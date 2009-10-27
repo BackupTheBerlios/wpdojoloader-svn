@@ -1,0 +1,57 @@
+.wpdojoloader_contentpane p {  /* p element inside a contentpane */
+	/*
+	color: Blue;
+	border:solid 1px green;
+	*/
+}
+
+.wpdojoloader .tundra .dijitTabInnerDiv {  /* tab button from a contentpane in a tabcontainer */
+	padding: 2px;
+	/*border: solid 1px red;*/
+	color: black;  /* color of the titletext */
+}
+
+/*
+.wpdojoloader .tundra .dijitContentPane {
+  color: black;	
+  border:solid 1px red;
+}	
+*/
+
+/*
+.wpdojoloader .tundra .dijitTab .dijitTabButtonSpacer {
+	/*height:12px;
+	/* width:1px; 
+	/*border: solid 1px blue;
+}
+*/
+
+/*
+.wpdojoloader .tundra .dijitTab .dijitTabButtonSpacer {  /* this is a img element behind the tab button title * /
+	margin-bottom:0px;
+	margin-top:0px;
+	max-height:600px;
+	max-width:500px;
+	border: solid 1px black; 
+}
+*/
+
+/*
+#content .wpdojoloader .dojoxGridContent { /* div containing the dojo grid content * /
+	height: 200px;
+	border: solid 1px red;
+}
+*/
+
+.wpdojoloader  .dojoxGridCell {  /* color in a datagrid cell */
+	color: Black;
+}
+
+.wpdojoloader_highlight .tag {
+	color:Blue;
+	display:block;
+}
+
+.wpdojoloader_highlight .title {
+	/* padding-left:10px; */
+}
