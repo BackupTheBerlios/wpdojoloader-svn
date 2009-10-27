@@ -896,6 +896,7 @@ if (!function_exists("WpDojoLoader_showAdmin")) {
 
 //Actions and Filters	
 if (isset($dl_dojoLoader)) {
+	//test
 	add_action('admin_menu', 'WpDojoLoader_showAdmin');
 	if ($dl_dojoLoader->isActive()) {
 		//Actions
