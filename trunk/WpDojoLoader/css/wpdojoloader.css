@@ -55,3 +55,11 @@
 .wpdojoloader_highlight .title {
 	/* padding-left:10px; */
 }
+
+
+
+.wpdojoloader_tinymce {
+	border:solid 1px red;
+	width: 100%;
+}
+

@@ -24,500 +24,25 @@ Copyright 2009  Dirk Lehmeier
 
 */
 
-if (!class_exists("WpDojoLoader")) {
-	
-	/**
-	 * used for creating dojo html output
-	 * @return 
-	 */
-	class DojoLoader {
-		
-		var $id_cnt = 0;
-		var $adminOptionsName = "WpDojoLoaderAdminOptions";
-		var $addResizeDiv = false;	//if this is set to true, a contentpane will contain a resize handler
-		var $prevId = "";  			//contains the last id which was returned from getId()
-		
-		function DojoLoader() { //constructor
-			
-		}
-		
-		/**
-		 * returns a unique id for dojo widgets
-		 * @return 
-		 */
-		function getId() {
-			$this->id_cnt++;
-			$newid = "wpdojoloader_id_".$this->id_cnt;
-			$this->prevId = $newid;
-			return $newid;
-		}
-		
-		
-		/**
-		 * 
-		 * @return 
-		 */
-		function getAdminOptions() {	
-			$adminoptions = get_option($this->adminOptionsName);
-			$dojoLoaderAdminOptions = array();
-			
-			if (!empty($adminoptions)) {
-				foreach ($adminoptions as $key => $option)
-					$dojoLoaderAdminOptions[$key] = $option;
-			}				
-			return $dojoLoaderAdminOptions;
-		}
-		
-		/**
-		 * returns a dijit.layout.ContentPane div container
-		 * @return 
-		 * @param $aTitle Object
-		 * @param $aStyle Object[optional]
-		 * @param $aCanResize Object[optional] if this is set to "true" the contentpane will be resizeable
-		 */
-		function getContentPane_start($aTitle,$aStyle = null,$aCanResize=null) {
-			$style = ""; //here you can set a default style
-			
-			if (isset($aStyle)) {
-				$style = $aStyle;
-			}
-			
-			$elemid = ""; 			
-			if ($aCanResize != null) {
-				if (strtolower($aCanResize) == "true") {
-					$this->addResizeDiv = true;
-				}
-				$elemid = " id =\"".$this->getId()."\""; //add a custom id to the element
-			}
-			
-			$rslt = "<div $elemid dojoType=\"dijit.layout.ContentPane\" class=\"tundra wpdojoloader_contentpane\" style=\"$style\" title=\"$aTitle\" >";
-			return $rslt;
-		}
-		
-		/**
-		 * returns a </div>, if $aCanResize is set to "true" in the start function, a dojox.layout.ResizeHandle will be created 
-		 * @return 
-		 */
-		function getContentPane_end() {
-			$rslt = "";
-			if ($this->addResizeDiv) {
-				$rslt .= "<div dojoType=\"dojox.layout.ResizeHandle\" targetId=\"$this->prevId\">test</div>";
-				$this->addResizeDiv = false;
-			}
-			$rslt .= "</div>";
-			return $rslt;
-		}
-		
-		/**
-		 * returns a dijit.layout.TabContainer div
-		 * @return 
-		 */
-		function getTabContainer_start($aStyle = null) {
-			$rslt = "<div class=\"wpdojoloader\" >";
-			
-			$style = "width:100%;height:200px"; //default style
-			if (isset($aStyle))
-				$style = $aStyle;
-			
-			$rslt .= "<div dojoType=\"dijit.layout.TabContainer\" class=\"tundra wpdojoloader_tab\" style=\"$style\">";
-			return $rslt;
-		}
-		
-		/**
-		 * returns a </div></div>
-		 * @return 
-		 */
-		function getTabContainer_end() {
-			return "</div></div>";
-		}
-		
-		
-		/**
-		 * returns a comma seperated string with the fieldnames from the given structure
-		 * grid structures are stored in the admin options
-		 * @return 
-		 * @param $aStructurename Object
-		 */
-		function getFieldnames($aStructurename) {
-			$options = $this->getAdminOptions();
-			
-			for ($i=0;$i<count($options['gridstructure']);$i++) {
-				$gs_name = $options['gridstructure'][$i]['name'];
-				$gs_value = $options['gridstructure'][$i]['structure'];
-				if (strtolower($gs_name) == strtolower($aStructurename)) {
-					return $gs_value; 
-				}
-			}			
-			return "";
-		}
-		
-		/**
-		 * returns a dojox.grid.DataGrid div
-		 * @return 	
-		 */
-		function getDataGrid_start($aStore,$aStructurename,$aFilename = null,$aStyle = null) {
-			$style = "width: 100%; height: 300px;"; //default styles
-			if (isset($aStyle))
-				$style = $aStyle;
-			
-			$filename = "";
-			if (isset($aFilename))
-				$filename = $aFilename;
-				
-			$elemid = $this->getId();
-			$wud = wp_upload_dir();
-			$wud = $wud['subdir'];
-			
-			$fieldnames = $this->getFieldnames($aStructurename);
-			$rslt = "<div class=\"tundra wpdojoloader\" fieldnames=\"$fieldnames\" uploaddir=\"$wud\" storetype=\"$aStore\" filename=\"$filename\" >";
-			$rslt .= "<div id=\"$elemid\" class=\"wpdojoloader_datagrid\" style=\"$style\" dojoType=\"dojox.grid.DataGrid\" rowsPerPage=\"40\">";	
-			return $rslt;
-		}
-		
-		/**
-		 * 
-		 * @return </div></div>
-		 */
-		function getDataGrid_end() {
-			return "</div></div>";
-		}
-		
-		/**
-		 * returns the content of a wordpress post with the given id
-		 * @return 
-		 * @param $aPostId Object
-		 */
-		function getPost_start($aPostId) {
-			$rslt = "<div class=\"wpdojoloader\">";
-			
-			$pst = get_post($aPostId);
-			if ($pst != null) {
-				$rslt .= $pst->post_content;
-			}
-			//debug only
-			//$rslt = str_replace("[dojocontent]","[d_ojocontent]",$rslt);
-			//$rslt = str_replace("[/dojocontent]","[/d_ojocontent]",$rslt);
-			return $rslt;
-		}
-		
-		/**
-		 * returns a </div>
-		 * @return 
-		 */
-		function getPost_end() {
-			return "</div>";
-		}
-		
-		/**
-		 * returns div elements used for a fisheye, fisheye is created in the js functions
-		 * @return 
-		 */
-		function getFisheyeLite_start() {
-			return "<div class=\"wpdojoloader\"><div class=\"wpdojoloader_fisheyelite\">";	
-		}
-		
-		/**
-		 * returns "</div></div>"
-		 * @return 
-		 */
-		function getFisheyeLite_end() {
-			return "</div></div>";	
-		}
-		
-		/**
-		 * 
-		 * @return 
-		 */
-		function getHighlight_start($aLanguage) {
-			return "<div class=\"wpdojoloader\"><pre><code lang=\"$aLanguage\" class=\"wpdojoloader_highlight\">";
-		}
-		
-		/**
-		 * 
-		 * @return 
-		 */
-		function getHighlight_end() {
-			return "</code></pre></div>";  //
-		}
-		
-		/**
-		 * used for the google syntax highlightner
-		 * @return 
-		 * @param $aLanguage Object
-		 */
-		function getCode_start($aLanguage) {
-			return "<div class=\"wpdojoloader\"><pre name=\"code\" class=\"$aLanguage\"> "; 
-		}
-		
-		/**
-		 * 
-		 * @return 
-		 */
-		function getCode_end() {
-			return "</pre></div>";
-		}
-		
-		/**
-		 * creates a link to wordpress pages, post and categories
-		 * @return 
-		 * @param $aLinkType String at the moment CAT, POST and PAGE
-		 * @param $aLinkId String wordpress id of the target
-		 */
-		function getLink_start($aLinkType, $aLinkId) {
-			$rslt = "<a href=\"".get_bloginfo("wpurl")."/";
-			switch (strtoupper($aLinkType)) {
-			    case 'CAT':
-					$rslt .= "?cat=$aLinkId";
-					break;
-				case 'POST':
-					$rslt .= "?p=$aLinkId";
-					break;
-				case 'PAGE':
-					$rslt .= "?page_id=$aLinkId";
-					break;
-			}
-			$rslt .= "\" >";
-			return $rslt;
-		}
-		
-		/**
-		 * 
-		 * @return 
-		 */
-		function getLink_end() {
-			return "</a>";	
-		}
-		
-		/**
-		 * 
-		 * @return 
-		 * @param $aOrientation Object
-		 * @param $aStyle Object[optional]
-		 */
-		function getScrollPane_start($aOrientation, $aStyle = null) {
-			$style = "width: 200px; height: 100px; border: solid 1px black;"; //default style
-			if (isset($aStyle)) {
-				$style = $aStyle;
-			}
-			return "<div dojoType=\"dojox.layout.ScrollPane\" orientation=\"$aOrientation\" style=\"$style\" >";
-		}
-		
-		/**
-		 * 
-		 * @return "</div>"
-		 */
-		function getScrollPane_end() {
-			return "</div>";
-		}
-		
-		/**
-		 * 
-		 * @return 
-		 * @param $aStyle Object[optional]
-		 * @param $aDuration Object[optional]
-		 */
-		function getAccordionContainer_start($aStyle = null, $aDuration = null) {
-			$style = "width: 100%;height: 300px;"; //default style
-			$duration = "80"; //default duration
-			if (isset($aStyle)) {
-				$style	= $aStyle;
-			}	
-			if (isset($aDuration)) {
-				$duration = $aDuration;	
-			}
-			return "<div class=\"wpdojoloader tundra\"><div dojoType=\"dijit.layout.AccordionContainer\" style=\"$style\" duration=\"$duration\"  >";
-		}
-		
-		/**
-		 * 
-		 * @return 
-		 * @param $aStyle Object[optional]
-		 * @param $aDuration Object[optional]
-		 */
-		function getAccordionContainer_end($aStyle = null, $aDuration = null) {
-			return "</div></div>";
-		}
-		
-		/**
-		 * e
-		 * @return dd	
-		 * @param $aTitle Object
-		 * @param $aSelected Object[optional]
-		 */
-		function getAccordionPane_start($aTitle, $aSelected = null) {
-			$selected = "false";
-			if (isset($aSelected)) {
-				if (strtolower($aSelected) == "true" ) {
-					$selected = "true";
-				}
-			}		
-			//<div class=\"wpdojoloader_accordionpane\">	
-			return "<div dojoType=\"dijit.layout.AccordionPane\" selected=\"$selected\" title=\"$aTitle\">";	
-		}
-		
-		/**
-		 * 
-		 * @return 
-		 */
-		function getAccordionPane_end() {
-			//</div>
-			return "</div>";	
-		}
-		
-	}  //end class DojoLoader
-	
-	
-	/**
-	 * functions for the wordpress admin pages
-	 */
-	class WpDojoLoader_AdminLoader {
-		
-		var $adminOptionsName = "WpDojoLoaderAdminOptions";
-		
-		function WpDojoLoader_AdminLoader() { //constructor
-			
-		}
-		
-				
-		/**
-		 * returns a array with the admin options
-		 * @return 
-		 */
-		function getAdminOptions() {
-			//delete_option($this->adminOptionsName);  //debug //TODO remove
-			
-			$dojoLoaderAdminOptions = array(
-				'activate' => 'true',
-				'gridstructure' => array(array('name' => 'gridstructure_1', 'structure' => 'name,link'))
-				);
-				
-			$adminoptions = get_option($this->adminOptionsName);
-			if (!empty($adminoptions)) {
-				foreach ($adminoptions as $key => $option)
-					$dojoLoaderAdminOptions[$key] = $option;
-			}				
-			update_option($this->adminOptionsName, $dojoLoaderAdminOptions);
+require_once(dirname(__FILE__). '/dojogenerator.php');
+require_once(dirname(__FILE__). '/wpdojoloader_admin.php');
 
-			return $dojoLoaderAdminOptions;
-		}
-		
-		/**
-		 * prints the admin page
-		 * @return 
-		 */
-		function printAdminPage() {
-			$adminOptions = $this->getAdminOptions();
-			
-			//store options
-			if (isset($_POST['update_wpdojoloader_adminoptions'])) { 
-				
-				if (isset($_POST['wpdojoloader_activate'])) {
-					$adminOptions['activate'] = $_POST['wpdojoloader_activate'];
-				}
-								
-				//update existing grid structures
-				for ($i=count($adminOptions['gridstructure']);$i>-1;$i--) {
-					$gsname = $adminOptions['gridstructure'][$i]['name'];
-					$gsvalue = $_POST[$gsname];
-					$deletevalue = trim($_POST["del_".$gsname]);
-					//check if the delete checkbox is selected
-					if (($deletevalue == $gsname) && ($deletevalue != "")) {
-						unset($adminOptions['gridstructure'][$i]);  //delete a selected structure
-					} else {
-						if (! empty($gsname)) {
-							$adminOptions['gridstructure'][$i]['structure'] = $gsvalue; 	 
-						}
-					}
-				}
-				
-				//add new grid structure
-				if (isset($_POST['gridstructure_name'])) {
-					$gsname  = trim($_POST['gridstructure_name']);
-					$gsvalue = trim($_POST['gridstructure_value']);
-					$doadd = true;
-					
-					//check if a gridstructure with posted gridstructure_name exist, if true nothing will happen 
-					for ($i=0;$i<count($adminOptions['gridstructure']);$i++) {
-						if ((strtolower($gsname)) == strtolower($adminOptions['gridstructure'][$i]['name'])) {
-							$doadd = false;
-							break;
-						}
-					}
-					
-					if ((! empty($gsname)) && (! empty($gsvalue)) && $doadd) {
-						//create a new gridstructure array
-						$idx = count($adminOptions['gridstructure']) + 1;
-						$newgs = array('name'=>$gsname,'structure'=>$gsvalue);
-						array_push($adminOptions['gridstructure'],$newgs);	
-					}
-				}
-				update_option($this->adminOptionsName, $adminOptions); //store options
-			}	
-			
-			?>
-			<div class=wrap>
-			<form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>">
-			<h2>Wordpress Dojo Loader Plugin</h2>
-			
-			<h3>Activate Dojo Loader Plugin?</h3>
-			<p>
-				<label for="wpdojoloader_activate_yes"><input type="radio" id="wpdojoloader_activate_yes" name="wpdojoloader_activate" value="true" <?php if ($adminOptions['activate'] == "true") { _e('checked="checked"'); }?> /> Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;
-				<label for="wpdojoloader_activate_no"><input type="radio" id="wpdojoloader_activate_no" name="wpdojoloader_activate" value="false" <?php if ($adminOptions['activate'] == "false") { _e('checked="checked"'); }?>/> No</label>
-			</p>
-						
-			<hr/>
-			<h2>Datagrid Structures</h2><br/>
-			<i>please enter the grid fieldnames in comma seperated values</i>
-			<i>e.g. name,link</i>
-			<p>
-				<?php
-					//load the existing grid structure
-				  	echo "<table>";
-				  	for ($i=0;$i<count($adminOptions['gridstructure']);$i++) {
-				  		echo "<tr>";
-						$gs_name = $adminOptions['gridstructure'][$i]['name'];
-						$gs_value = $adminOptions['gridstructure'][$i]['structure'];
-						echo "<td><b>$gs_name</b></td><td><input name=\"$gs_name\" value=\"$gs_value\"/></td>";
-						echo "<td>delete&nbsp;<input type=\"checkbox\" name=\"del_$gs_name\" value=\"$gs_name\"></td>";
-						echo "</tr>";
-				    }
-					echo "</table><br/>";	  
-					echo "<hr/>";
-					
-					//add fields for a new grid structure
-					echo "create a new grid structure <br/>";
-					$idx = count($adminOptions['gridstructure']) + 1;
-					echo "<b><label>Structurename</label></b>&nbsp;<input value=\"gridstructure_$idx\" name=\"gridstructure_name\" />";
-					echo "<label>Gridstructure</label><input name=\"gridstructure_value\" />";
-					
-				?>
-			</p>
-			
-			<div class="submit">
-			<input type="submit" name="update_wpdojoloader_adminoptions" value="<?php _e('Update Settings') ?>" /></div>
-			</form>
-			
-			 </div>
-			 <?php
-		
-		} //end function printAdminPage 
-		
-	} //end class WpDojoLoader_AdminLoader
-	
+if (!class_exists("WpDojoLoader")) {
 	
 	/**
 	 * this class manages the parsing of posts and pages and inserts dojo content
 	 */
 	class WpDojoLoader {
 		
-		var $dojoloader = null;
+		var $dojogenerator = null;
 		var $dojocontent = "";
-		var $currentdata = "";
+		//var $currentdata = "";
+		var $currentdata = array();  //array containing the data inside a a xml element
 		var $adminOptionsName = "WpDojoLoaderAdminOptions";
 		var $iscodeelem = false; //this is set to true if a <code> element is found, no other elements will be parsed until the </code> element 
 		
 		function WpDojoLoader() { //constructor
-			$this->dojoloader = new DojoLoader();	
+			$this->dojogenerator = new DojoGenerator();	
 		}
 		
 		/**
@@ -556,7 +81,7 @@ if (!class_exists("WpDojoLoader")) {
 		 */		
 		function characterData($parser,$data){
 			if ((trim($data) != "") && ($data != null)) {
-				$this->currentdata .= $data; 
+				$this->currentdata[sizeof($this->currentdata)-1] .= $data;
 			}
 		}
 		
@@ -581,7 +106,7 @@ if (!class_exists("WpDojoLoader")) {
 			if (strcmp($aElementname,"FISHEYE") == 0)
 				return true;
 			
-			/* currently not activated it's a little bit buggy at the moment
+			/* currently not activated it's a little bit buggy at the moment 
 			if (strcmp($aElementname,"HIGHLIGHT") == 0)
 				return true;
 			
@@ -603,7 +128,13 @@ if (!class_exists("WpDojoLoader")) {
 				
 			if (strcmp($aElementname,"ACCORDIONCONTAINER") == 0)
 				return true;	
+				
+			if (strcmp($aElementname,"BUTTON") == 0)
+				return true;
 			
+			if (strcmp($aElementname,"DYNAMIC") == 0)
+				return true;
+					
 			return false;
 		}
 
@@ -615,55 +146,67 @@ if (!class_exists("WpDojoLoader")) {
 		 * @param $attributes Object
 		 */
 		function startElement($parser, $name, $attributes) {
-			
+			array_push($this->currentdata,""); //
+						
 			//if a element within the wpdojoloader is not a wpdojoloader element,
-			//this element will be inserted (e.g. <li> or <img> elements)
+			//this element will be inserted (e.g. <li> or <img> elements), includeing it's attributes
 			if ((! $this->isValidElement($name)) || $this->iscodeelem) {
-				$this->currentdata .= "<".$name." "; 		//insert the start element
+				$elemstr = "";
+				$elemstr .= "<".$name.""; 		//insert the start element
 				foreach ($attributes as $key => $value) {   //insert the attributes from the start element
-				   $this->currentdata .= " ".$key."=\"".$value."\"";
+				   $elemstr .= " ".$key."=\"".$value."\"";
 			   	}	
-				$this->currentdata .= ">";
+				$elemstr .= ">";
+				
+				$this->dojocontent .= $elemstr;
 				return;
 			}
 			
-			//$this->currentdata = "";
 		   	switch ($name) {
 			    case 'TABCONTAINER':
-					$this->dojocontent .= $this->dojoloader->getTabContainer_start($attributes['STYLE']);
+					$this->dojocontent .= $this->dojogenerator->getTabContainer_start($attributes['STYLE']);
 					break;
 				case 'CONTENTPANE':
-					$this->dojocontent .= $this->dojoloader->getContentPane_start($attributes['TITLE'],$attributes['STYLE'],$attributes['RESIZE']);
+					$this->dojocontent .= $this->dojogenerator->getContentPane_start($attributes['TITLE'],$attributes['STYLE'],$attributes['RESIZE']);
 					break;
 				 case 'DATAGRID':
-					$this->dojocontent .= $this->dojoloader->getDataGrid_start($attributes['STORETYPE'],$attributes['STRUCTURENAME'],$attributes['FILENAME'], $attributes['STYLE']);
+					$this->dojocontent .= $this->dojogenerator->getDataGrid_start($attributes['STORETYPE'],$attributes['STRUCTURENAME'],$attributes['FILENAME'], $attributes['STYLE']);
 					break;
 				case 'POST':
-					$this->dojocontent .= $this->dojoloader->getPost_start($attributes['ID']);
+					$this->dojocontent .= $this->dojogenerator->getPost_start($attributes['ID']);
 					break;
 				case 'FISHEYE':
-					$this->dojocontent .= $this->dojoloader->getFisheyeLite_start();
+					$this->dojocontent .= $this->dojogenerator->getFisheyeLite_start();
 					break;
-				/* currently not activated it's a little bit buggy at the moment 
+				
+				/* currently not activated it's a little bit buggy at the moment  
 				case 'HIGHLIGHT':
-					$this->dojocontent .= $this->dojoloader->getHighlight_start($attributes['LANG']);
+					$this->dojocontent .= $this->dojogenerator->getHighlight_start($attributes['LANG']);
+					$this->iscodeelem = true; 
 					break;
 				case 'CODE':
-					$this->dojocontent .= $this->dojoloader->getCode_start($attributes['LANG']);
+					$this->dojocontent .= $this->dojogenerator->getCode_start($attributes['LANG']);
 					$this->iscodeelem = true; 
 					break;
 				*/
+				
 				case 'LINK':
-					$this->dojocontent .= $this->dojoloader->getLink_start($attributes['TYPE'],$attributes['ID']);
+					$this->dojocontent .= $this->dojogenerator->getLink_start($attributes['TYPE'],$attributes['ID']);
 					break;
 				case 'SCROLLPANE':
-					$this->dojocontent .= $this->dojoloader->getScrollPane_start($attributes['ORIENTATION'],$attributes['STYLE']);
+					$this->dojocontent .= $this->dojogenerator->getScrollPane_start($attributes['ORIENTATION'],$attributes['STYLE']);
 					break;
 				case 'ACCORDIONCONTAINER':
-					$this->dojocontent .= $this->dojoloader->getAccordionContainer_start($attributes['STYLE'],$attributes['DURATION']);
+					$this->dojocontent .= $this->dojogenerator->getAccordionContainer_start($attributes['STYLE'],$attributes['DURATION']);
 					break;
 				case 'ACCORDIONPANE':
-					$this->dojocontent .= $this->dojoloader->getAccordionPane_start($attributes['TITLE'],$attributes['SELECTED']);
+					$this->dojocontent .= $this->dojogenerator->getAccordionPane_start($attributes['TITLE'],$attributes['SELECTED']);
+					break;
+				case 'BUTTON':
+					$this->dojocontent .= $this->dojogenerator->getButton_start($attributes['FUNCTION']);
+					break;
+				case 'DYNAMIC':
+					$this->dojocontent .= $this->dojogenerator->getDynamicPost_start();
 					break;
 		   	}
 		}
@@ -675,67 +218,69 @@ if (!class_exists("WpDojoLoader")) {
 		 * @param $name Object
 		 */
 		function closeElement($parser, $name) {
+						
+			$cd = array_pop($this->currentdata); //get the data inside a element which was not parsed
+			$this->dojocontent .= $cd;  		 //add to the dojocontent string
 			
 			if (! $this->isValidElement($name)) {
-				$this->currentdata .= "</".$name.">"; //insert end the element
+				$this->dojocontent .= "</".$name.">"; //insert the element end tag
 				return;
 			}
 			
-			//not needed at the moment
+			/* used for code highlightning
 			if (($this->iscodeelem) && ($name != "CODE")) { 
-				$this->currentdata .= "</".$name.">"; //insert end the element
-				return;	
-			} 
-			//echo "<!-- ENDTAG $name -->"; //debug only
+				$this->dojocontent .= "</".$name.">"; //insert the element end tag
+				return;
+			}
+			*/
+			
 			switch ($name) {
 			    case 'TABCONTAINER':
-					$this->dojocontent .= $this->dojoloader->getTabContainer_end();
+					$this->dojocontent .= $this->dojogenerator->getTabContainer_end();
 					break;
 				case 'CONTENTPANE':
-					$this->dojocontent .= $this->currentdata; //insert the data between <CONTENTPANE> and </CONTENTPANE>
-					$this->dojocontent .= $this->dojoloader->getContentPane_end();
+					$this->dojocontent .= $this->dojogenerator->getContentPane_end();
 					break;
 				case 'DATAGRID':
-					$this->dojocontent .= $this->dojoloader->getDataGrid_end();
+					$this->dojocontent .= $this->dojogenerator->getDataGrid_end();
 					break;
 				case 'POST':
-					$this->dojocontent .= $this->currentdata;
-					$this->dojocontent .= $this->dojoloader->getPost_end();
+					$this->dojocontent .= $this->dojogenerator->getPost_end();
 					break;
 				case 'FISHEYE':
-					$this->dojocontent .= $this->currentdata; //insert the data between <FISHEYE> and </FISHEYE>
-					$this->dojocontent .= $this->dojoloader->getFisheyeLite_end();
+					$this->dojocontent .= $this->dojogenerator->getFisheyeLite_end();
 					break;
+					
 				/* currently not activated it's a little bit buggy at the moment 
 				case 'HIGHLIGHT':
-					$this->dojocontent .= $this->currentdata; //insert the data between <HIGHLIGHT> and </HIGHLIGHT>
-					$this->dojocontent .= $this->dojoloader->getHighlight_end();
+					$this->dojocontent .= $this->dojogenerator->getHighlight_end();
+					$this->iscodeelem = false; 
 					break;
 				case 'CODE':
-					$this->dojocontent .= $this->currentdata; //insert the data between <PRE> and </PRE>
-					$this->dojocontent .= $this->dojoloader->getCode_end();
+					$this->dojocontent .= $this->dojogenerator->getCode_end();
 					$this->iscodeelem = false;
 					break;
 				*/
-				
+					
 				case 'LINK':
-					$this->dojocontent .= $this->currentdata; //insert the data between <LINK> and </LINK>
-					$this->dojocontent .= $this->dojoloader->getLink_end();
+					$this->dojocontent .= $this->dojogenerator->getLink_end();
 					break;
 				case 'SCROLLPANE':
-					$this->dojocontent .= $this->currentdata; //insert the data between <SCROLLPANE> and </SCROLLPANE>
-					$this->dojocontent .= $this->dojoloader->getScrollPane_end();
+					$this->dojocontent .= $this->dojogenerator->getScrollPane_end();
 					break;
 				case 'ACCORDIONCONTAINER':
-					//$this->dojocontent .= $this->currentdata; //insert the data between <SCROLLPANE> and </SCROLLPANE>
-					$this->dojocontent .= $this->dojoloader->getAccordionContainer_end();
+					$this->dojocontent .= $this->dojogenerator->getAccordionContainer_end();
 					break;
 				case 'ACCORDIONPANE':
-					$this->dojocontent .= $this->currentdata; //insert the data between <ACCORDIONPANE> and </ACCORDIONPANE>
-					$this->dojocontent .= $this->dojoloader->getAccordionPane_end();
+					$this->dojocontent .= $this->dojogenerator->getAccordionPane_end();
+					break;
+				case 'BUTTON':
+					$this->dojocontent .= $this->dojogenerator->getButton_end();
+					break;
+				case 'DYNAMIC':
+					$this->dojocontent .= $this->dojogenerator->getDynamicPost_end();
 					break;
 		   }
-		   $this->currentdata = "";
 		}
 		
 		
@@ -787,7 +332,7 @@ if (!class_exists("WpDojoLoader")) {
 				
 				$this->dojocontent = "";				
 				if ($this->parseXML($inner) == 1) {
-					echo "<!-- BEGIN CONTENT ".$this->dojocontent." END CONTENT -->"; //TODO debug only remove
+					echo "<!-- BEGIN CONTENT ".$this->dojocontent." END CONTENT -->"; //debug only
 					return $pre.$this->dojocontent.$suf;	
 				}
 			}
@@ -851,9 +396,20 @@ if (!class_exists("WpDojoLoader")) {
 			echo '<link type="text/css" rel="stylesheet" href="' . get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/css/wpdojoloader.css" />' . "\n";
 			
 			if (function_exists('wp_enqueue_script')) {
+				//load jquery
 				wp_enqueue_script('jquery');
+				//load a custom tiny mce				
+				wp_enqueue_script('tiny_mce', get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/js/tinymce/jscripts/tiny_mce/tiny_mce.js', array('prototype'), '0.1');
+				
+				//load the tiny mce from wordpress
+				//wp_enqueue_script('tiny_mce', get_bloginfo('wpurl') . '/wp-includes/js/tinymce/tiny_mce.js', array('prototype'), '0.1');
+				//wp_enqueue_script('tiny_mce', get_bloginfo('wpurl') . '/wp-includes/js/tinymce/wp-tinymce.js', array('prototype'), '0.1');
+				
+				//add the dojo toolkit from ajax.googleapis.com
+				wp_enqueue_script('dojo', 'http://ajax.googleapis.com/ajax/libs/dojo/1.3.1/dojo/dojo.xd.js', array('prototype'), '0.1');
+				
 				//add the wpdojoloader js functions
-				wp_enqueue_script('wpdojoloader', get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/js/wpdojoloader.js', array('prototype'), '0.1');
+				wp_enqueue_script('wpdojoloader', get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/js/wpdojoloader.js', array('prototype'), '0.1');				
 			}
 		}
 		
