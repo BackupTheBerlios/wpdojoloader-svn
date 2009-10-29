@@ -24,6 +24,8 @@ Copyright 2009  Dirk Lehmeier
 
 */
 
+//this is develop
+
 require_once(dirname(__FILE__). '/dojogenerator.php');
 require_once(dirname(__FILE__). '/wpdojoloader_admin.php');
 
