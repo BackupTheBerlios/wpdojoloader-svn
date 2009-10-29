@@ -414,12 +414,7 @@ if (!class_exists("WpDojoLoader")) {
 				wp_enqueue_script('wpdojoloader', get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/js/wpdojoloader.js', array('prototype'), '0.1');				
 			}
 		}
-		
-		//hello
-		function test_Trunk() {
-			return "";
-		}
-		
+				
 		/**
 		 * filter content
 		 * @return 
