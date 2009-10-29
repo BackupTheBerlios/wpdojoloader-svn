@@ -388,14 +388,6 @@
 			return "</div></div>";			
 		}
 		
-		function getTest_start() {
-			return "";
-		}
-		
-		function getTest_end() {
-			return "";
-		}
-		
 	}  //end class DojoLoader
 	
 ?>

@@ -24,7 +24,7 @@ Copyright 2009  Dirk Lehmeier
 
 */
 
-//this is develop
+//this is the current version
 
 require_once(dirname(__FILE__). '/dojogenerator.php');
 require_once(dirname(__FILE__). '/wpdojoloader_admin.php');
@@ -413,6 +413,11 @@ if (!class_exists("WpDojoLoader")) {
 				//add the wpdojoloader js functions
 				wp_enqueue_script('wpdojoloader', get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/js/wpdojoloader.js', array('prototype'), '0.1');				
 			}
+		}
+		
+		//hello
+		function test_Trunk() {
+			return "";
 		}
 		
 		/**
