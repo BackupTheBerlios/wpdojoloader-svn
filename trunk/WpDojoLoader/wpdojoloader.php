@@ -415,6 +415,11 @@ if (!class_exists("WpDojoLoader")) {
 			}
 		}
 		
+		//hello
+		function test_Trunk() {
+			return "";
+		}
+		
 		/**
 		 * filter content
 		 * @return 
