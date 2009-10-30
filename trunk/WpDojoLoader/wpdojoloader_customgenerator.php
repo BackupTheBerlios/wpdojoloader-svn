@@ -1,5 +1,7 @@
 <?php
 
+if (!class_exists("WpDojoLoader_CustomGenerator")) {
+	
 	/**
 	 * used for creating other html output, for example a tinymce frontend editor
 	 * @return 
@@ -50,4 +52,5 @@
 		
 	} //end class WpDojoLoader_CustomGenerator
 	
-?> 
+} //end if (!class_exists("WpDojoLoader_CustomGenerator")) {
+?>

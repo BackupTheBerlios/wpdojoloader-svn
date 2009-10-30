@@ -26,7 +26,7 @@ Author URI: http://wpdojoloader.berlios.de/
 */
 
 require_once(dirname(__FILE__). '/dojogenerator.php');
-require_once(dirname(__FILE__). '/customgenerator.php');
+require_once(dirname(__FILE__). '/wpdojoloader_customgenerator.php');
 require_once(dirname(__FILE__). '/wpdojoloader_admin.php');
 
 if (!class_exists("WpDojoLoader")) {
@@ -349,7 +349,7 @@ if (!class_exists("WpDojoLoader")) {
 					//echo "<!-- BEGIN CONTENT ".$this->dojocontent." END CONTENT -->"; //debug only
 					return $pre.$this->dojocontent.$suf;	
 				} else {
-					return $pre."<i>error parsing the xml structure</i>".$suf
+					return $pre."<i>error parsing the xml structure</i>".$suf;
 				}
 			}
 			return false;
@@ -363,8 +363,7 @@ if (!class_exists("WpDojoLoader")) {
 		 * @param $aStartTag Object
 		 * @param $aEndTag Object
 		 */
-		function executeParse($content, $aStartTag, $aEndTag) {
-			
+		function executeParse($content, $aStartTag, $aEndTag) {			
 			$rslt = $content;
 			do {
 				$c1 = $this->replaceContent($rslt,$aStartTag,$aEndTag);
@@ -373,15 +372,7 @@ if (!class_exists("WpDojoLoader")) {
 				}
 				
 			} while (is_string($c1));
-			
-			
-			/*
-			$rslt = $content;
-			$c1 = $this->replaceContent($rslt,$aStartTag,$aEndTag);
-				if (is_string($c1)) {
-					$rslt = $c1;	
-				}
-			*/
+
 			return $rslt;
 		}
 		

@@ -1,5 +1,7 @@
 <?php
 
+if (!class_exists("DojoGenerator")) {
+	
 	/**
 	 * used for creating dojo html output
 	 * @return 
@@ -364,4 +366,6 @@
 		
 	}  //end class DojoLoader
 	
+} //end if (!class_exists("DojoGenerator")) {
+
 ?>
