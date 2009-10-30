@@ -1,12 +1,13 @@
 <?php
 /* 
-Plugin Name: WpDojoLoader 
+Plugin Name: WpDojoLoader
 Plugin URI: http://wpdojoloader.berlios.de/
-Version: v0.01
-Author: <a href="http://wpdojoloader.berlios.de/">Dirk Lehmeier</a>
-Description: Dojo Loader Plugin
+Description: WpDojoloader allows you to include dojo widgets into wordpress
+Version: 0.0.1
+Author: Dirk Lehmeier
+Author URI: http://wpdojoloader.berlios.de/
  
-Copyright 2009  Dirk Lehmeier
+	Copyright 2009  Dirk Lehmeier
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,9 +25,8 @@ Copyright 2009  Dirk Lehmeier
 
 */
 
-//this is the current version
-
 require_once(dirname(__FILE__). '/dojogenerator.php');
+require_once(dirname(__FILE__). '/customgenerator.php');
 require_once(dirname(__FILE__). '/wpdojoloader_admin.php');
 
 if (!class_exists("WpDojoLoader")) {
@@ -37,6 +37,7 @@ if (!class_exists("WpDojoLoader")) {
 	class WpDojoLoader {
 		
 		var $dojogenerator = null;
+		var $customgenerator = null;
 		var $dojocontent = "";
 		//var $currentdata = "";
 		var $currentdata = array();  //array containing the data inside a a xml element
@@ -45,6 +46,7 @@ if (!class_exists("WpDojoLoader")) {
 		
 		function WpDojoLoader() { //constructor
 			$this->dojogenerator = new DojoGenerator();	
+			$this->customgenerator = new WpDojoLoader_CustomGenerator();
 		}
 		
 		/**
@@ -131,8 +133,10 @@ if (!class_exists("WpDojoLoader")) {
 			if (strcmp($aElementname,"ACCORDIONCONTAINER") == 0)
 				return true;	
 				
+			/* not used at the moment
 			if (strcmp($aElementname,"BUTTON") == 0)
 				return true;
+			*/		
 			
 			if (strcmp($aElementname,"DYNAMIC") == 0)
 				return true;
@@ -204,11 +208,15 @@ if (!class_exists("WpDojoLoader")) {
 				case 'ACCORDIONPANE':
 					$this->dojocontent .= $this->dojogenerator->getAccordionPane_start($attributes['TITLE'],$attributes['SELECTED']);
 					break;
+				/* not used at the moment
 				case 'BUTTON':
 					$this->dojocontent .= $this->dojogenerator->getButton_start($attributes['FUNCTION']);
 					break;
+				*/
+				
+				/* some other none dojo elements */
 				case 'DYNAMIC':
-					$this->dojocontent .= $this->dojogenerator->getDynamicPost_start();
+					$this->dojocontent .= $this->customgenerator->getDynamicPost_start();
 					break;
 		   	}
 		}
@@ -276,11 +284,15 @@ if (!class_exists("WpDojoLoader")) {
 				case 'ACCORDIONPANE':
 					$this->dojocontent .= $this->dojogenerator->getAccordionPane_end();
 					break;
+				/*
 				case 'BUTTON':
 					$this->dojocontent .= $this->dojogenerator->getButton_end();
 					break;
+				*/
+				
+				/* some other none dojo elements */
 				case 'DYNAMIC':
-					$this->dojocontent .= $this->dojogenerator->getDynamicPost_end();
+					$this->dojocontent .= $this->customgenerator->getDynamicPost_end();
 					break;
 		   }
 		}
@@ -306,7 +318,7 @@ if (!class_exists("WpDojoLoader")) {
 			$xd = str_replace("&gt;",">",$xd);
 			
 			
-			echo "<!-- BEGIN XML".$xd." END XML -->"; //debug only
+			//echo "<!-- BEGIN XML".$xd." END XML -->"; //debug only
 			
 			$rslt = xml_parse($xml_parser, $xd);
 			xml_parser_free($xml_parser);
@@ -334,8 +346,10 @@ if (!class_exists("WpDojoLoader")) {
 				
 				$this->dojocontent = "";				
 				if ($this->parseXML($inner) == 1) {
-					echo "<!-- BEGIN CONTENT ".$this->dojocontent." END CONTENT -->"; //debug only
+					//echo "<!-- BEGIN CONTENT ".$this->dojocontent." END CONTENT -->"; //debug only
 					return $pre.$this->dojocontent.$suf;	
+				} else {
+					return $pre."<i>error parsing the xml structure</i>".$suf
 				}
 			}
 			return false;

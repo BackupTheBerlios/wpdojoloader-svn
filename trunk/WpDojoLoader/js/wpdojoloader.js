@@ -1,4 +1,3 @@
-//jQuery.noConflict();
 dojo.require("dojo.parser");
 
 /**
@@ -170,8 +169,13 @@ function wpdojoloader_hideTinyMce(sender) {
 	}
 }
 
+/**
+ * print a message in the wpdojoloader_tinymcestatus span element 
+ * @param {Object} parentelement
+ * @param {Object} message
+ * @param {Object} style
+ */
 function wpdojoloader_printTinyMceStatusMsg(parentelement, message, style) {
-	//wpdojoloader_tinymcestatus
 	var lst1 = jQuery(".wpdojoloader_tinymcestatus", parentelement);
 	var contentdiv = null;
 	if (lst1.length > 0) {

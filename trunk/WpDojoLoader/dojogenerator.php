@@ -169,8 +169,6 @@
 				$rslt .= $pst->post_content;
 			}
 			//debug only
-			//$rslt = str_replace("[dojocontent]","[d_ojocontent]",$rslt);
-			//$rslt = str_replace("[/dojocontent]","[/d_ojocontent]",$rslt);
 			return $rslt;
 		}
 		
@@ -255,7 +253,7 @@
 		}
 		
 		/**
-		 * 
+		 * end of a link element
 		 * @return 
 		 */
 		function getLink_end() {
@@ -263,7 +261,7 @@
 		}
 		
 		/**
-		 * 
+		 * scrollpane start
 		 * @return 
 		 * @param $aOrientation Object
 		 * @param $aStyle Object[optional]
@@ -277,7 +275,7 @@
 		}
 		
 		/**
-		 * 
+		 * scrollpane end 
 		 * @return "</div>"
 		 */
 		function getScrollPane_end() {
@@ -285,7 +283,7 @@
 		}
 		
 		/**
-		 * 
+		 * accordion container start
 		 * @return 
 		 * @param $aStyle Object[optional]
 		 * @param $aDuration Object[optional]
@@ -303,7 +301,7 @@
 		}
 		
 		/**
-		 * 
+		 * accordion container end
 		 * @return 
 		 * @param $aStyle Object[optional]
 		 * @param $aDuration Object[optional]
@@ -313,8 +311,8 @@
 		}
 		
 		/**
-		 * e
-		 * @return dd	
+		 * accordion pane start
+		 * @return 	
 		 * @param $aTitle Object
 		 * @param $aSelected Object[optional]
 		 */
@@ -330,7 +328,7 @@
 		}
 		
 		/**
-		 * 
+		 * accordion pane end
 		 * @return 
 		 */
 		function getAccordionPane_end() {
@@ -339,7 +337,7 @@
 		}
 		
 		/**
-		 * 
+		 * dojo button start
 		 * @return 
 		 * @param $aFunction Object
 		 */
@@ -347,7 +345,7 @@
 			$onclick = "";
 			switch (strtoupper($aFunction)) {
 			    case 'INITTINY':
-					$onclick = " onClick=\"wpdojoloader_initTinyMce(this)\" ";
+					//$onclick = " onClick=\"wpdojoloader_initTinyMce(this)\" ";
 					break;
 			}
 			
@@ -356,36 +354,12 @@
 		}
 		
 		/**
-		 * 
+		 * dojo button end
 		 * @return 
 		 */
 		function getButton_end() {
 			$rslt = "</button></div>";
 			return $rslt;
-		}
-		
-		/**
-		 * returns the start element for a frontend editable post
-		 * @return 
-		 */
-		function getDynamicPost_start() {
-			$rslt = "<div class=\"wpdojoloader\">";
-			$rslt .= "<div class=\"wpdojoloader_buttonmenu\" >";
-			$rslt .= "<button onClick=\"wpdojoloader_initTinyMce(this)\" dojoType=\"dijit.form.Button\" >Edit</button>";
-			$rslt .= "<button onClick=\"wpdojoloader_savePost(this)\" dojoType=\"dijit.form.Button\" >Save</button>";
-			$rslt .= "<button onClick=\"wpdojoloader_hideTinyMce(this)\" dojoType=\"dijit.form.Button\" >Cancel</button>";
-			$rslt .= "<span class=\"wpdojoloader_tinymcestatus\"></span>";
-			$rslt .= "</div>"; //end div wpdojoloader_buttonmenu
-			$rslt .= "<div class=\"wpdojoloader_dynamiccontent\">";
-			return $rslt;
-		}
-		
-		/**
-		 * returns "</div></div>"
-		 * @return 
-		 */
-		function getDynamicPost_end() {
-			return "</div></div>";			
 		}
 		
 	}  //end class DojoLoader
