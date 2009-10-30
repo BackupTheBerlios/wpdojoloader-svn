@@ -35,6 +35,7 @@ The name of the plugindirectory must be 'wpdojoloader'
 = How to use the plugin =
 
 For a accordion e.g. add this lines in a post or page.
+<pre><code>
 [dojocontent]
 	<accordioncontainer>
 		<accordionpane selected=”true” title=”First One”>This is the content in the first accordion pane</accordionpane>
@@ -42,7 +43,7 @@ For a accordion e.g. add this lines in a post or page.
 		<accordionpane  title=”With a post inside”><post id=”28″/></accordionpane>
 	</accordioncontainer>
 [/dojocontent]
-
+</code></pre>
 
 == Screenshots ==
 
