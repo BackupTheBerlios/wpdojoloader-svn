@@ -2,7 +2,7 @@
 Contributors: lehmeier
 Donate link: http://wpdojoloader.berlios.de/
 Tags: wordpress, dojo, datagrid, accordion, scrollpane, grid, table, nested, tab, widget, fisheye
-Requires at least: 2.0.2
+Requires at least: 2.8.2
 Tested up to: 2.8.5
 Stable tag: 0.0.1
 
@@ -44,6 +44,9 @@ For a accordion e.g. add this lines in a post or page.
 	</accordioncontainer>
 [/dojocontent]
 </code></pre>
+
+= Does it work with a version less then 2.8.2 =
+Maybe, i haven't tested it. So if it works, let me know about that.
 
 == Screenshots ==
 
