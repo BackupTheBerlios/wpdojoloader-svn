@@ -12,13 +12,14 @@ WpDojoLoader allows you to include dojo widgets into wordpress.
 At the moment you can add them into posts and pages.
 
 The following widgets are supported at the moment:
-*tabcontainer
-*contentpane
-*datagrid
-*fisheye
-*scrollpane
-*accordionpane
-*accrodioncontainer 
+
+* tabcontainer
+* contentpane
+* datagrid
+* fisheye
+* scrollpane
+* accordionpane
+* accrodioncontainer 
 
 To add a widget the plugin uses a simple xml structure so that you can create nested tabs or
 include a datagrid into a tab or a accordion.
@@ -27,7 +28,7 @@ You can see some examples on the plugin homepage.
 == Installation ==
 
 Unpack the plugin files int '/wp-content/plugins/'
-The name of the plugindirectory must be 'wpdojoloader'
+The directoryname of the plugin must be 'wpdojoloader'
 
 
 == Frequently Asked Questions ==
