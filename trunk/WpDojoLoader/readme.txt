@@ -4,7 +4,7 @@ Donate link: http://wpdojoloader.berlios.de/
 Tags: wordpress, dojo, datagrid, accordion, scrollpane, grid, table, nested, tab, widget, fisheye
 Requires at least: 2.8.2
 Tested up to: 2.8.5
-Stable tag: 0.0.1
+Stable tag: 0.0.2
 
 == Description ==
 
@@ -14,6 +14,7 @@ At the moment you can add them into posts and pages.
 The following widgets are supported at the moment:
 
 * tabcontainer
+* bordercontainer
 * contentpane
 * datagrid
 * fisheye
@@ -56,6 +57,13 @@ Maybe, i haven't tested it. So if it works, let me know about that.
 3. Nested Tabs
 
 == Changelog ==
+
+= 0.0.2 =
+
+* fixed a bug, the "activate dojoloader = yes" option was not saved in the options when the plugin was activated the first time
+* added a dojo bordercontainer
+* added a box container with optional fadein and fadeout animation
+* added a rounded corner css class
 
 = 0.0.1 =
 * First plugin version

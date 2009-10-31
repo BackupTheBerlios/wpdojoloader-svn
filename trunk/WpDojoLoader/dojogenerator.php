@@ -51,22 +51,28 @@ if (!class_exists("DojoGenerator")) {
 		 * @param $aStyle Object[optional]
 		 * @param $aCanResize Object[optional] if this is set to "true" the contentpane will be resizeable
 		 */
-		function getContentPane_start($aTitle,$aStyle = null,$aCanResize=null) {
+		function getContentPane_start($aTitle,$aStyle = null,$aCanResize=null,$aRegion = null) {
 			$style = ""; //here you can set a default style
 			
 			if (isset($aStyle)) {
 				$style = $aStyle;
 			}
 			
+			$region = "";
+			if (isset($aRegion)) {
+				$region = " region= \"$aRegion\" ";	
+			}
+			
 			$elemid = ""; 			
 			if ($aCanResize != null) {
 				if (strtolower($aCanResize) == "true") {
 					$this->addResizeDiv = true;
+					$style .= " position: relative; ";
 				}
 				$elemid = " id =\"".$this->getId()."\""; //add a custom id to the element
 			}
 			
-			$rslt = "<div $elemid dojoType=\"dijit.layout.ContentPane\" class=\"tundra wpdojoloader_contentpane\" style=\"$style\" title=\"$aTitle\" >";
+			$rslt = "<div $elemid dojoType=\"dijit.layout.ContentPane\" class=\"tundra wpdojoloader_contentpane\" style=\"$style\" title=\"$aTitle\" $region >";
 			return $rslt;
 		}
 		
@@ -363,6 +369,70 @@ if (!class_exists("DojoGenerator")) {
 			$rslt = "</button></div>";
 			return $rslt;
 		}
+		
+		/**
+		 * 
+		 * @return 
+		 * @param $aClass Object
+		 * @param $aStyle Object[optional]
+		 * @param $aAnimation Object[optional]
+		 */
+		function getBox_start($aClass, $aStyle = null, $aAnimation = null) {
+			$cls   = " class = \"".$aClass."\" ";
+			$style = ""; //default style
+			$id1 = "id=\"".$this->getId()."\"";
+			
+			if (isset($aStyle)) {
+				$style   = " style = \"".$aStyle."\" ";	
+			}
+			
+			$animation = "";
+			if (isset($aAnimation)) {
+				$animation   = " animation = \"".strtolower($aAnimation)."\" ";	
+				$cls = "class = \"wpdojoloader_animation $aClass\" ";
+			}
+			return "<div $id1 $cls $style $animation>";
+		}
+		
+		/**
+		 * 
+		 * @return 
+		 */
+		function getBox_end() {
+			return "</div>";
+		}
+		
+		/**
+		 * 
+		 * @return 
+		 * @param $aDesign Object[optional]
+		 * @param $aStyle Object[optional]
+		 */
+		function getBorderContainer_start($aDesign = null, $aStyle = null) {
+			
+			$style = " style=\"width:100%; heigth:200px;\" ";
+			if (isset($aStyle)) {
+				$style = " style =\"$aStyle\" ";	
+			}
+			
+			$design = " design=\"headline\" "; //this is the dojo default
+			if (isset($aDesign)) {
+				$design = " design =\"$aDesign\" ";	
+			}
+			
+			$rslt = "<div class=\"wpdojoloader\">";
+			$rslt .= "<div dojoType=\"dijit.layout.BorderContainer\" $design $style  >";
+			return $rslt;
+		}
+		
+		/**
+		 * 
+		 * @return 
+		 */
+		function getBorderContainer_end() {
+			return "</div></div>";
+		}
+		
 		
 	}  //end class DojoLoader
 	

@@ -34,6 +34,26 @@ function wpdojoloader_addOnLoad() {
 				var cd1 = dojox.highlight.processString(n.innerHTML,n.getAttribute("lang"));
 				n.innerHTML = cd1.result;
 			});
+			
+			//init a animation
+			jQuery('.wpdojoloader_animation').each(function(){
+				var id1 = jQuery(this).attr('id');
+				var animation = jQuery(this).attr('animation');
+				var dojoanim = null;
+
+				dojo.style(id1, "opacity", "0");
+				switch (animation) {
+					case "fadein":
+						dojoanim = 	dojo.fadeIn({node: id1,duration: 1500});
+						break;
+					case "fadeout":
+						dojoanim = 	dojo.fadeOut({node: id1,duration: 1500});
+						break;
+				}
+				if (dojoanim) {
+					dojoanim.play();
+				}
+			});
 					
 			//init a datagrid
 			jQuery('.wpdojoloader_datagrid').each(function(){
@@ -131,6 +151,7 @@ jQuery(document).ready(function() {
 		dojo.require("dojox.layout.ScrollPane");
 		dojo.require("dijit.layout.AccordionContainer");
 		dojo.require("dijit.form.Button");
+		dojo.require("dijit.layout.BorderContainer");
 	
 		//Load the XML language
 		//dojo.require("dojox.highlight.languages.xml");

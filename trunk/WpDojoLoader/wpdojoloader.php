@@ -73,8 +73,21 @@ if (!class_exists("WpDojoLoader")) {
 		 * the stored options will be deleted
 		 * @return 
 		 */
-		function deactivate() {
+		function deactivatePlugin() {
 			delete_option($this->adminOptionsName);	
+		}
+		
+		/**
+		 * this function is called when the plugin is activated in the plugin section
+		 * @return 
+		 */
+		function activatePlugin() {
+			$dojoLoaderAdminOptions = array(
+				'activate' => 'true',
+				'gridstructure' => array(array('name' => 'gridstructure_1', 'structure' => 'name,link'))
+				);
+								
+			update_option($this->adminOptionsName, $dojoLoaderAdminOptions);
 		}
 		
 		/**
@@ -131,7 +144,13 @@ if (!class_exists("WpDojoLoader")) {
 				return true;	
 				
 			if (strcmp($aElementname,"ACCORDIONCONTAINER") == 0)
-				return true;	
+				return true;
+				
+			if (strcmp($aElementname,"BOX") == 0)
+				return true;
+			
+			if (strcmp($aElementname,"BORDERCONTAINER") == 0)
+				return true;		
 				
 			/* not used at the moment
 			if (strcmp($aElementname,"BUTTON") == 0)
@@ -173,7 +192,7 @@ if (!class_exists("WpDojoLoader")) {
 					$this->dojocontent .= $this->dojogenerator->getTabContainer_start($attributes['STYLE']);
 					break;
 				case 'CONTENTPANE':
-					$this->dojocontent .= $this->dojogenerator->getContentPane_start($attributes['TITLE'],$attributes['STYLE'],$attributes['RESIZE']);
+					$this->dojocontent .= $this->dojogenerator->getContentPane_start($attributes['TITLE'],$attributes['STYLE'],$attributes['RESIZE'],$attributes['REGION']);
 					break;
 				 case 'DATAGRID':
 					$this->dojocontent .= $this->dojogenerator->getDataGrid_start($attributes['STORETYPE'],$attributes['STRUCTURENAME'],$attributes['FILENAME'], $attributes['STYLE']);
@@ -208,6 +227,13 @@ if (!class_exists("WpDojoLoader")) {
 				case 'ACCORDIONPANE':
 					$this->dojocontent .= $this->dojogenerator->getAccordionPane_start($attributes['TITLE'],$attributes['SELECTED']);
 					break;
+				case 'BOX':
+					$this->dojocontent .= $this->dojogenerator->getBox_start($attributes['CLASS'],$attributes['STYLE'],$attributes['ANIMATION']);
+					break;
+				case 'BORDERCONTAINER':
+					$this->dojocontent .= $this->dojogenerator->getBorderContainer_start($attributes['DESIGN'],$attributes['STYLE']);
+					break;
+				
 				/* not used at the moment
 				case 'BUTTON':
 					$this->dojocontent .= $this->dojogenerator->getButton_start($attributes['FUNCTION']);
@@ -283,6 +309,12 @@ if (!class_exists("WpDojoLoader")) {
 					break;
 				case 'ACCORDIONPANE':
 					$this->dojocontent .= $this->dojogenerator->getAccordionPane_end();
+					break;
+				case 'BOX':
+					$this->dojocontent .= $this->dojogenerator->getBox_end();
+					break;
+				case 'BORDERCONTAINER':
+					$this->dojocontent .= $this->dojogenerator->getBorderContainer_end();
 					break;
 				/*
 				case 'BUTTON':
@@ -469,8 +501,11 @@ if (isset($dl_dojoLoader)) {
 		add_filter('the_content', array(&$dl_dojoLoader, 'addContent'),1); 
 	}
 	
+	//called when the plugin is activated
+	register_activation_hook( __FILE__, array(&$dl_dojoLoader, 'activatePlugin') );
+	
 	//called when the plugin is deactivated => cleanup a bit
-	register_deactivation_hook( __FILE__, array(&$dl_dojoLoader, 'deactivate') );
+	register_deactivation_hook( __FILE__, array(&$dl_dojoLoader, 'deactivatePlugin') );
 }
 
 
