@@ -1,14 +1,20 @@
+/**
+ * this file contains a custom plugin for tinymce
+ * it allows you to insert templates for wpdojoloader into the editor
+ */
+
 (function() {
 	tinymce.PluginManager.requireLangPack('wpdojoloader');
 
 	tinymce.create('tinymce.plugins.WpDojoLoader', {
+		plugin_url: "",
 		createControl: function(n, cm) { //called when a control is created
 			switch (n) {
 				case 'wpdojoloader_plugin':  
 	                var c = cm.createSplitButton('wpdojoloader_splitbutton', {
 	                    title : 'wpdojoloader.dojowidgets',
-	                    image : 'some.gif',
-						onclick : function() {
+	                    image : this.plugin_url + '/img/dojo_widgets.gif',
+						onclick : function() { 
                         	//alert('Button was clicked.');
                    		}
 
@@ -80,10 +86,7 @@
 		
 		//init the plugin	
 		init : function(ed, url) {
-						
-			ed.addButton('wpdojoloader_plugin', { 
-				title : 'wpdojoloader.dojowidgets'
-			});
+				this.plugin_url = url;
 		}
 	});
 	tinymce.PluginManager.add('wpdojoloader_plugin', tinymce.plugins.WpDojoLoader);
