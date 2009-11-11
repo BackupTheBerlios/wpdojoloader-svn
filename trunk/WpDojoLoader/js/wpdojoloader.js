@@ -1,5 +1,8 @@
 dojo.require("dojo.parser");
+//dojo.registerModulePath("wpd", "../../wpd");  //used for custom widgets 
+//dojo.registerModulePath("trm", "../../trm");  //used for osmdatamanager data
 
+				
 /**
  * this function is called on dojo.addOnLoad
  */
@@ -14,7 +17,7 @@ function wpdojoloader_addOnLoad() {
 				alert(e);
 				//return;
 			}
-			
+					
 			//init a FisheyeLite for a li element			
 			dojo.query(".wpdojoloader_fisheyelite li").forEach(function(n){
 				new dojox.widget.FisheyeLite({},n);
@@ -127,6 +130,18 @@ function wpdojoloader_addOnLoad() {
 				
 				dijit.byId(id1).setStructure(layoutGrid);	
 				dijit.byId(id1).setStore(dataStore, {/* query  name: "*" */}, {ignoreCase: true});
+				dijit.byId(id1).startup();
+			});
+			
+			
+			//init a osm map
+			dojo.query(".wpdojoloader_osmmap").forEach(function(n){
+				console.debug(n);
+				dojo.require("wpd.widget._BaseWidget");
+				dojo.require("wpd.widget.OsmMapWidget");
+				var map = new wpd.widget.OsmMapWidget({}, n);
+				
+				console.debug(map);
 			});
 			
 } // end function wpdojoloader_addOnLoad ()
@@ -139,7 +154,6 @@ jQuery(document).ready(function() {
 		if (!dojo)  //if dojo is not initialized this will throw an exception, probably there is a better way ?
 			return;
 			
-		//load some dojo stuff
 		dojo.require("dijit.form.TextBox");
 		dojo.require("dijit.layout.TabContainer");
 		dojo.require("dijit.layout.ContentPane");
@@ -152,7 +166,7 @@ jQuery(document).ready(function() {
 		dojo.require("dijit.layout.AccordionContainer");
 		dojo.require("dijit.form.Button");
 		dojo.require("dijit.layout.BorderContainer");
-	
+		
 		//Load the XML language
 		//dojo.require("dojox.highlight.languages.xml");
 		//Load the HTML language
@@ -165,30 +179,30 @@ jQuery(document).ready(function() {
 		
 });
 
+
 /**
  * remove tinyMce editor
  * @param {Object} sender
  */
-function wpdojoloader_hideTinyMce(sender) {
-	var elem = sender;
-	if (sender.domNode) //check if sender is a dojo widget 
-	 elem = sender.domNode;
+function wpdojoloader_hideTinyMce() {
 	
-	var prnts = jQuery(elem).parents('div.entry'); //load the parent div.entry from sender
-	var entrydiv = null;
-	if (prnts.length > 0) {
-		entrydiv = prnts[0];
-	}
-	
-	if (entrydiv) {
-		wpdojoloader_printTinyMceStatusMsg(entrydiv, "", "");
-		var ta1 = document.getElementById("wpdojoloader_ta_tinymce");
-		if (ta1) {
-			tinyMCE.get("wpdojoloader_ta_tinymce").remove();	
-			ta1.parentNode.removeChild(ta1);
+	if (tinyMCE.activeEditor) {
+		
+		//load the parent div.wpdojoloader
+		var prnt = document.getElementById(tinyMCE.activeEditor.editorContainer);
+		if (prnt) {
+			var prnts = jQuery(prnt).parents('div.wpdojoloader');
+			if (prnts.length > 0) {
+				wpdojoloader_printTinyMceStatusMsg(prnts[0], "", "");	
+			}
 		}
+		
+		//hide the tinyMCE editor
+		tinyMCE.get(tinyMCE.activeEditor.editorId).remove();
 	}
-}
+	
+} //end function wpdojoloader_hideTinyMce
+
 
 /**
  * print a message in the wpdojoloader_tinymcestatus span element 
@@ -204,7 +218,8 @@ function wpdojoloader_printTinyMceStatusMsg(parentelement, message, style) {
 		contentdiv.innerHTML = message;
 		contentdiv.setAttribute("style",style);
 	}
-}
+} // end function wpdojoloader_printTinyMceStatusMsg 
+
 
 /**
  * 
@@ -213,45 +228,35 @@ function wpdojoloader_printTinyMceStatusMsg(parentelement, message, style) {
 function wpdojoloader_initTinyMce(sender) {
 		
 	try {
-		var prnts = jQuery(sender.domNode).parents('div.entry'); //load the parent div.entry from sender
+		if (tinyMCE.activeEditor) {
+			return;
+		}
+		
+		var prnts = jQuery(sender.domNode).parents('div.wpdojoloader'); //load the parent div.wpdojoloader from sender
 		var entrydiv = null;
 		if (prnts.length > 0) {
 			entrydiv = prnts[0];
 		}
-		
+	
 		if (entrydiv) {
-			var ta1 = document.getElementById("wpdojoloader_ta_tinymce");
-			if (!ta1) {
-				//create a new textarea for tinyMCE
-				var ta1 = document.createElement("textarea");
-				ta1.setAttribute("id", "wpdojoloader_ta_tinymce");
-				ta1.setAttribute("class", "wpdojoloader_tinymce");
-				ta1.setAttribute("className", "wpdojoloader_tinymce");
-			} else {
-				//console.debug(ta1);
-				return;
-			}
-			
 			//the contentdiv is a child div element from the entrydiv with the class wpdojoloader_dynamiccontent 
 			var lst1 = jQuery(".wpdojoloader_dynamiccontent", entrydiv);
 			var contentdiv = null;
 			if (lst1.length > 0) {
 				contentdiv = lst1[0];
 			}
-			
 			if (contentdiv) {
 				wpdojoloader_printTinyMceStatusMsg(entrydiv, "edit mode", "color: Black;");
-				entrydiv.appendChild(ta1);
-				ta1.value = contentdiv.innerHTML;
-				
+				var elemid = contentdiv.getAttribute("id");
 				//init tinyMCE
 				tinyMCE.init({
 					mode: "exact",
 					//mode: "textareas",
-					elements : "wpdojoloader_ta_tinymce",
+					elements : elemid,
 					theme: "advanced",
 					theme_advanced_toolbar_location : "top",
     				theme_advanced_toolbar_align : "left",
+					height: 480,
 					oninit: function(){
 						//alert('test');
 					}
@@ -264,7 +269,7 @@ function wpdojoloader_initTinyMce(sender) {
 } // end function wpdojoloader_initTinyMce
 
 /**
- * 
+ * execute dojo.xhrPost to store the data
  * @param {Object} targetfile
  * @param {Object} params
  */
@@ -281,16 +286,13 @@ function wpdojoloader_doSavePost(targetfile, params) {
 			timeout: 5000, // Time in milliseconds
 			// The LOAD function will be called on a successful response.
 			load: function(response, ioArgs) {
-								if (response.message == "Content updated.") {
-									var ta1 = document.getElementById("wpdojoloader_ta_tinymce");
-									if (ta1) {
-										wpdojoloader_hideTinyMce(ta1);
-									}
-								} else {
-									alert("error: " + response.message);
-								}
-								//alert(response.message);
-							},
+							
+						if (response.message == "Content updated.") {
+							wpdojoloader_hideTinyMce();
+						} else {
+							alert("error: " + response.message);
+						}
+					},
 			sync: true,
 			// The ERROR function will be called in an error case.
 			error: function(response, ioArgs){ //
@@ -313,29 +315,37 @@ function wpdojoloader_doSavePost(targetfile, params) {
  */
 function wpdojoloader_savePost(sender){
 	try {
+		if (! tinyMCE.activeEditor) {
+			return;
+		}
+		
 		//load entry div
-		var prnts = jQuery(sender.domNode).parents('div.entry'); //load the parent div.entry from sender
+		var prnts = jQuery(sender.domNode).parents('div.wpdojoloader'); //load the parent div.wpdojoloader from sender
 		var entrydiv = null;
 		if (prnts.length > 0) {
 			entrydiv = prnts[0];
 		}
 		
-		//load content div
-		var lst1 = jQuery(".wpdojoloader_dynamiccontent", entrydiv);
-		var contentdiv = null;
-		if (lst1.length > 0) {
-			contentdiv = lst1[0];
-		}
-		
-		//load editor
-		var ta1 = document.getElementById("wpdojoloader_ta_tinymce");
-		if (ta1) {
-			contentdiv.innerHTML = tinyMCE.get("wpdojoloader_ta_tinymce").getContent();
+		if (entrydiv) {
+			//load content div
+			var id1 = entrydiv.getAttribute("wpid");
+			var lst1 = jQuery(".wpdojoloader_dynamiccontent", entrydiv);
+			var contentdiv = null;
+			var cntid = "";
+			if (lst1.length > 0) {
+				contentdiv = lst1[0];
+				cntid = contentdiv.getAttribute("id");
+			}
+						
+			contentdiv.innerHTML = tinyMCE.get(cntid).getContent();
 			var newContent = "[dojocontent]<dynamic>" + contentdiv.innerHTML + "</dynamic>[/dojocontent]";
 			wpdojoloader_printTinyMceStatusMsg(entrydiv, "please wait...", "color:Red;");
-			wpdojoloader_doSavePost("wp-content/plugins/wpdojoloader/ajax-save.php",{id: "130", content: newContent});	
+			wpdojoloader_doSavePost("wp-content/plugins/wpdojoloader/ajax-save.php", {
+				id: id1,
+				content: newContent
+			});
+			
 		}
-		
 	} catch(e) {
 		console.error(e);
 	}	

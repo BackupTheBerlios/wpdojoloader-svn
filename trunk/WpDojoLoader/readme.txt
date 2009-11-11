@@ -4,7 +4,7 @@ Donate link: http://wpdojoloader.berlios.de/
 Tags: wordpress, dojo, datagrid, accordion, scrollpane, grid, table, nested, tab, widget, fisheye
 Requires at least: 2.8.2
 Tested up to: 2.8.5
-Stable tag: 0.0.2
+Stable tag: 0.0.3
 
 == Description ==
 
@@ -50,13 +50,22 @@ For a accordion e.g. add this lines in a post or page.
 = Does it work with a version less then 2.8.2 =
 Maybe, i haven't tested it. So if it works, let me know about that.
 
+= I am getting a ‘xml cannot be parsed’ error. How can i fix this? =
+You probably have copied and pasted from the example pages.
+Then it's possible that the quote characters are wrong. 
+
 == Screenshots ==
 
 1. Here you can see a accordion
 2. This is a datagrid with data from a csv file
 3. Nested Tabs
+4. Editor with plugin
 
 == Changelog ==
+
+= 0.0.3 =
+* added a plugin for the editor in wordpress so that you can easy insert xml templates for the widgets
+
 
 = 0.0.2 =
 

@@ -7,7 +7,7 @@ if (!class_exists("DojoGenerator")) {
 	 * @return 
 	 */
 	class DojoGenerator {
-		
+
 		var $id_cnt = 0;
 		var $adminOptionsName = "WpDojoLoaderAdminOptions";
 		var $addResizeDiv = false;	//if this is set to true, a contentpane will contain a resize handler
@@ -72,7 +72,7 @@ if (!class_exists("DojoGenerator")) {
 				$elemid = " id =\"".$this->getId()."\""; //add a custom id to the element
 			}
 			
-			$rslt = "<div $elemid dojoType=\"dijit.layout.ContentPane\" class=\"tundra wpdojoloader_contentpane\" style=\"$style\" title=\"$aTitle\" $region >";
+			$rslt = "<div $elemid closable=\"false\" dojoType=\"dijit.layout.ContentPane\" class=\"tundra wpdojoloader_contentpane\" style=\"$style\" title=\"$aTitle\" $region >";
 			return $rslt;
 		}
 		
@@ -95,7 +95,7 @@ if (!class_exists("DojoGenerator")) {
 		 * @return 
 		 */
 		function getTabContainer_start($aStyle = null) {
-			$rslt = "<div class=\"wpdojoloader\" >";
+			$rslt = ""; //"<div class=\"wpdojoloader\" >";
 			
 			$style = "width:100%;height:200px"; //default style
 			if (isset($aStyle))
@@ -110,7 +110,7 @@ if (!class_exists("DojoGenerator")) {
 		 * @return 
 		 */
 		function getTabContainer_end() {
-			return "</div></div>";
+			return "</div>";
 		}
 		
 		
@@ -170,13 +170,12 @@ if (!class_exists("DojoGenerator")) {
 		 * @param $aPostId Object
 		 */
 		function getPost_start($aPostId) {
-			$rslt = "<div class=\"wpdojoloader\">";
+			$rslt = "<div class=\"wpdojoloader_post\">";
 			
 			$pst = get_post($aPostId);
 			if ($pst != null) {
 				$rslt .= $pst->post_content;
 			}
-			//debug only
 			return $rslt;
 		}
 		
@@ -189,11 +188,35 @@ if (!class_exists("DojoGenerator")) {
 		}
 		
 		/**
+		 * returns the content of a wordpress page with the given id
+		 * @return 
+		 * @param $aPageId Object
+		 */
+		function getPage_start($aPageId) {
+			$rslt = "<div class=\"wpdojoloader_page\">";
+			
+			$pst = get_page($aPageId);
+			if ($pst != null) {
+				$rslt .= $pst->post_content;
+			}
+			return $rslt;
+		}
+		
+		/**
+		 * returns a </div>
+		 * @return 
+		 */
+		function getPage_end() {
+			return "</div>";
+		}
+		
+		
+		/**
 		 * returns div elements used for a fisheye, fisheye is created in the js functions
 		 * @return 
 		 */
 		function getFisheyeLite_start() {
-			return "<div class=\"wpdojoloader\"><div class=\"wpdojoloader_fisheyelite\">";	
+			return "<div class=\"wpdojoloader_fisheyelite\">";	//<div class=\"wpdojoloader\">
 		}
 		
 		/**
@@ -201,7 +224,7 @@ if (!class_exists("DojoGenerator")) {
 		 * @return 
 		 */
 		function getFisheyeLite_end() {
-			return "</div></div>";	
+			return "</div>";	//</div>
 		}
 		
 		/**

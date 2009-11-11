@@ -32,10 +32,11 @@ if ( $authorised ) {
                           '&gt;' );                          
         $opePost['post_content'] = str_replace( $search, $replace, $opePost['post_content'] );                          
         $opePost['post_content'] = format_to_post( $opePost['post_content'] );
+
         if ( wp_update_post( $opePost ) === 0 )
             die( '{"response":"0","message":"' . __( 'Unable to save, database error generated.' ) . '"}' );
         else
-            die( '{"response":"1","message":"' . __( 'Content updated.' ) . '"}' );
+            die( '{"response":"1","postid":"'.$_POST['id'].'","message":"' . __( 'Content updated.' ) . '"}' );
     } else {
         die( '{"response":"1","message":"' . __( 'No id or content.' ) . '"}');
     }
