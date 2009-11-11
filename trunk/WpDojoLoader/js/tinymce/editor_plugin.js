@@ -81,8 +81,8 @@
 		//init the plugin	
 		init : function(ed, url) {
 						
-			ed.addButton('wpdojoloader_plugin', { title : 'wpdojoloader.dojowidgets',
-				image : url + '/img/flickr.gif'
+			ed.addButton('wpdojoloader_plugin', { 
+				title : 'wpdojoloader.dojowidgets'
 			});
 		}
 	});
