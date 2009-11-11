@@ -66,7 +66,6 @@ Then it's possible that the quote characters are wrong.
 = 0.0.3 =
 * added a plugin for the editor in wordpress so that you can easy insert xml templates for the widgets
 
-
 = 0.0.2 =
 
 * fixed a bug, the "activate dojoloader = yes" option was not saved in the options when the plugin was activated the first time
