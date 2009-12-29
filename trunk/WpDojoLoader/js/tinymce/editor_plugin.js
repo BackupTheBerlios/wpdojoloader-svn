@@ -72,7 +72,7 @@
 						
 						//border container
 						m.add({title : 'wpdojoloader.bordercontainer', onclick : function() {
-	                        tinyMCE.execCommand('mceInsertContent', false, "&lt;bordercontainer style=\"width:100%;heigth:300px;border: solid 1px black\" design=\"sidebar\" &gt;&lt;/bordercontainer&gt;");
+	                        tinyMCE.execCommand('mceInsertContent', false, "&lt;bordercontainer style=\"width:100%;height:300px;border: solid 1px black\" design=\"sidebar\" &gt;&lt;/bordercontainer&gt;");
 	                    }});
 						
 	              });

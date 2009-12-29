@@ -63,7 +63,8 @@ function wpdojoloader_addOnLoad() {
 			
 				//init a store
 				var storetype = jQuery(this).parent().attr('storetype');
-				var uploaddir = jQuery(this).parent().attr('uploaddir'); 
+				var uploaddir = jQuery(this).parent().attr('uploaddir');
+				 
 				var dataStore = null;
 				switch (storetype) {
 					case "csv": //create a csv store
@@ -73,7 +74,7 @@ function wpdojoloader_addOnLoad() {
 						dataStore = new dojox.data.CsvStore({
 							url: storeurl,
 							label: "Title"
-						//seperator: ";"  //supported by dojo 1.4 ?
+						    //seperator: ";"  //supported by dojo 1.4 ?
 						});
 						break;
 				}
@@ -280,7 +281,7 @@ function wpdojoloader_doSavePost(targetfile, params) {
 		dojo.xhrPost({ //
 			// The following URL must match that used to test the server.
 			url: targetfile,
-			handleAs: "json",
+			handleAs: "text",
 			content: params,
 			
 			timeout: 5000, // Time in milliseconds

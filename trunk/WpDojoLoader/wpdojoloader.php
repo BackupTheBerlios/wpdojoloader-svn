@@ -25,8 +25,8 @@ Author URI: http://wpdojoloader.berlios.de/
 
 */
 
-require_once(dirname(__FILE__). '/dojogenerator.php');
-require_once(dirname(__FILE__). '/wpdojoloader_customgenerator.php');
+//require_once(dirname(__FILE__). '/dojogenerator.php');
+//require_once(dirname(__FILE__). '/wpdojoloader_customgenerator.php');
 require_once(dirname(__FILE__). '/wpdojoloader_admin.php');
 
 if (!class_exists("WpDojoLoader")) {
@@ -59,17 +59,18 @@ if (!class_exists("WpDojoLoader")) {
 		 *****************************/
 		
 		
-		var $dojogenerator = null;
-		var $customgenerator = null;
-		var $dojocontent = "";
+		//var $dojogenerator = null;
+		//var $customgenerator = null;
+		//var $dojocontent = "";
 		//var $currentdata = "";
-		var $currentdata = array();  //array containing the data inside a a xml element
+		//var $currentdata = array();  //array containing the data inside a a xml element
+		
 		var $adminOptionsName = "WpDojoLoaderAdminOptions";
 		var $iscodeelem = false; //this is set to true if a <code> element is found, no other elements will be parsed until the </code> element 
 		
 		function WpDojoLoader() { //constructor
-			$this->dojogenerator = new DojoGenerator();	
-			$this->customgenerator = new WpDojoLoader_CustomGenerator();
+			//$this->dojogenerator = new DojoGenerator();	
+			//$this->customgenerator = new WpDojoLoader_CustomGenerator();
 		}
 		
 		/**
@@ -155,18 +156,21 @@ if (!class_exists("WpDojoLoader")) {
 		 * @return 
 		 * @param $parser Object
 		 * @param $data Object
-		 */		
+		 */
+		/*		
 		function characterData($parser,$data){
 			if ((trim($data) != "") && ($data != null)) {
 				$this->currentdata[sizeof($this->currentdata)-1] .= $data;
 			}
 		}
+		*/
 		
 		/**
 		 * returns true if the elementname is a valid wpdojoloader xml element, otherwise false
 		 * @return 
 		 * @param $aElementname Object
 		 */
+		/*
 		function isValidElement($aElementname) {
 			if (strcmp($aElementname,"TABCONTAINER") == 0)
 				return true;
@@ -192,7 +196,7 @@ if (!class_exists("WpDojoLoader")) {
 			
 			if (strcmp($aElementname,"CODE") == 0)
 				return true;
-			*/
+			* /
 			
 			if (strcmp($aElementname,"LINK") == 0)
 				return true;
@@ -218,7 +222,7 @@ if (!class_exists("WpDojoLoader")) {
 			/* not used at the moment
 			if (strcmp($aElementname,"BUTTON") == 0)
 				return true;
-			*/		
+			* /		
 			
 			if ($this->customLoaderEnabled) {
 				if (strcmp($aElementname,"DYNAMIC") == 0)
@@ -230,6 +234,7 @@ if (!class_exists("WpDojoLoader")) {
 					
 			return false;
 		}
+		*/
 
 		/**
 		 * parse a xml start element
@@ -238,6 +243,7 @@ if (!class_exists("WpDojoLoader")) {
 		 * @param $name Object
 		 * @param $attributes Object
 		 */
+		/*
 		function startElement($parser, $name, $attributes) {
 			array_push($this->currentdata,""); //
 						
@@ -284,7 +290,7 @@ if (!class_exists("WpDojoLoader")) {
 					$this->dojocontent .= $this->dojogenerator->getCode_start($attributes['LANG']);
 					$this->iscodeelem = true; 
 					break;
-				*/
+				* /
 				
 				case 'LINK':
 					$this->dojocontent .= $this->dojogenerator->getLink_start($attributes['TYPE'],$attributes['ID']);
@@ -309,9 +315,9 @@ if (!class_exists("WpDojoLoader")) {
 				case 'BUTTON':
 					$this->dojocontent .= $this->dojogenerator->getButton_start($attributes['FUNCTION']);
 					break;
-				*/
+				* /
 				
-				/* none dojo elements */
+				/* none dojo elements * /
 				case 'DYNAMIC':
 					if ($this->customLoaderEnabled)
 						$this->dojocontent .= $this->customgenerator->getDynamicPost_start();
@@ -323,6 +329,7 @@ if (!class_exists("WpDojoLoader")) {
 				
 		   	}
 		}
+		*/
 		
 		/**
 		 * parse a xml close element
@@ -330,6 +337,7 @@ if (!class_exists("WpDojoLoader")) {
 		 * @param $parser Object
 		 * @param $name Object
 		 */
+		/*
 		function closeElement($parser, $name) {
 						
 			$cd = array_pop($this->currentdata); //get the data inside a element which was not parsed
@@ -345,7 +353,7 @@ if (!class_exists("WpDojoLoader")) {
 				$this->dojocontent .= "</".$name.">"; //insert the element end tag
 				return;
 			}
-			*/
+			* /
 			
 			switch ($name) {
 			    case 'TABCONTAINER':
@@ -376,7 +384,7 @@ if (!class_exists("WpDojoLoader")) {
 					$this->dojocontent .= $this->dojogenerator->getCode_end();
 					$this->iscodeelem = false;
 					break;
-				*/
+				* /
 					
 				case 'LINK':
 					$this->dojocontent .= $this->dojogenerator->getLink_end();
@@ -400,9 +408,9 @@ if (!class_exists("WpDojoLoader")) {
 				case 'BUTTON':
 					$this->dojocontent .= $this->dojogenerator->getButton_end();
 					break;
-				*/
+				* /
 				
-				/* some other none dojo elements */
+				/* some other none dojo elements *  /
 				
 				case 'DYNAMIC':
 					if ($this->customLoaderEnabled)
@@ -415,18 +423,202 @@ if (!class_exists("WpDojoLoader")) {
 				
 		   }
 		}
+		*/
+		
+		/**
+		 * 
+		 * @return 
+		 * @param $xpathcontext Object
+		 */
+		function getPostElements($xpathcontext,$domdocument) {
+			$result = array();
+			
+			$obj = $xpathcontext->xpath_eval('//post/@id'); // get all post elements with attribute id
+			$nodeset = $obj->nodeset;
+			
+			foreach ($nodeset as $node) {
+				$pstid = $node->value;
+				$pst = get_post($pstid);
+				if ($pst != null) {
+					$cnt = $this->executeParse($pst->post_content,"[dojocontent]","[/dojocontent]");
+					$node = $domdocument->create_element( 'postcontent' );
+					$attr = $domdocument->create_attribute  ( "id"  , "$pstid"  );
+  					$cdata = $domdocument->create_cdata_section( $cnt );
+					//$cdata = $domdocument->create_text_node( $cnt );
+					$node->append_child( $attr );
+  					$node->append_child( $cdata );
+					array_push($result, $node);	
+				}
+			}
+		
+			if (count($result) > 0)		
+				return $result;
+				
+			return null;
+		}
 		
 		
 		/**
-		 * parse a given xml data string
+		 * 
+		 * @return 
+		 * @param $xpathcontext Object
+		 */
+		function getPageElements($xpathcontext,$domdocument) {
+			$result = array();
+			
+			$obj = $xpathcontext->xpath_eval('//page/@id'); // get all post elements with attribute id
+			$nodeset = $obj->nodeset;
+			
+			foreach ($nodeset as $node) {
+				$pstid = $node->value;
+				$pst = get_post($pstid);
+				if ($pst != null) {
+					$cnt = $this->executeParse($pst->post_content,"[dojocontent]","[/dojocontent]");
+					
+					$node = $domdocument->create_element( 'pagecontent' );
+					$attr = $domdocument->create_attribute  ( "id"  , "$pstid"  );
+  					$cdata = $domdocument->create_cdata_section( $cnt );
+					//$cdata = $domdocument->create_text_node( $cnt );
+					$node->append_child( $attr );
+  					$node->append_child( $cdata );
+					array_push($result, $node);	
+				}
+			}
+		
+			if (count($result) > 0)		
+				return $result;
+				
+			return null;
+		}
+		
+		/**
+		 * 
+		 * @return 
+		 * @param $xpathcontext Object
+		 */
+		function getContentElement($xpathcontext) {
+			$node = $xpathcontext->xpath_eval('/wpcontentroot'); //get content element
+			return $node->nodeset[0];
+		}
+		
+		/**
+		 * returns a array with the adminoptions
+		 * @return array
+		 */
+		function getAdminOptions() {	
+			$adminoptions = get_option($this->adminOptionsName);
+			$dojoLoaderAdminOptions = array();
+			
+			if (!empty($adminoptions)) {
+				foreach ($adminoptions as $key => $option)
+					$dojoLoaderAdminOptions[$key] = $option;
+			}				
+			return $dojoLoaderAdminOptions;
+		}
+		
+		/**
+		 * returns a comma seperated string with the fieldnames from the given structure
+		 * grid structures are stored in the admin options
+		 * @return 
+		 * @param $aStructurename Object
+		 */
+		function getFieldnames($aStructurename) {
+			$options = $this->getAdminOptions();
+			
+			for ($i=0;$i<count($options['gridstructure']);$i++) {
+				$gs_name = $options['gridstructure'][$i]['name'];
+				$gs_value = $options['gridstructure'][$i]['structure'];
+				if (strtolower($gs_name) == strtolower($aStructurename)) {
+					return $gs_value; 
+				}
+			}			
+			return "";
+		}
+		
+		/**
+		 * 
+		 * @return 
+		 * @param $xpathcontext Object
+		 */
+		function replaceGridStructures($xpathcontext) {
+			$obj = $xpathcontext->xpath_eval('//datagrid'); // get all post elements with attribute id
+			$nodeset = $obj->nodeset;
+			
+			foreach ($nodeset as $node) {
+				$fields = $this->getFieldnames($node->get_attribute("structurename"));
+				$node->set_attribute("fieldnames",$fields);				
+			}	
+		}
+		
+		/**
+		 * enriches the xmlstring with linked posts, pages and gridstructures
+		 * @return 
+		 */
+		function enrichXmlString($xmlstring) {
+			$dom   = domxml_open_mem($xmlstring);
+			$xpath = $dom->xpath_new_context();
+			
+			$elem_content = $this->getContentElement($xpath);
+			if ($elem_content != null) {
+				$elem_posts = $dom->create_element("posts");
+				$elem_pages = $dom->create_element("pages");
+				$elem_content->append_child($elem_posts);
+				$elem_content->append_child($elem_pages);
+						
+				$posts = $this->getPostElements($xpath,$dom);
+				if ($posts != null) {
+					foreach ($posts as $pst) {
+						$elem_posts->append_child($pst);	
+					}	
+				}
+				
+				$pages = $this->getPageElements($xpath,$dom);
+				if ($pages != null) {
+					foreach ($pages as $pg) {
+						$elem_pages->append_child($pg);	
+					}	
+				}
+				
+				$this->replaceGridStructures($xpath);
+			}
+			return $dom->dump_mem(true);
+		}
+		
+		
+		/**
+		 * 
+		 * @return 
+		 * @param $xmlstring Object
+		 */
+		function xml_translate($xmlstring) {
+			$arguments = array(
+     			'/_xml' => $xmlstring
+			);
+			$xh = xslt_create();
+			
+			$result = xslt_process($xh, 'arg:/_xml', 'wp-content/plugins/wpdojoloader/wpdojoloader.xsl', NULL, $arguments);
+			if ($result) {
+				return $result;	
+			} else {
+				return null;
+			}
+			
+			xslt_free($xh);
+		}
+		
+		
+		/**
+		 * parse a given xml raw data string
 		 * @return 1 if successful otherwise 0
 		 * @param $xmldata string
 		 */
 		function parseXML($xmldata) {
+			/*
 			$xml_parser = xml_parser_create();
 			
 			xml_set_element_handler($xml_parser, array(&$this,'startElement'),array(&$this,'closeElement'));
 			xml_set_character_data_handler($xml_parser, array(&$this,"characterData"));
+			*/
 			
 			//wrap xml document around the xmldata from the page or post
 			$xd = "<?xml version=\"1.0\"?>";
@@ -436,11 +628,15 @@ if (!class_exists("WpDojoLoader")) {
 			$xd = str_replace("&lt;","<",$xd);
 			$xd = str_replace("&gt;",">",$xd);
 			
+			$xd = $this->enrichXmlString($xd);
 			
-			echo "<!-- BEGIN XML".$xd." END XML -->"; //debug only
-			
+			//echo "<!-- BEGIN XML".$xd." END XML -->"; //debug only
+			/*
 			$rslt = xml_parse($xml_parser, $xd);
 			xml_parser_free($xml_parser);
+			return $rslt;
+			*/
+			$rslt = ($this->xml_translate($xd));
 			return $rslt;
 		}
 				
@@ -464,9 +660,11 @@ if (!class_exists("WpDojoLoader")) {
 				$inner = substr($aContent,$p1 + strlen($aStartTag), ($p2 - strlen($aStartTag)) - ($p1));
 				
 				$this->dojocontent = "";				
-				if ($this->parseXML($inner) == 1) {
-					echo "<!-- BEGIN CONTENT ".$this->dojocontent." END CONTENT -->"; //debug only	
-					return $pre."<div class=\"wpdojoloader\">".$this->dojocontent."</div>".$suf;	
+				$htmldata = $this->parseXML($inner); 
+				if ($htmldata != null) {
+					//echo "<!-- BEGIN CONTENT ".$htmldata." END CONTENT -->"; //debug only	
+					//return $pre."<div class=\"wpdojoloader\">".$this->dojocontent."</div>".$suf;	
+					return $pre.$htmldata.$suf;
 				} else {
 					return $pre."<i>error parsing the xml structure</i>".$suf;
 				}
@@ -549,7 +747,10 @@ if (!class_exists("WpDojoLoader")) {
 					wp_enqueue_script('dojo', get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/js/dojo/dojo/dojo.js', array('prototype'), '0.1');
 				} else {
 					//add the dojo toolkit from ajax.googleapis.com
-					wp_enqueue_script('dojo', 'http://ajax.googleapis.com/ajax/libs/dojo/1.3.1/dojo/dojo.xd.js', array('prototype'), '0.1');
+					
+					//version 1.3.1
+					//wp_enqueue_script('dojo', 'http://ajax.googleapis.com/ajax/libs/dojo/1.3.1/dojo/dojo.xd.js', array('prototype'), '0.1');
+					wp_enqueue_script('dojo', 'http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojo/dojo.xd.js', array('prototype'), '0.1');
 				}
 				
 				
