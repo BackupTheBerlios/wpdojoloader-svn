@@ -271,6 +271,14 @@
 		<xsl:call-template name="addhtml" />
 	</xsl:template>
 	
+	<xsl:template match="strong">
+		<xsl:call-template name="addhtml" />
+	</xsl:template>
+	
+	<xsl:template match="em">
+		<xsl:call-template name="addhtml" />
+	</xsl:template>
+	
 	<xsl:template match="i">
 		<xsl:call-template name="addhtml" />
 	</xsl:template>
