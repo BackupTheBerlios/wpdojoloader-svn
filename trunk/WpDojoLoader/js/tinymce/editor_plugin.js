@@ -75,6 +75,40 @@
 	                        tinyMCE.execCommand('mceInsertContent', false, "&lt;bordercontainer style=\"width:100%;height:300px;border: solid 1px black\" design=\"sidebar\" &gt;&lt;/bordercontainer&gt;");
 	                    }});
 						
+						m.add({title : 'wpdojoloader.insert', 'class' : 'mceMenuItemTitle'}).setDisabled(1);
+						
+						//page
+						m.add({title : 'wpdojoloader.insertpage', onclick : function() {
+	                        tinyMCE.execCommand('mceInsertContent', false, "&lt;post id=\"1\" &gt;&lt;/post&gt;");
+	                    }});
+						
+						//post
+						m.add({title : 'wpdojoloader.insertpost', onclick : function() {
+	                        tinyMCE.execCommand('mceInsertContent', false, "&lt;page id=\"1\" &gt;&lt;/page&gt;");
+	                    }});
+						
+						m.add({title : 'wpdojoloader.links', 'class' : 'mceMenuItemTitle'}).setDisabled(1);
+						
+						//page
+						m.add({title : 'wpdojoloader.pagelink', onclick : function() {
+	                        tinyMCE.execCommand('mceInsertContent', false, "&lt;link type=\"page\" id=\"1\" &gt;Your Linkname&lt;/link&gt;");
+	                    }});
+						
+						//post
+						m.add({title : 'wpdojoloader.postlink', onclick : function() {
+	                        tinyMCE.execCommand('mceInsertContent', false, "&lt;link type=\"post\" id=\"1\" &gt;Your Linkname&lt;/link&gt;");
+	                    }});
+						
+						//category
+						m.add({title : 'wpdojoloader.catlink', onclick : function() {
+	                        tinyMCE.execCommand('mceInsertContent', false, "&lt;link type=\"cat\" id=\"1\" &gt;Your Linkname&lt;/link&gt;");
+	                    }});
+						
+						//hyperlink
+						m.add({title : 'wpdojoloader.hyperlink', onclick : function() {
+	                        tinyMCE.execCommand('mceInsertContent', false, "&lt;link  id=\"http://www.yoururl.com\" &gt;Your Linkname&lt;/link&gt;");
+	                    }});
+						
 	              });
 	
 	              // Return the new menubutton instance

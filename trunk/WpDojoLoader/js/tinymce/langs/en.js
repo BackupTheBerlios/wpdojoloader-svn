@@ -10,5 +10,13 @@ tinyMCE.addI18n('en.wpdojoloader',{
 	scrollpane: 'Scroll Pane',
 	box: 'Box',
 	bordercontainer: 'Border Container',
-	dojocontent: 'Dojo Content Tags'
+	dojocontent: 'Dojo Content Tags',
+	links: 'Links',
+	pagelink: 'Link to Page',
+	postlink: 'Link to Post',
+	catlink: 'Link to Category',
+	hyperlink: 'Hyperlink',
+	insert: 'Insert',
+	insertpage: 'Page',
+	insertpost: 'Post'
 });

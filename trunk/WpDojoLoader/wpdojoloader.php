@@ -3,7 +3,7 @@
 Plugin Name: WpDojoLoader
 Plugin URI: http://wpdojoloader.berlios.de/
 Description: WpDojoloader allows you to include dojo widgets into wordpress
-Version: 0.0.3
+Version: 0.0.4
 Author: Dirk Lehmeier
 Author URI: http://wpdojoloader.berlios.de/
  
@@ -25,9 +25,12 @@ Author URI: http://wpdojoloader.berlios.de/
 
 */
 
-//require_once(dirname(__FILE__). '/dojogenerator.php');
-//require_once(dirname(__FILE__). '/wpdojoloader_customgenerator.php');
 require_once(dirname(__FILE__). '/wpdojoloader_admin.php');
+
+if (PHP_VERSION>='5') {
+	require_once(dirname(__FILE__).'/domxml-php4-to-php5.php'); 	//Load the PHP5 converter
+ 	require_once(dirname(__FILE__).'/xslt-php4-to-php5.php'); 		//Load the PHP5 converter 
+}
 
 if (!class_exists("WpDojoLoader")) {
 	
@@ -58,19 +61,11 @@ if (!class_exists("WpDojoLoader")) {
 		 * 
 		 *****************************/
 		
-		
-		//var $dojogenerator = null;
-		//var $customgenerator = null;
-		//var $dojocontent = "";
-		//var $currentdata = "";
-		//var $currentdata = array();  //array containing the data inside a a xml element
-		
 		var $adminOptionsName = "WpDojoLoaderAdminOptions";
 		var $iscodeelem = false; //this is set to true if a <code> element is found, no other elements will be parsed until the </code> element 
 		
 		function WpDojoLoader() { //constructor
-			//$this->dojogenerator = new DojoGenerator();	
-			//$this->customgenerator = new WpDojoLoader_CustomGenerator();
+			//nothing to be done at the moment
 		}
 		
 		/**
@@ -149,284 +144,9 @@ if (!class_exists("WpDojoLoader")) {
 			$plugin_array['wpdojoloader_plugin'] = get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/js/tinymce/editor_plugin.js';
 		   	return $plugin_array;
 		}
-
 		
 		/**
-		 * called from the xml parser for element data
-		 * @return 
-		 * @param $parser Object
-		 * @param $data Object
-		 */
-		/*		
-		function characterData($parser,$data){
-			if ((trim($data) != "") && ($data != null)) {
-				$this->currentdata[sizeof($this->currentdata)-1] .= $data;
-			}
-		}
-		*/
-		
-		/**
-		 * returns true if the elementname is a valid wpdojoloader xml element, otherwise false
-		 * @return 
-		 * @param $aElementname Object
-		 */
-		/*
-		function isValidElement($aElementname) {
-			if (strcmp($aElementname,"TABCONTAINER") == 0)
-				return true;
-			
-			if (strcmp($aElementname,"CONTENTPANE") == 0)
-				return true;
-				
-			if (strcmp($aElementname,"DATAGRID") == 0)
-				return true;
-				
-			if (strcmp($aElementname,"POST") == 0)
-				return true;
-			
-			if (strcmp($aElementname,"PAGE") == 0)
-				return true;
-				
-			if (strcmp($aElementname,"FISHEYE") == 0)
-				return true;
-			
-			/* currently not activated it's a little bit buggy at the moment 
-			if (strcmp($aElementname,"HIGHLIGHT") == 0)
-				return true;
-			
-			if (strcmp($aElementname,"CODE") == 0)
-				return true;
-			* /
-			
-			if (strcmp($aElementname,"LINK") == 0)
-				return true;
-			
-			if (strcmp($aElementname,"SCROLLPANE") == 0)
-				return true;
-				
-			if (strcmp($aElementname,"WPCONTENTROOT") == 0)
-				return true;	
-				
-			if (strcmp($aElementname,"ACCORDIONPANE") == 0)
-				return true;	
-				
-			if (strcmp($aElementname,"ACCORDIONCONTAINER") == 0)
-				return true;
-				
-			if (strcmp($aElementname,"BOX") == 0)
-				return true;
-			
-			if (strcmp($aElementname,"BORDERCONTAINER") == 0)
-				return true;		
-				
-			/* not used at the moment
-			if (strcmp($aElementname,"BUTTON") == 0)
-				return true;
-			* /		
-			
-			if ($this->customLoaderEnabled) {
-				if (strcmp($aElementname,"DYNAMIC") == 0)
-					return true;
-					
-				if (strcmp($aElementname,"OSMMAP") == 0)
-					return true;
-			}
-					
-			return false;
-		}
-		*/
-
-		/**
-		 * parse a xml start element
-		 * @return 
-		 * @param $parser Object
-		 * @param $name Object
-		 * @param $attributes Object
-		 */
-		/*
-		function startElement($parser, $name, $attributes) {
-			array_push($this->currentdata,""); //
-						
-			//if a element within the wpdojoloader is not a wpdojoloader element,
-			//this element will be inserted (e.g. <li> or <img> elements), includeing it's attributes
-			if ((! $this->isValidElement($name)) || $this->iscodeelem) {
-				$elemstr = "";
-				$elemstr .= "<".$name.""; 		//insert the start element
-				foreach ($attributes as $key => $value) {   //insert the attributes from the start element
-				   $elemstr .= " ".$key."=\"".$value."\"";
-			   	}	
-				$elemstr .= ">";
-				
-				$this->dojocontent .= $elemstr;
-				return;
-			}
-			
-		   	switch ($name) {
-			    case 'TABCONTAINER':
-					$this->dojocontent .= $this->dojogenerator->getTabContainer_start($attributes['STYLE']);
-					break;
-				case 'CONTENTPANE':
-					$this->dojocontent .= $this->dojogenerator->getContentPane_start($attributes['TITLE'],$attributes['STYLE'],$attributes['RESIZE'],$attributes['REGION']);
-					break;
-				 case 'DATAGRID':
-					$this->dojocontent .= $this->dojogenerator->getDataGrid_start($attributes['STORETYPE'],$attributes['STRUCTURENAME'],$attributes['FILENAME'], $attributes['STYLE']);
-					break;
-				case 'POST':
-					$this->dojocontent .= $this->dojogenerator->getPost_start($attributes['ID']);
-					break;
-				case 'PAGE':
-					$this->dojocontent .= $this->dojogenerator->getPage_start($attributes['ID']);
-					break;
-				case 'FISHEYE':
-					$this->dojocontent .= $this->dojogenerator->getFisheyeLite_start();
-					break;
-				
-				/* currently not activated it's a little bit buggy at the moment  
-				case 'HIGHLIGHT':
-					$this->dojocontent .= $this->dojogenerator->getHighlight_start($attributes['LANG']);
-					$this->iscodeelem = true; 
-					break;
-				case 'CODE':
-					$this->dojocontent .= $this->dojogenerator->getCode_start($attributes['LANG']);
-					$this->iscodeelem = true; 
-					break;
-				* /
-				
-				case 'LINK':
-					$this->dojocontent .= $this->dojogenerator->getLink_start($attributes['TYPE'],$attributes['ID']);
-					break;
-				case 'SCROLLPANE':
-					$this->dojocontent .= $this->dojogenerator->getScrollPane_start($attributes['ORIENTATION'],$attributes['STYLE']);
-					break;
-				case 'ACCORDIONCONTAINER':
-					$this->dojocontent .= $this->dojogenerator->getAccordionContainer_start($attributes['STYLE'],$attributes['DURATION']);
-					break;
-				case 'ACCORDIONPANE':
-					$this->dojocontent .= $this->dojogenerator->getAccordionPane_start($attributes['TITLE'],$attributes['SELECTED']);
-					break;
-				case 'BOX':
-					$this->dojocontent .= $this->dojogenerator->getBox_start($attributes['CLASS'],$attributes['STYLE'],$attributes['ANIMATION']);
-					break;
-				case 'BORDERCONTAINER':
-					$this->dojocontent .= $this->dojogenerator->getBorderContainer_start($attributes['DESIGN'],$attributes['STYLE']);
-					break;
-				
-				/* not used at the moment
-				case 'BUTTON':
-					$this->dojocontent .= $this->dojogenerator->getButton_start($attributes['FUNCTION']);
-					break;
-				* /
-				
-				/* none dojo elements * /
-				case 'DYNAMIC':
-					if ($this->customLoaderEnabled)
-						$this->dojocontent .= $this->customgenerator->getDynamicPost_start();
-					break;
-				case 'OSMMAP':
-					if ($this->customLoaderEnabled)
-						$this->dojocontent .= $this->customgenerator->getOsmMap_start();
-					break;
-				
-		   	}
-		}
-		*/
-		
-		/**
-		 * parse a xml close element
-		 * @return 
-		 * @param $parser Object
-		 * @param $name Object
-		 */
-		/*
-		function closeElement($parser, $name) {
-						
-			$cd = array_pop($this->currentdata); //get the data inside a element which was not parsed
-			$this->dojocontent .= $cd;  		 //add to the dojocontent string
-			
-			if (! $this->isValidElement($name)) {
-				$this->dojocontent .= "</".$name.">"; //insert the element end tag
-				return;
-			}
-			
-			/* used for code highlightning
-			if (($this->iscodeelem) && ($name != "CODE")) { 
-				$this->dojocontent .= "</".$name.">"; //insert the element end tag
-				return;
-			}
-			* /
-			
-			switch ($name) {
-			    case 'TABCONTAINER':
-					$this->dojocontent .= $this->dojogenerator->getTabContainer_end();
-					break;
-				case 'CONTENTPANE':
-					$this->dojocontent .= $this->dojogenerator->getContentPane_end();
-					break;
-				case 'DATAGRID':
-					$this->dojocontent .= $this->dojogenerator->getDataGrid_end();
-					break;
-				case 'POST':
-					$this->dojocontent .= $this->dojogenerator->getPost_end();
-					break;
-				case 'PAGE':
-					$this->dojocontent .= $this->dojogenerator->getPage_end();
-					break;
-				case 'FISHEYE':
-					$this->dojocontent .= $this->dojogenerator->getFisheyeLite_end();
-					break;
-					
-				/* currently not activated it's a little bit buggy at the moment 
-				case 'HIGHLIGHT':
-					$this->dojocontent .= $this->dojogenerator->getHighlight_end();
-					$this->iscodeelem = false; 
-					break;
-				case 'CODE':
-					$this->dojocontent .= $this->dojogenerator->getCode_end();
-					$this->iscodeelem = false;
-					break;
-				* /
-					
-				case 'LINK':
-					$this->dojocontent .= $this->dojogenerator->getLink_end();
-					break;
-				case 'SCROLLPANE':
-					$this->dojocontent .= $this->dojogenerator->getScrollPane_end();
-					break;
-				case 'ACCORDIONCONTAINER':
-					$this->dojocontent .= $this->dojogenerator->getAccordionContainer_end();
-					break;
-				case 'ACCORDIONPANE':
-					$this->dojocontent .= $this->dojogenerator->getAccordionPane_end();
-					break;
-				case 'BOX':
-					$this->dojocontent .= $this->dojogenerator->getBox_end();
-					break;
-				case 'BORDERCONTAINER':
-					$this->dojocontent .= $this->dojogenerator->getBorderContainer_end();
-					break;
-				/*
-				case 'BUTTON':
-					$this->dojocontent .= $this->dojogenerator->getButton_end();
-					break;
-				* /
-				
-				/* some other none dojo elements *  /
-				
-				case 'DYNAMIC':
-					if ($this->customLoaderEnabled)
-						$this->dojocontent .= $this->customgenerator->getDynamicPost_end();
-					break;
-				case 'OSMMAP':
-					if ($this->customLoaderEnabled)
-						$this->dojocontent .= $this->customgenerator->getOsmMap_end();
-					break;
-				
-		   }
-		}
-		*/
-		
-		/**
-		 * 
+		 * returns all linked wordpress posts as xml element
 		 * @return 
 		 * @param $xpathcontext Object
 		 */
@@ -444,7 +164,6 @@ if (!class_exists("WpDojoLoader")) {
 					$node = $domdocument->create_element( 'postcontent' );
 					$attr = $domdocument->create_attribute  ( "id"  , "$pstid"  );
   					$cdata = $domdocument->create_cdata_section( $cnt );
-					//$cdata = $domdocument->create_text_node( $cnt );
 					$node->append_child( $attr );
   					$node->append_child( $cdata );
 					array_push($result, $node);	
@@ -459,7 +178,7 @@ if (!class_exists("WpDojoLoader")) {
 		
 		
 		/**
-		 * 
+		 * returns all linked wordpress pages as xml element
 		 * @return 
 		 * @param $xpathcontext Object
 		 */
@@ -478,7 +197,6 @@ if (!class_exists("WpDojoLoader")) {
 					$node = $domdocument->create_element( 'pagecontent' );
 					$attr = $domdocument->create_attribute  ( "id"  , "$pstid"  );
   					$cdata = $domdocument->create_cdata_section( $cnt );
-					//$cdata = $domdocument->create_text_node( $cnt );
 					$node->append_child( $attr );
   					$node->append_child( $cdata );
 					array_push($result, $node);	
@@ -491,8 +209,34 @@ if (!class_exists("WpDojoLoader")) {
 			return null;
 		}
 		
+		
 		/**
-		 * 
+		 * returns some options as xml element
+		 * @return 
+		 * @param $xpathcontext Object
+		 * @param $domdocument Object
+		 */
+		function getOptionElements($xpathcontext,$domdocument) {
+			$result = array();
+			
+			//add the wpurl			
+			$node = $domdocument->create_element( 'option' );
+			$attr = $domdocument->create_attribute  ( "name"  , "wpurl"  );
+			$text = $domdocument->create_text_node( get_bloginfo("wpurl") );
+			$node->append_child( $attr );
+			$node->append_child( $text );
+			
+			array_push($result, $node);	
+			
+			if (count($result) > 0)		
+				return $result;
+				
+			return null;	
+		}
+		
+		
+		/**
+		 * get the main content element from the xml document
 		 * @return 
 		 * @param $xpathcontext Object
 		 */
@@ -536,7 +280,7 @@ if (!class_exists("WpDojoLoader")) {
 		}
 		
 		/**
-		 * 
+		 * adds the fieldnames from the wordpress plugin options to the datagrid elements
 		 * @return 
 		 * @param $xpathcontext Object
 		 */
@@ -562,9 +306,12 @@ if (!class_exists("WpDojoLoader")) {
 			if ($elem_content != null) {
 				$elem_posts = $dom->create_element("posts");
 				$elem_pages = $dom->create_element("pages");
+				$elem_options = $dom->create_element("options");
 				$elem_content->append_child($elem_posts);
 				$elem_content->append_child($elem_pages);
-						
+				$elem_content->append_child($elem_options);
+				
+				//add post elements		
 				$posts = $this->getPostElements($xpath,$dom);
 				if ($posts != null) {
 					foreach ($posts as $pst) {
@@ -572,10 +319,19 @@ if (!class_exists("WpDojoLoader")) {
 					}	
 				}
 				
+				//add page elements
 				$pages = $this->getPageElements($xpath,$dom);
 				if ($pages != null) {
 					foreach ($pages as $pg) {
 						$elem_pages->append_child($pg);	
+					}	
+				}
+				
+				//add options elements
+				$options = $this->getOptionElements($xpath,$dom);
+				if ($options != null) {
+					foreach ($options as $opt) {
+						$elem_options->append_child($opt);	
 					}	
 				}
 				
@@ -613,13 +369,7 @@ if (!class_exists("WpDojoLoader")) {
 		 * @param $xmldata string
 		 */
 		function parseXML($xmldata) {
-			/*
-			$xml_parser = xml_parser_create();
-			
-			xml_set_element_handler($xml_parser, array(&$this,'startElement'),array(&$this,'closeElement'));
-			xml_set_character_data_handler($xml_parser, array(&$this,"characterData"));
-			*/
-			
+						
 			//wrap xml document around the xmldata from the page or post
 			$xd = "<?xml version=\"1.0\"?>";
 			$xd .= "<wpcontentroot>";
@@ -631,11 +381,7 @@ if (!class_exists("WpDojoLoader")) {
 			$xd = $this->enrichXmlString($xd);
 			
 			//echo "<!-- BEGIN XML".$xd." END XML -->"; //debug only
-			/*
-			$rslt = xml_parse($xml_parser, $xd);
-			xml_parser_free($xml_parser);
-			return $rslt;
-			*/
+			
 			$rslt = ($this->xml_translate($xd));
 			return $rslt;
 		}
@@ -658,12 +404,10 @@ if (!class_exists("WpDojoLoader")) {
 				$pre = substr($aContent,0,$p1);
 				$suf = substr($aContent,$p2 + strlen($aEndTag),strlen($aContent) - $p1);
 				$inner = substr($aContent,$p1 + strlen($aStartTag), ($p2 - strlen($aStartTag)) - ($p1));
-				
-				$this->dojocontent = "";				
+							
 				$htmldata = $this->parseXML($inner); 
 				if ($htmldata != null) {
 					//echo "<!-- BEGIN CONTENT ".$htmldata." END CONTENT -->"; //debug only	
-					//return $pre."<div class=\"wpdojoloader\">".$this->dojocontent."</div>".$suf;	
 					return $pre.$htmldata.$suf;
 				} else {
 					return $pre."<i>error parsing the xml structure</i>".$suf;

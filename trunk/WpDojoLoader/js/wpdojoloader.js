@@ -38,26 +38,33 @@ function wpdojoloader_addOnLoad() {
 				n.innerHTML = cd1.result;
 			});
 			
+			
 			//init a animation
-			jQuery('.wpdojoloader_animation').each(function(){
-				var id1 = jQuery(this).attr('id');
-				var animation = jQuery(this).attr('animation');
+			dojo.query(".wpdojoloader_animation").forEach(function(n){
+				var animation = n.getAttribute('animation');
+				var duration = parseInt(n.getAttribute('duration'));
 				var dojoanim = null;
-
-				dojo.style(id1, "opacity", "0");
+				
+				var arg = {
+					node: n,
+					duration: duration
+				}
+				
 				switch (animation) {
 					case "fadein":
-						dojoanim = 	dojo.fadeIn({node: id1,duration: 1500});
+						dojoanim = 	dojo.fadeIn(arg);
 						break;
 					case "fadeout":
-						dojoanim = 	dojo.fadeOut({node: id1,duration: 1500});
+						dojoanim = 	dojo.fadeOut(arg);
 						break;
 				}
+				
 				if (dojoanim) {
 					dojoanim.play();
 				}
 			});
-					
+			
+								
 			//init a datagrid
 			jQuery('.wpdojoloader_datagrid').each(function(){
 			

@@ -95,13 +95,36 @@
 	
 	<!-- a dojo fisheye -->
 	<xsl:template match="fisheye">
-		<div class="wpdojoloader_fisheyelite" />
+		<div class="wpdojoloader_fisheyelite">
+			<xsl:call-template name="addhtml" />
+		</div>
 	</xsl:template>
 	
 	
-	<!-- a link --> <!-- TODO -->
+	<!-- a link -->
 	<xsl:template match="link">
-		<a href="todo">
+		<a>
+			<xsl:variable name="wpurl">   <!-- set a variable with the post id -->
+            	<xsl:value-of select="//option[@name='wpurl']" />  
+            </xsl:variable>
+			
+			<xsl:choose>  
+            	<xsl:when test="@type='cat'">
+            		<xsl:attribute name="href"><xsl:value-of select="$wpurl" />/?cat=<xsl:value-of select="@id" /></xsl:attribute>	 		  	  
+            	</xsl:when>
+				<xsl:when test="@type='post'">
+            		<xsl:attribute name="href"><xsl:value-of select="$wpurl" />/?p=<xsl:value-of select="@id" /></xsl:attribute>	 		  	  
+            	</xsl:when>
+				<xsl:when test="@type='page'">
+            		<xsl:attribute name="href"><xsl:value-of select="$wpurl" />/?page_id=<xsl:value-of select="@id" /></xsl:attribute>	 		  	  
+            	</xsl:when>
+				<xsl:otherwise>
+                	<xsl:attribute name="href"><xsl:value-of select="@id" /></xsl:attribute>
+					<xsl:attribute name="target">_blank</xsl:attribute>
+                </xsl:otherwise>   
+			</xsl:choose>
+		
+			<xsl:value-of select="text()[1]" />
 		</a>
 	</xsl:template>
 	
@@ -158,7 +181,24 @@
 			<xsl:call-template name="allattributes" /> <!--
 				<xsl:with-param name="defaultstyle">width: 100%;height: 300px;</xsl:with-param>
 			</xsl:call-template>  -->
-		
+			
+			<xsl:if test="(@animation)">
+				<xsl:attribute name="class">wpdojoloader_animation <xsl:value-of select="@class" /></xsl:attribute>
+				<xsl:if test="@animation='fadein'">
+					<xsl:attribute name="style">opacity:0; <xsl:value-of select="@style" /></xsl:attribute>	  	  
+				</xsl:if>
+			</xsl:if>
+			
+			<xsl:choose>  
+            	<xsl:when test="@duration">
+            		<xsl:attribute name="duration"><xsl:value-of select="@duration" /></xsl:attribute>	  	  
+            	</xsl:when>  
+                         
+                <xsl:otherwise>
+                	<xsl:attribute name="duration">3000</xsl:attribute>
+                </xsl:otherwise>  
+            </xsl:choose>  
+			
 			<xsl:value-of select="text()[1]" />
 			<xsl:apply-templates/>
 		</div>
@@ -191,18 +231,49 @@
 		</xsl:for-each>
 		
 		<xsl:if test="$defaultstyle != ''">
-		<xsl:if test="not(@style)">
-			<xsl:attribute name="style"><xsl:value-of select="$defaultstyle"/></xsl:attribute>
-		</xsl:if>
+			<xsl:if test="not(@style)">
+				<xsl:attribute name="style"><xsl:value-of select="$defaultstyle"/></xsl:attribute>
+			</xsl:if>
 		</xsl:if>
 	</xsl:template>
+	
+	
+	<!--
+		add html element from xml element
+	-->
+	<xsl:template name="addhtml">
+		<xsl:variable name="elem">   
+    		<xsl:value-of select="name()"/>  
+    	</xsl:variable>
+		
+		<xsl:element name="{$elem}">	
+			<xsl:value-of select="text()[1]" />
+			<xsl:apply-templates/>	
+		</xsl:element>
+	</xsl:template>
+	
+	
+	<!-- Templates for some html elements -->
+	
+	<xsl:template match="ul">
+		<xsl:call-template name="addhtml" />	
+	</xsl:template>
+	
+	<xsl:template match="li">
+		<xsl:call-template name="addhtml" />
+	</xsl:template>
+	
+	<xsl:template match="img">
+		<xsl:call-template name="addhtml" />
+	</xsl:template>
+	
 	
 	<!-- 
 		this is the default template for text nodes
 		the text output is done in the templates, if no template exist => no text output
 	-->
 	<xsl:template match="@*|text()">
-		<!-- <xsl:value-of select="." /> -->
+		 <!-- <xsl:value-of select="." /> -->
   	</xsl:template>		
 	
 </xsl:stylesheet>
