@@ -1,10 +1,10 @@
 === WpDojoLoader ===
 Contributors: lehmeier
 Donate link: http://wpdojoloader.berlios.de/
-Tags: wordpress, dojo, datagrid, accordion, scrollpane, grid, table, nested, tab, widget, fisheye
+Tags: wordpress, dojo, datagrid, accordion, scrollpane, grid, table, nested, tab, widget, fisheye, xml, xsl
 Requires at least: 2.8.2
 Tested up to: 2.8.5
-Stable tag: 0.0.3
+Stable tag: 0.0.4
 
 == Description ==
 
@@ -25,6 +25,8 @@ The following widgets are supported at the moment:
 To add a widget the plugin uses a simple xml structure so that you can create nested tabs or
 include a datagrid into a tab or a accordion.
 You can see some examples on the plugin homepage.
+
+Since 0.0.4 the xml structure is translated with xsl so that it is very easy to extend.
 
 == Installation ==
 
@@ -62,6 +64,10 @@ Then it's possible that the quote characters are wrong.
 4. Editor with plugin
 
 == Changelog ==
+
+= 0.0.4 =
+* switched to dojo 1.4.0
+* xml to html translation now with xsl (check the wpdojoloader.xsl)
 
 = 0.0.3 =
 * added a plugin for the editor in wordpress so that you can easy insert xml templates for the widgets
