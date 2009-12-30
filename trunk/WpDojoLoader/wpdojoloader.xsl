@@ -267,6 +267,13 @@
 		<xsl:call-template name="addhtml" />
 	</xsl:template>
 	
+	<xsl:template match="b">
+		<xsl:call-template name="addhtml" />
+	</xsl:template>
+	
+	<xsl:template match="i">
+		<xsl:call-template name="addhtml" />
+	</xsl:template>
 	
 	<!-- 
 		this is the default template for text nodes
