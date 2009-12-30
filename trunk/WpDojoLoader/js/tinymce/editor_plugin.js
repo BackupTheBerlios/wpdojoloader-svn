@@ -79,12 +79,12 @@
 						
 						//page
 						m.add({title : 'wpdojoloader.insertpage', onclick : function() {
-	                        tinyMCE.execCommand('mceInsertContent', false, "&lt;post id=\"1\" &gt;&lt;/post&gt;");
+	                        tinyMCE.execCommand('mceInsertContent', false, "&lt;page id=\"1\" &gt;&lt;/page&gt;");
 	                    }});
 						
 						//post
 						m.add({title : 'wpdojoloader.insertpost', onclick : function() {
-	                        tinyMCE.execCommand('mceInsertContent', false, "&lt;page id=\"1\" &gt;&lt;/page&gt;");
+	                        tinyMCE.execCommand('mceInsertContent', false, "&lt;post id=\"1\" &gt;&lt;/post&gt;");
 	                    }});
 						
 						m.add({title : 'wpdojoloader.links', 'class' : 'mceMenuItemTitle'}).setDisabled(1);

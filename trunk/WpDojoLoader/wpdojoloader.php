@@ -153,20 +153,23 @@ if (!class_exists("WpDojoLoader")) {
 		function getPostElements($xpathcontext,$domdocument) {
 			$result = array();
 			
-			$obj = $xpathcontext->xpath_eval('//post/@id'); // get all post elements with attribute id
-			$nodeset = $obj->nodeset;
-			
-			foreach ($nodeset as $node) {
-				$pstid = $node->value;
-				$pst = get_post($pstid);
-				if ($pst != null) {
-					$cnt = $this->executeParse($pst->post_content,"[dojocontent]","[/dojocontent]");
-					$node = $domdocument->create_element( 'postcontent' );
-					$attr = $domdocument->create_attribute  ( "id"  , "$pstid"  );
-  					$cdata = $domdocument->create_cdata_section( $cnt );
-					$node->append_child( $attr );
-  					$node->append_child( $cdata );
-					array_push($result, $node);	
+			$obj = $xpathcontext->xpath_eval('//pos22t/@id'); // get all post elements with attribute id
+			if ($obj) {
+				$nodeset = $obj->nodeset;
+				if ($nodeset != null) {
+					foreach ($nodeset as $node) {
+						$pstid = $node->value;
+						$pst = get_post($pstid);
+						if ($pst != null) {
+							$cnt = $this->executeParse($pst->post_content,"[dojocontent]","[/dojocontent]");
+							$node = $domdocument->create_element( 'postcontent' );
+							$attr = $domdocument->create_attribute  ( "id"  , "$pstid"  );
+		  					$cdata = $domdocument->create_cdata_section( $cnt );
+							$node->append_child( $attr );
+		  					$node->append_child( $cdata );
+							array_push($result, $node);	
+						}
+					}
 				}
 			}
 		
@@ -186,20 +189,23 @@ if (!class_exists("WpDojoLoader")) {
 			$result = array();
 			
 			$obj = $xpathcontext->xpath_eval('//page/@id'); // get all post elements with attribute id
-			$nodeset = $obj->nodeset;
-			
-			foreach ($nodeset as $node) {
-				$pstid = $node->value;
-				$pst = get_post($pstid);
-				if ($pst != null) {
-					$cnt = $this->executeParse($pst->post_content,"[dojocontent]","[/dojocontent]");
-					
-					$node = $domdocument->create_element( 'pagecontent' );
-					$attr = $domdocument->create_attribute  ( "id"  , "$pstid"  );
-  					$cdata = $domdocument->create_cdata_section( $cnt );
-					$node->append_child( $attr );
-  					$node->append_child( $cdata );
-					array_push($result, $node);	
+			if ($obj) {
+				$nodeset = $obj->nodeset;
+				if ($nodeset != null) {
+					foreach ($nodeset as $node) {
+						$pstid = $node->value;
+						$pst = get_post($pstid);
+						if ($pst != null) {
+							$cnt = $this->executeParse($pst->post_content,"[dojocontent]","[/dojocontent]");
+							
+							$node = $domdocument->create_element( 'pagecontent' );
+							$attr = $domdocument->create_attribute  ( "id"  , "$pstid"  );
+		  					$cdata = $domdocument->create_cdata_section( $cnt );
+							$node->append_child( $attr );
+		  					$node->append_child( $cdata );
+							array_push($result, $node);	
+						}
+					}
 				}
 			}
 		
@@ -286,11 +292,14 @@ if (!class_exists("WpDojoLoader")) {
 		 */
 		function replaceGridStructures($xpathcontext) {
 			$obj = $xpathcontext->xpath_eval('//datagrid'); // get all post elements with attribute id
-			$nodeset = $obj->nodeset;
-			
-			foreach ($nodeset as $node) {
-				$fields = $this->getFieldnames($node->get_attribute("structurename"));
-				$node->set_attribute("fieldnames",$fields);				
+			if ($obj) {
+				$nodeset = $obj->nodeset;
+				if ($nodeset != null) {
+					foreach ($nodeset as $node) {
+						$fields = $this->getFieldnames($node->get_attribute("structurename"));
+						$node->set_attribute("fieldnames",$fields);				
+					}
+				}
 			}	
 		}
 		
