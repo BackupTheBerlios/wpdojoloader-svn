@@ -153,7 +153,7 @@ if (!class_exists("WpDojoLoader")) {
 		function getPostElements($xpathcontext,$domdocument) {
 			$result = array();
 			
-			$obj = $xpathcontext->xpath_eval('//pos22t/@id'); // get all post elements with attribute id
+			$obj = $xpathcontext->xpath_eval('//post/@id'); // get all post elements with attribute id
 			if ($obj) {
 				$nodeset = $obj->nodeset;
 				if ($nodeset != null) {
@@ -389,7 +389,7 @@ if (!class_exists("WpDojoLoader")) {
 			
 			$xd = $this->enrichXmlString($xd);
 			
-			//echo "<!-- BEGIN XML".$xd." END XML -->"; //debug only
+			echo "<!-- BEGIN XML".$xd." END XML -->"; //debug only
 			
 			$rslt = ($this->xml_translate($xd));
 			return $rslt;
