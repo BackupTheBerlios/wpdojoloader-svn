@@ -220,6 +220,21 @@
 	</xsl:template>
 	
 	
+	<!-- a dojo titlepane -->
+	<xsl:template match="titlepane">
+		<div dojoType="dijit.TitlePane" >
+			
+			<!-- add all attributes from xml to html -->
+			<xsl:call-template name="allattributes" > 
+				<xsl:with-param name="defaultstyle">width:100%;</xsl:with-param>
+			</xsl:call-template>
+		
+			<xsl:value-of select="text()[1]" />
+			<xsl:apply-templates/>
+		</div>
+	</xsl:template>
+	
+		
 	<!-- 
 		 add all xml attributes as html attributes, if the style attribute does not exist
 		 the defaultstyle param will be added as style

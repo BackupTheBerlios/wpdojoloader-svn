@@ -3,7 +3,7 @@
 Plugin Name: WpDojoLoader
 Plugin URI: http://wpdojoloader.berlios.de/
 Description: WpDojoloader allows you to include dojo widgets into wordpress
-Version: 0.0.4
+Version: 0.0.41
 Author: Dirk Lehmeier
 Author URI: http://wpdojoloader.berlios.de/
  

@@ -174,7 +174,8 @@ jQuery(document).ready(function() {
 		dojo.require("dijit.layout.AccordionContainer");
 		dojo.require("dijit.form.Button");
 		dojo.require("dijit.layout.BorderContainer");
-		
+		dojo.require("dijit.TitlePane");
+
 		//Load the XML language
 		//dojo.require("dojox.highlight.languages.xml");
 		//Load the HTML language
