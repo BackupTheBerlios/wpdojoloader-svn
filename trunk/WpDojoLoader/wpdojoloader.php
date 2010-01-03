@@ -389,7 +389,7 @@ if (!class_exists("WpDojoLoader")) {
 			
 			$xd = $this->enrichXmlString($xd);
 			
-			echo "<!-- BEGIN XML".$xd." END XML -->"; //debug only
+			//echo "<!-- BEGIN XML".$xd." END XML -->"; //debug only
 			
 			$rslt = ($this->xml_translate($xd));
 			return $rslt;
