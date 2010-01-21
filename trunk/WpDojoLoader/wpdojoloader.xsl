@@ -267,6 +267,23 @@
 		</xsl:element>
 	</xsl:template>
 	
+	<!--
+		add all child html element from xml element
+	-->
+	<xsl:template name="addall">
+		<xsl:for-each select="./*"> <!-- all direct childs -->
+			
+			<xsl:variable name="elem">   
+	    		<xsl:value-of select="name()"/>  
+	    	</xsl:variable>
+			
+			<xsl:element name="{$elem}">
+				<xsl:call-template name="allattributes" />					
+				<xsl:value-of select="text()[1]" />	
+				<xsl:call-template name="addall" /> <!-- recursiv call -->
+			</xsl:element>
+		</xsl:for-each>
+	</xsl:template>
 	
 	<!-- Templates for some html elements -->
 	
@@ -296,6 +313,13 @@
 	
 	<xsl:template match="i">
 		<xsl:call-template name="addhtml" />
+	</xsl:template>
+	
+	<xsl:template match="code">
+		<div class="wpdojoloader_highlight">
+			<xsl:call-template name="allattributes" />
+			<xsl:call-template name="addall" />
+		</div>
 	</xsl:template>
 	
 	<!-- 

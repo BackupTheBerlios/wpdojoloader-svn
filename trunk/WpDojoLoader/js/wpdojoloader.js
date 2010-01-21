@@ -34,7 +34,12 @@ function wpdojoloader_addOnLoad() {
 			
 			//init a Highlightner			
 			dojo.query(".wpdojoloader_highlight").forEach(function(n){
-				var cd1 = dojox.highlight.processString(n.innerHTML,n.getAttribute("lang"));
+				var code = n.innerHTML;
+				code = code.replace(/<p>/g,"");   //replace the <p> tags -> sometimes added from wordpress
+				code = code.replace(/<\/p>/g,"");
+				
+				//var x1 = dojox.html.entities.encode(code);
+				var cd1 = dojox.highlight.processString(code,n.getAttribute("lang"));
 				n.innerHTML = cd1.result;
 			});
 			
@@ -175,11 +180,12 @@ jQuery(document).ready(function() {
 		dojo.require("dijit.form.Button");
 		dojo.require("dijit.layout.BorderContainer");
 		dojo.require("dijit.TitlePane");
+		dojo.require("dojox.html.entities");
 
 		//Load the XML language
-		//dojo.require("dojox.highlight.languages.xml");
+		dojo.require("dojox.highlight.languages.xml");
 		//Load the HTML language
-		//dojo.require("dojox.highlight.languages.html");
+		dojo.require("dojox.highlight.languages.html");
 		dojo.addOnLoad(wpdojoloader_addOnLoad);
 		
 	} catch (e) {
