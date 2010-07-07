@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<content>
+	
+<accordioncontainer style="width:80%;height:200px">
+
+<accordionpane selected="true" title="A AccordionPane 1">Hello World 1</accordionpane>
+
+<accordionpane selected="true" title="A AccordionPane 2">Hello World 2</accordionpane>
+
+<accordionpane selected="true" title="A AccordionPane 3">Hello World 3</accordionpane>
+
+</accordioncontainer>
+
+
+	
+<import type="template" filename="testtemplate.xml" />
+
+<placeholder id="###accordion_1" countable="true">
+	Hallo Welt
+</placeholder>
+
+</content>
+

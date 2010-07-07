@@ -34,13 +34,23 @@ function wpdojoloader_addOnLoad() {
 			
 			//init a Highlightner			
 			dojo.query(".wpdojoloader_highlight").forEach(function(n){
-				var code = n.innerHTML;
-				code = code.replace(/<p>/g,"");   //replace the <p> tags -> sometimes added from wordpress
-				code = code.replace(/<\/p>/g,"");
 				
-				//var x1 = dojox.html.entities.encode(code);
+				var code = n.innerHTML;
+				
+				//replace the <p> tags -> added from wordpress
+				//if you want to show <p> tags in the code you have to
+				//comment out this line
+				code = code.replace(/<p>/g,"");   
+				code = code.replace(/<\/p>/g,"");
+				console.debug(code);
+				n.innerHTML = code;
+				
+				//below is the dojo highlightner
+				//it's not needed because translation is in xsl
+				/*
 				var cd1 = dojox.highlight.processString(code,n.getAttribute("lang"));
 				n.innerHTML = cd1.result;
+				*/
 			});
 			
 			
@@ -76,7 +86,10 @@ function wpdojoloader_addOnLoad() {
 				//init a store
 				var storetype = jQuery(this).parent().attr('storetype');
 				var uploaddir = jQuery(this).parent().attr('uploaddir');
-				 
+
+				console.debug(this.id);
+				//console.debug(this.jsID);
+				
 				var dataStore = null;
 				switch (storetype) {
 					case "csv": //create a csv store
@@ -89,11 +102,29 @@ function wpdojoloader_addOnLoad() {
 						    //seperator: ";"  //supported by dojo 1.4 ?
 						});
 						break;
+					case "xml": //create a xml datastore
+						var storeurl = "dojo_xmlstore_loadsave.php?filename=" + "wp-content/" + jQuery(this).parent().attr('filename'); 
+						dataStore = new dojox.data.XmlStore({ 
+							url: storeurl, 
+							urlPreventCache: false,
+							id:"teststore",
+							jsId:"teststore"
+							//query: "*",
+							//sendQuery: false
+						});  
+						break;
 				}
 								
 				if (!dataStore) 
 					return;
 				
+				var editable = jQuery(this).parent().attr('editable');
+				if (!editable) 
+				{
+					editable = "false";
+				}
+				
+				//load the field definitions
 				var id1 = jQuery(this).attr('id');
 				var fields = jQuery(this).parent().attr('fieldnames'); //list of fieldnames, seperated with comma
 				var layoutGrid = new Array();
@@ -102,7 +133,8 @@ function wpdojoloader_addOnLoad() {
 					for (var i=0;i<lst1.length;i++) {
 						var fo = {
 							field: lst1[i],
-							name: lst1[i]
+							name: lst1[i],
+							editable: editable
 						}
 						layoutGrid.push(fo); 
 					}
@@ -122,7 +154,10 @@ function wpdojoloader_addOnLoad() {
 				*/
 				
 				//called when a row is clicked
-				dijit.byId(id1).onRowClick = function(event){					
+				dijit.byId(id1).onRowClick = function(event){
+					return;
+					console.debug("onRowClick");
+					console.debug(event);
 					//check all cells if there is a valid url and open it
 					dojo.query("[role=gridcell]", event.rowNode).forEach(
 					    function(element) {
@@ -136,15 +171,71 @@ function wpdojoloader_addOnLoad() {
 					);
 				}
 				
+				//onApplyCellEdit(inValue, inRowIndex, inFieldIndex);
+				dijit.byId(id1).onApplyCellEdit = function(inValue, inRowIndex, inFieldIndex){
+					console.debug("onApplyCellEdit");
+					console.debug(inValue);
+					console.debug(inRowIndex);
+					console.debug(inFieldIndex);
+				}
+				
+				dataStore._saveCustom = function(saveComplete, saveFailed) {
+					alert("savecustom");
+				}
+				
+				dataStore._getPostUrl = function(item) {
+					console.debug("_getPostUrl");
+					console.debug(item);
+				}
+				
+				dataStore._getPutUrl = function(item) {
+					console.debug("_getPutUrl");
+					console.debug(item);
+				}
+				
+				
+				dataStore._getFetchUrl = function(item) {
+					console.debug("_getFetchUrl");
+					console.debug(item);
+					if (item != null)
+					{
+						console.debug("hallo");
+						return this.url;
+					} else
+					{
+						return "http://dirk-lehmeier.de/wpdojoloader/#";
+					}
+				}
+				
+				/*
+				console.debug(dataStore.fetchItemByIdentity);
+				dataStore.fetchItemByIdentity = function(keywordArgs)
+				{
+					console.debug("fetchItemByIdentity");
+					console.debug(keywordArgs);
+					console.debug(this.data);
+					
+				}
+				*/
+				
+				dijit.byId(id1).onApplyEdit = function(event){
+					//log.error;
+					console.debug("onApplyEdit")
+					console.debug(event);
+					//alert(event);
+					//dataStore.save();
+				}
+				alert('a');
 				/* you can use this for custom row styleing
 				dijit.byId(id1).onStyleRow = function(inrow){
 				}
 				*/
 				
 				dijit.byId(id1).setStructure(layoutGrid);	
-				dijit.byId(id1).setStore(dataStore, {/* query  name: "*" */}, {ignoreCase: true});
+				//dijit.byId(id1).setStore(dataStore, { query: "*" ,queryOptions: {ignoreCase: true}});
+				dijit.byId(id1).setStore(dataStore);
 				dijit.byId(id1).startup();
-			});
+			}); //end datagrid
 			
 			
 			//init a osm map
@@ -166,7 +257,8 @@ jQuery(document).ready(function() {
 	try {
 		if (!dojo)  //if dojo is not initialized this will throw an exception, probably there is a better way ?
 			return;
-			
+		
+		/*
 		dojo.require("dijit.form.TextBox");
 		dojo.require("dijit.layout.TabContainer");
 		dojo.require("dijit.layout.ContentPane");
@@ -186,6 +278,7 @@ jQuery(document).ready(function() {
 		dojo.require("dojox.highlight.languages.xml");
 		//Load the HTML language
 		dojo.require("dojox.highlight.languages.html");
+		*/
 		dojo.addOnLoad(wpdojoloader_addOnLoad);
 		
 	} catch (e) {

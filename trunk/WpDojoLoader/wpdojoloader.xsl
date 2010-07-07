@@ -42,8 +42,12 @@
 		<div>
 			<!-- add all attributes from xml to html -->
 			<xsl:call-template name="allattributes" />
-							
-			<div dojoType="dojox.grid.DataGrid" rowsPerPage="40" class="tundra wpdojoloader_datagrid">
+				
+			<xsl:variable name="gridid">
+				<xsl:value-of select="generate-id()"></xsl:value-of>
+			</xsl:variable>				
+			
+			<div dojoType="dojox.grid.DataGrid" jsid="{$gridid}" id="{$gridid}" rowsPerPage="40" class="tundra wpdojoloader_datagrid">
 				
 				<!-- add all attributes from xml to html -->
 				<xsl:call-template name="allattributes">

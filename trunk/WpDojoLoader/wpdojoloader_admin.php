@@ -21,7 +21,10 @@
 			
 			$dojoLoaderAdminOptions = array(
 				'activate' => 'true',
-				'gridstructure' => array(array('name' => 'gridstructure_1', 'structure' => 'name,link'))
+				'gridstructure' => array(array('name' => 'gridstructure_1', 'structure' => 'name,link')),
+				'require' => array('dojo.require("dijit.Dialog");'),
+				'xslt' => array('<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format">'),
+				'css' => array('.wpdojoloader {}')
 				);
 				
 			$adminoptions = get_option($this->adminOptionsName);
@@ -40,13 +43,61 @@
 		 */
 		function printAdminPage() {
 			$adminOptions = $this->getAdminOptions();
-			
+									
 			//store options
 			if (isset($_POST['update_wpdojoloader_adminoptions'])) { 
 				
 				if (isset($_POST['wpdojoloader_activate'])) {
 					$adminOptions['activate'] = $_POST['wpdojoloader_activate'];
 				}
+				
+				//dojo require option
+				if (isset($_POST['wpdojoloader_dojorequire'])) {
+				   
+					for ($i=count($adminOptions['require']);$i>-1;$i--) {
+						unset($adminOptions['require'][$i]);	
+					}
+					
+				   $lines = preg_split("/\r\n/", $_POST["wpdojoloader_dojorequire"]);
+				   $i = 0;
+				   foreach ($lines as $key => $value) {
+				      //$adminOptions['require'][$i] = trim($value);
+				      $adminOptions['require'][$i] = $value;
+				      $i++;
+				    }
+				}
+									
+				//css option
+				if (isset($_POST['wpdojoloader_css'])) {
+				   
+					for ($i=count($adminOptions['css']);$i>-1;$i--) {
+						unset($adminOptions['css'][$i]);	
+					}
+					
+				   $lines = preg_split("/\r\n/", $_POST["wpdojoloader_css"]);
+				   $i = 0;
+				   foreach ($lines as $key => $value) {
+				      //$adminOptions['require'][$i] = trim($value);
+				      $adminOptions['css'][$i] = $value;
+				      $i++;
+				    }
+				}
+				
+				//xslt option
+				if (isset($_POST['wpdojoloader_xslt'])) {
+					
+					for ($i=count($adminOptions['xslt']);$i>-1;$i--) {
+						unset($adminOptions['xslt'][$i]);	
+					}
+					
+				   $lines = preg_split("/\r\n/", $_POST["wpdojoloader_xslt"]);
+				   $i = 0;
+				   foreach ($lines as $key => $value) {
+				      $adminOptions['xslt'][$i] = ($value);
+				      $i++;
+				    }
+				}
+								
 								
 				//update existing grid structures
 				for ($i=count($adminOptions['gridstructure']);$i>-1;$i--) {
@@ -87,6 +138,40 @@
 				update_option($this->adminOptionsName, $adminOptions); //store options
 			}	
 			
+			//load require options array into a string 
+			$require = "";
+			for ($i=0;$i<count($adminOptions['require']);$i++) {
+				if ($i == 0) {
+					$require = trim($adminOptions['require'][$i]);	
+				} else {
+					$require .= "\n".trim($adminOptions['require'][$i]);	
+				}
+			}
+			if ($require == "")
+			{
+				$require .= "Hallo";
+			}
+			
+			//load xslt options array into a string 
+			$xslt = "";
+			for ($i=0;$i<count($adminOptions['xslt']);$i++) {
+				if ($i == 0) {
+					$xslt = ($adminOptions['xslt'][$i]);	
+				} else {
+					$xslt .= "\n".($adminOptions['xslt'][$i]);	
+				}
+			}
+			
+			//load css options array into a string 
+			$css = "";
+			for ($i=0;$i<count($adminOptions['css']);$i++) {
+				if ($i == 0) {
+					$css = ($adminOptions['css'][$i]);	
+				} else {
+					$css .= "\n".($adminOptions['css'][$i]);	
+				}
+			}
+			
 			?>
 			<div class=wrap>
 			<form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>">
@@ -96,6 +181,25 @@
 			<p>
 				<label for="wpdojoloader_activate_yes"><input type="radio" id="wpdojoloader_activate_yes" name="wpdojoloader_activate" value="true" <?php if ($adminOptions['activate'] == "true") { _e('checked="checked"'); }?> /> Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;
 				<label for="wpdojoloader_activate_no"><input type="radio" id="wpdojoloader_activate_no" name="wpdojoloader_activate" value="false" <?php if ($adminOptions['activate'] == "false") { _e('checked="checked"'); }?>/> No</label>
+			</p>
+			
+			<hr />
+			
+			<h2>Styles</h2>
+			<p>
+				<textarea type="text" name="wpdojoloader_css" style="width:800px;height:150px;"><?php echo stripslashes($css); ?></textarea>
+			</p>
+			<hr />
+			
+			<h2>Dojo Require</h2>
+			<p>
+				<textarea type="text" name="wpdojoloader_dojorequire" style="width:400px;height:150px;"><?php echo stripslashes($require); ?></textarea>
+			</p>
+			
+			<hr />
+			<h2>XSL Transformation</h2>
+			<p>
+				<textarea type="text" name="wpdojoloader_xslt" style="width:800px;height:300px;"><?php echo stripslashes($xslt); ?></textarea>
 			</p>
 						
 			<hr/>

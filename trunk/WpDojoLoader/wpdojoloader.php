@@ -3,7 +3,7 @@
 Plugin Name: WpDojoLoader
 Plugin URI: http://wpdojoloader.berlios.de/
 Description: WpDojoloader allows you to include dojo widgets into wordpress
-Version: 0.0.41
+Version: 0.0.42
 Author: Dirk Lehmeier
 Author URI: http://wpdojoloader.berlios.de/
  
@@ -55,6 +55,8 @@ if (!class_exists("WpDojoLoader")) {
 		var $customLoaderEnabled = false; //if this is set to true, the custom loader is enabled which contains 
 										  //some other none dojo elements
 		
+		var $debugmode = false;
+		
 		/*****************************
 		 * 
 		 * END Config Section
@@ -62,11 +64,18 @@ if (!class_exists("WpDojoLoader")) {
 		 *****************************/
 		
 		var $adminOptionsName = "WpDojoLoaderAdminOptions";
-		var $iscodeelem = false; //this is set to true if a <code> element is found, no other elements will be parsed until the </code> element 
+		//TODO to remove
+		//var $iscodeelem = false; //this is set to true if a <code> element is found, no other elements will be parsed until the </code> element 
 		
 		function WpDojoLoader() { //constructor
 			//nothing to be done at the moment
 		}
+		
+		/*
+		function WpDojoLoader($isdebug) { //constructor
+			$this->debugmode = $isdebug;
+		}
+		*/
 		
 		/**
 		 * returns true if the the plugin is activated in the dojoloader settings, otherwise false
@@ -85,6 +94,25 @@ if (!class_exists("WpDojoLoader")) {
 				return true;
 			}
 			return false;
+		}
+		
+		/**
+		 * shows a debug message when debugmode is true
+		 */
+		function debug($text, $object)
+		{
+			if ($this->debugmode == true)
+			{
+				echo "<br/>";
+				echo "########&nbsp;".$text."&nbsp;########<br/>";
+				
+				if ($object != null)
+				{
+					var_dump($object);
+				}
+				
+				echo "<br/>";
+			}				
 		}
 		
 		/**
@@ -114,11 +142,11 @@ if (!class_exists("WpDojoLoader")) {
 		 * @return 
 		 */
 		function activateTinyMcePluginButtons() {
-			
+			if (!function_exists("get_user_option"))				return;						if (!function_exists("add_filter"))				return;						
 			if ( ! current_user_can('edit_posts') && ! current_user_can('edit_pages') )
 		    	return;
 		 
-		   	// Add only in Rich Editor mode
+		   	// Add only in Rich Editor mode			
 		   	if ( get_user_option('rich_editing') == 'true') {
 				add_filter('mce_external_plugins', array(&$this,'add_myplugin_tinymce_plugin'));
 		     	add_filter('mce_buttons', array(&$this, 'register_myplugin_button'));
@@ -223,6 +251,10 @@ if (!class_exists("WpDojoLoader")) {
 		 * @param $domdocument Object
 		 */
 		function getOptionElements($xpathcontext,$domdocument) {
+			
+			if (!function_exists("get_bloginfo"))
+				return null;
+			
 			$result = array();
 			
 			//add the wpurl			
@@ -233,6 +265,78 @@ if (!class_exists("WpDojoLoader")) {
 			$node->append_child( $text );
 			
 			array_push($result, $node);	
+			
+			if (count($result) > 0)		
+				return $result;
+				
+			return null;	
+		}
+		
+		
+		function &getFirstChild(&$domdocument)
+		{
+			$de = $domdocument->document_element();
+			return $de;
+			$this->debug("getFirstChild",$de->node_name());
+			$kids = $de->children();
+			$nkids = count ($kids);
+			if ($nkids > 0)
+			{
+				return $kids[0];
+			}
+			
+			return null;
+		}		
+		
+		
+		/**
+		 * 
+		 * 
+		 */
+		function getTemplateElements($xpathcontext,$domdocument,&$parentnode) {
+			//$result = array();
+			
+			$obj = $xpathcontext->xpath_eval('//import/@filename'); //get all template elements
+			if ($obj) {
+				$nodeset = $obj->nodeset;
+				if ($nodeset != null) {
+					foreach ($nodeset as $node) {
+						
+						$this->debug("getTemplateElements",$node);
+						
+						//add 			
+						$filename = $node->value;
+						
+						$this->debug("getTemplateElements1111",$filename);					
+						$filename = dirname(__FILE__)."/".$filename;  
+						$tpl = domxml_open_file($filename);
+						//$this->debug("xxxxx",$tpl);						
+						//$node = $domdocument->create_element( 'template' );
+						$fc = $this->getFirstChild($tpl);	
+						if ($fc != null)
+						{	
+							$nd = $fc->clone_node(true);
+							$parentnode->append_child($nd);
+							$attr = $domdocument->create_attribute("filename",$filename);
+							$nd->append_child( $attr );
+							
+						}
+						//$attr = $domdocument->create_attribute  ( "filename"  , $filename  );
+						
+						//$tpltxt = $tpl->dump_mem(true);
+						
+						//$this->debug($tpltxt,null);
+						
+						$text = $domdocument->create_text_node( $tpltxt );
+						//$parentnode->append_child( $attr );
+						$parentnode->append_child( $text );
+						
+						
+						//array_push($result, $node);						
+					} //foreach
+				}
+			}
+			
 			
 			if (count($result) > 0)		
 				return $result;
@@ -264,6 +368,42 @@ if (!class_exists("WpDojoLoader")) {
 					$dojoLoaderAdminOptions[$key] = $option;
 			}				
 			return $dojoLoaderAdminOptions;
+		}
+		
+		/*
+		 * add the dojo.require lines from the admin options 
+		 */
+		function addDojoRequireLines() {
+			
+			//dojo version 1.4 from google
+			echo '<SCRIPT TYPE="text/javascript"  SRC="http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojo/dojo.xd.js" djConfig="parseOnLoad:false" ></SCRIPT>';
+			echo '<script type="text/javascript">';
+			$adminOptions = $this->getAdminOptions();
+						
+			//var_dump($adminOptions);
+			$require = "";
+			for ($i=0;$i<count($adminOptions['require']);$i++) {
+				echo stripslashes(trim($adminOptions['require'][$i]))."\n";
+			}
+			
+			echo '</script>';
+		}
+		
+		/**
+		 * adds css lines from the admin options
+		 */
+		function addDojoCssLines() {
+			
+			echo '<style type="text/css">';
+			$adminOptions = $this->getAdminOptions();
+						
+			//var_dump($adminOptions);
+			$require = "";
+			for ($i=0;$i<count($adminOptions['css']);$i++) {
+				echo stripslashes(trim($adminOptions['css'][$i]))."\n";
+			}
+			
+			echo '</style>';
 		}
 		
 		/**
@@ -316,9 +456,11 @@ if (!class_exists("WpDojoLoader")) {
 				$elem_posts = $dom->create_element("posts");
 				$elem_pages = $dom->create_element("pages");
 				$elem_options = $dom->create_element("options");
+				$elem_templates = $dom->create_element("templates");
 				$elem_content->append_child($elem_posts);
 				$elem_content->append_child($elem_pages);
 				$elem_content->append_child($elem_options);
+				$elem_content->append_child($elem_templates);
 				
 				//add post elements		
 				$posts = $this->getPostElements($xpath,$dom);
@@ -344,6 +486,16 @@ if (!class_exists("WpDojoLoader")) {
 					}	
 				}
 				
+				//add template elements
+				$this->getTemplateElements($xpath,$dom,$elem_templates);
+				/*
+				if ($templates != null) {
+					foreach ($template as $tpl) {
+						$elem_templates->append_child($tpl);	
+					}	
+				}
+				*/
+				
 				$this->replaceGridStructures($xpath);
 			}
 			return $dom->dump_mem(true);
@@ -356,12 +508,20 @@ if (!class_exists("WpDojoLoader")) {
 		 * @param $xmlstring Object
 		 */
 		function xml_translate($xmlstring) {
+			
+			if ($this->debugmode == true)
+			{
+				echo $xmlstring;
+			}
+			
 			$arguments = array(
      			'/_xml' => $xmlstring
 			);
 			$xh = xslt_create();
 			
-			$result = xslt_process($xh, 'arg:/_xml', 'wp-content/plugins/wpdojoloader/wpdojoloader.xsl', NULL, $arguments);
+			$xslfile = dirname(__FILE__). '/wpdojoloader.xsl';
+			//$result = xslt_process($xh, 'arg:/_xml', 'wp-content/plugins/wpdojoloader/wpdojoloader.xsl', NULL, $arguments);
+			$result = xslt_process($xh, 'arg:/_xml', $xslfile, NULL, $arguments);
 			if ($result) {
 				return $result;	
 			} else {
@@ -470,7 +630,7 @@ if (!class_exists("WpDojoLoader")) {
 			echo '<link type="text/css" rel="stylesheet" href="' . get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/css/dojox/layout/resources/ResizeHandle.css" />' . "\n";
 			echo '<link type="text/css" rel="stylesheet" href="' . get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/css/dojox/layout/resources/ScrollPane.css" />' . "\n";
 			echo '<link type="text/css" rel="stylesheet" href="' . get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/css/resources/dojo.css" />' . "\n";
-			echo '<link type="text/css" rel="stylesheet" href="' . get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/css/wpdojoloader.css" />' . "\n";
+			//echo '<link type="text/css" rel="stylesheet" href="' . get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/css/wpdojoloader.css" />' . "\n";
 			
 			if (function_exists('wp_enqueue_script')) {
 				//load jquery
@@ -503,7 +663,9 @@ if (!class_exists("WpDojoLoader")) {
 					
 					//version 1.3.1
 					//wp_enqueue_script('dojo', 'http://ajax.googleapis.com/ajax/libs/dojo/1.3.1/dojo/dojo.xd.js', array('prototype'), '0.1');
-					wp_enqueue_script('dojo', 'http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojo/dojo.xd.js', array('prototype'), '0.1');
+					
+					//version 1.4
+					//wp_enqueue_script('dojo', 'http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojo/dojo.xd.js', array('prototype'), '0.1');
 				}
 				
 				
@@ -512,6 +674,9 @@ if (!class_exists("WpDojoLoader")) {
 				//add the wpdojoloader js functions
 				wp_enqueue_script('wpdojoloader', get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/js/wpdojoloader.js', array('prototype'), '0.1');				
 			}
+			
+			$this->addDojoRequireLines();
+			$this->addDojoCssLines();
 		}
 				
 		/**
@@ -553,24 +718,29 @@ if (!function_exists("WpDojoLoader_showAdmin")) {
 
 //Actions and Filters	
 if (isset($dl_dojoLoader)) {
-	//test
-	add_action('admin_menu', 'WpDojoLoader_showAdmin');
-	if ($dl_dojoLoader->isActive()) {
-		//Actions
-		add_action('wp_print_scripts',array(&$dl_dojoLoader, 'addHeaderCode'), 1);
-				
-		//Filters
-		add_filter('the_content', array(&$dl_dojoLoader, 'addContent'),1); 
+		
+	if (function_exists("add_action"))
+	{
+		//test
+		add_action('admin_menu', 'WpDojoLoader_showAdmin');
+		if ($dl_dojoLoader->isActive()) {
+			//Actions
+			add_action('wp_print_scripts',array(&$dl_dojoLoader, 'addHeaderCode'), 1);
+					
+			//Filters
+			add_filter('the_content', array(&$dl_dojoLoader, 'addContent'),1); 
+		}
+		
+		// init tinymce plugin
+		add_action('init', array(&$dl_dojoLoader, 'activateTinyMcePluginButtons') );
+	
+		//called when the plugin is activated
+		register_activation_hook( __FILE__, array(&$dl_dojoLoader, 'activatePlugin') );
+		
+		//called when the plugin is deactivated => cleanup a bit
+		register_deactivation_hook( __FILE__, array(&$dl_dojoLoader, 'deactivatePlugin') );
 	}
 	
-	// init tinymce plugin
-	add_action('init', array(&$dl_dojoLoader, 'activateTinyMcePluginButtons') );
-
-	//called when the plugin is activated
-	register_activation_hook( __FILE__, array(&$dl_dojoLoader, 'activatePlugin') );
-	
-	//called when the plugin is deactivated => cleanup a bit
-	register_deactivation_hook( __FILE__, array(&$dl_dojoLoader, 'deactivatePlugin') );
 }
 
 
