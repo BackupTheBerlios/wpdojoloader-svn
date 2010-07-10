@@ -1,14 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<template>
-	<accordioncontainer style="width:80%;height:200px">
+<templates>
+  <template name="template1">
+	  <accordioncontainer style="width:80%;height:600px">
 	
-	<accordionpane selected="true" title="A AccordionPane 1">Hello World 1</accordionpane>
+	  <accordionpane selected="true" title="A AccordionPane 1">Hello World 1</accordionpane>
 	
-	<accordionpane selected="true" title="A AccordionPane 2">Hello World 2</accordionpane>
+	  <accordionpane selected="true" title="A AccordionPane 2">Hello World 2</accordionpane>
 	
-	<accordionpane selected="true" title="A AccordionPane 3">Hello World 3</accordionpane>
-	
-	</accordioncontainer>
+	  <accordionpane selected="true" title="A AccordionPane 3">Hello World 3</accordionpane>
 
-</template>
+      <accordionpane selected="true" title="A AccordionPane 4">
+          <calltemplate name="template2"></calltemplate>        
+      </accordionpane>
+		
+	  <accordionpane selected="true" title="A AccordionPane 4">
+          <calltemplate name="jquerytab" uid="tpl1"></calltemplate>        
+      </accordionpane>
+    </accordioncontainer>
+
+  </template>
+
+
+  <template name="template2">
+    <accordioncontainer style="width:40%;height:200px">
+
+      <accordionpane selected="true" title="A AccordionPane 1">###text1###</accordionpane>
+      <accordionpane selected="true" title="A AccordionPane 1">###text2###</accordionpane>
+
+    </accordioncontainer>
+
+  </template>
+  
+  
+  <template name="jquerytab">
+    <jquerytabcontainer style="width:40%;height:200px">
+		<jquerytab title="Hallo Welt">###text1###</jquerytab>
+		<!-- <calltemplate name="template2"></calltemplate>-->
+		<jquerytab title="Hallo Welt2"></jquerytab> 
+		<jquerytab title="Hallo Welt2">###text2###</jquerytab>     
+    </jquerytabcontainer>
+
+  </template>
+  
+  
+  
+  
+</templates>

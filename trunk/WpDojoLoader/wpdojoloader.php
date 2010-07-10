@@ -286,53 +286,74 @@ if (!class_exists("WpDojoLoader")) {
 			}
 			
 			return null;
-		}		
+		}
+    
+
+    function getChildren(&$domdocument,$elementname)
+    {
+      $result = array();
+
+      $de = $domdocument->document_element();
+      $kids = $de->children();
+      
+      foreach($kids as $node)
+      {
+        if (strtolower($node->node_name()) == strtolower($elementname))
+        {
+          array_push($result, $node);	  
+        }
+      } 
+      
+      if (count($result) > 0)		
+				return $result;
+				
+			return null;	      
+    }		
 		
 		
 		/**
 		 * 
 		 * 
 		 */
-		function getTemplateElements($xpathcontext,$domdocument,&$parentnode) {
+		function getImportElements($xpathcontext,$domdocument,&$parentnode, $importtype) {
 			//$result = array();
 			
-			$obj = $xpathcontext->xpath_eval('//import/@filename'); //get all template elements
+			$this->debug("getTemplateElements",$importtype);
+			
+			$obj = $xpathcontext->xpath_eval("//import[@filename and @type = '$importtype']"); //get all template elements
 			if ($obj) {
 				$nodeset = $obj->nodeset;
 				if ($nodeset != null) {
 					foreach ($nodeset as $node) {
 						
 						$this->debug("getTemplateElements",$node);
+						$this->debug("getTemplateElements",$node->get_attribute("filename"));
 						
 						//add 			
-						$filename = $node->value;
-						
-						$this->debug("getTemplateElements1111",$filename);					
-						$filename = dirname(__FILE__)."/".$filename;  
-						$tpl = domxml_open_file($filename);
-						//$this->debug("xxxxx",$tpl);						
-						//$node = $domdocument->create_element( 'template' );
-						$fc = $this->getFirstChild($tpl);	
-						if ($fc != null)
-						{	
-							$nd = $fc->clone_node(true);
-							$parentnode->append_child($nd);
-							$attr = $domdocument->create_attribute("filename",$filename);
-							$nd->append_child( $attr );
-							
-						}
-						//$attr = $domdocument->create_attribute  ( "filename"  , $filename  );
-						
-						//$tpltxt = $tpl->dump_mem(true);
-						
-						//$this->debug($tpltxt,null);
-						
-						$text = $domdocument->create_text_node( $tpltxt );
-						//$parentnode->append_child( $attr );
-						$parentnode->append_child( $text );
-						
-						
-						//array_push($result, $node);						
+						$filename = $node->get_attribute("filename");								
+						$this->debug("getTemplateElements1111",$filename);
+
+						$filename = dirname(__FILE__)."/".$filename;
+						  
+						if (file_exists($filename))
+						{
+							$tpl = domxml_open_file($filename);
+
+            				$templates = $this->getChildren($tpl, $importtype);
+				            foreach ($templates as $template)
+				            {
+				              $nd = $template->clone_node(true);
+											$parentnode->append_child($nd);
+											$attr = $domdocument->create_attribute("filename",$filename);
+											$nd->append_child( $attr );
+				            }
+							//$attr = $domdocument->create_attribute  ( "filename"  , $filename  );
+							//$tpltxt = $tpl->dump_mem(true);
+							//$this->debug($tpltxt,null);
+							$text = $domdocument->create_text_node( $tpltxt );
+							//$parentnode->append_child( $attr );
+							$parentnode->append_child( $text );
+						}						
 					} //foreach
 				}
 			}
@@ -457,10 +478,12 @@ if (!class_exists("WpDojoLoader")) {
 				$elem_pages = $dom->create_element("pages");
 				$elem_options = $dom->create_element("options");
 				$elem_templates = $dom->create_element("templates");
+				$elem_contents = $dom->create_element("contentlist");
 				$elem_content->append_child($elem_posts);
 				$elem_content->append_child($elem_pages);
 				$elem_content->append_child($elem_options);
 				$elem_content->append_child($elem_templates);
+				$elem_content->append_child($elem_contents);
 				
 				//add post elements		
 				$posts = $this->getPostElements($xpath,$dom);
@@ -487,7 +510,9 @@ if (!class_exists("WpDojoLoader")) {
 				}
 				
 				//add template elements
-				$this->getTemplateElements($xpath,$dom,$elem_templates);
+				$this->getImportElements($xpath,$dom,$elem_templates,"template");
+				$this->getImportElements($xpath,$dom,$elem_contents,"content");
+				
 				/*
 				if ($templates != null) {
 					foreach ($template as $tpl) {
