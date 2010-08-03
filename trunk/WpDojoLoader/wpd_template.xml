@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+	Templates for WpDojoloader
+-->
+
+
+<templates>
+	
+	
+	<template name="wpdsidebar">
+		<bordercontainer style="width:100%; height:300px;border:solid 1px black;" design="sidebar">
+			<contentpane region="left" style="width:100px;background-color:#d7d7d7">###left###</contentpane>
+			<contentpane region="top" style="background-color:#e7e7e7;">###head###</contentpane>
+			<contentpane region="center" style="background-color:#f7f7f7;">###right###</contentpane>
+		</bordercontainer>
+	</template>
+	
+	<template name="wpdscreendesign">
+		<bordercontainer style="width:100%; height:300px;" design="screenDesign">
+			<contentpane region="top" style="text-align:center;vertical-align:middle;margin-top:0px !important;">###head###</contentpane>
+			<contentpane region="left" style="width:50%;background-color:#d7d7d7;">###left###</contentpane>
+			<contentpane region="center">###center###</contentpane>
+		</bordercontainer>
+	</template>
+	
+	
+	<template name="tabcontainer_example">
+		<box animation="fadein" style="width:95%;font-size:22px;opacity:0;text-align:center;">###head###</box>
+		<tabcontainer>
+			<contentpane title="This is the first tab">###text1###</contentpane>	
+			<!--
+			<contentpane title="Containing another post">
+				<post id="88"/>
+			</contentpane>
+			-->			
+			<contentpane title="Nested">
+				<tabcontainer>
+					<contentpane title="A Contentpane">###text2###</contentpane>
+					<contentpane title="A second Contentpane">###text3###</contentpane>
+				</tabcontainer>
+			</contentpane>
+		
+		</tabcontainer>	
+	</template>
+	
+	<!-- 
+		Below are some Samples from the homepage
+		the content is in mydata.xml
+	-->
+	<template name="accordion_example" uid="accordion1">
+		<accordioncontainer_cnt count="5" >
+		</accordioncontainer_cnt>	
+	</template>
+	
+	<template name="titlepane_example" uid="titlepane1">
+		<titlepane title="Titlepane1" open="false">###text1###</titlepane>
+		<titlepane title="Titlepane2" open="false">###text2###</titlepane>
+		<titlepane title="Titlepane3 with a post inside" open="false">###text3###</titlepane>		
+	</template>
+	
+	<template name="tab_example" uid="tabexample">
+		<tabcontainer>
+			<contentpane title="This is the first tab">###text1###</contentpane>	
+			<!--
+			<contentpane title="Containing another post">
+				<post id="88"/>
+			</contentpane>
+			-->			
+			<contentpane title="Nested">
+				<tabcontainer>
+					<contentpane title="A Contentpane">###text2###</contentpane>
+					<contentpane title="A second Contentpane">###text3###</contentpane>
+				</tabcontainer>
+			</contentpane>
+		
+		</tabcontainer>		
+	</template>
+	
+	<template name="datagrid_example">
+		<datagrid storetype="csv" style="width:100%; height:400px;" fieldnames="name,link" structurename="bookmarks" filename="bookmarks.csv" />
+		<datagrid storetype="xml" style="width:100%; height:400px;" fieldnames="name,link" structurename="bookmarks" filename="bookmarks.xml" />
+	</template>
+</templates>

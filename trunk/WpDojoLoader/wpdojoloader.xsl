@@ -1,5 +1,5 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format">
-<xsl:output method="html" version="4.01" encoding="UTF-8"/>
+<xsl:output method="html" version="4.01" indent="no" encoding="UTF-8"/>
 	
 	<!-- the main template -->
 	<!--<xsl:template match="wpcontentroot">  
@@ -18,48 +18,39 @@
     <xsl:variable name="templatename" select="name()"></xsl:variable>
 
 
-    <div class="tundra wpdojoloader"> 
-      <xsl:apply-templates select="/wpcontentroot/content"/>
+    <div class="claro wpdojoloader"> 
+      <xsl:apply-templates select="/root/content"/>
     </div>  
     <!--<xsl:call-template name="$templatename"></xsl:call-template>-->
   </xsl:template>
-	
-  <xsl:template name="applytemplates">
-  	<xsl:param name="templatename"></xsl:param>
-  	<xsl:param name="withtemplates"></xsl:param>
-  	
-  	<!--<xsl:variable name="apply">
-	  	<xsl:choose>
-		  	<xsl:when test="ancestor::templates">
-		      --><!--ich bin ein template--><!--
-		      true
-		    </xsl:when>
-		    <xsl:otherwise>
-		      false
-		    </xsl:otherwise>
-	    </xsl:choose>
-    </xsl:variable>-->
-  	
-  	x<xsl:value-of select="$templatename"></xsl:value-of>x
-  	
-  	<xsl:choose>
-    	<xsl:when test="$templatename = 'accordionpane'">
-    		<!--<xsl:call-template name="accordionpane"></xsl:call-template>-->
-    	</xsl:when>
-    	<xsl:when test="$templatename = 'accordioncontainer'">
-    		<!--<xsl:call-template name="accordioncontainer"></xsl:call-template>-->
-    	</xsl:when>
-    	<xsl:when test="$templatename = 'calltemplate'">
-    		c<!--<xsl:apply-templates select="/wpcontentroot/templates"/>-->c
-    	</xsl:when>
-    </xsl:choose>
-  
-  </xsl:template>
 
+  <!-- 
+  	template to call imported templates
+   -->
   <xsl:template match="calltemplate">      
       <xsl:variable name="tplname" select="@name"></xsl:variable>
          
-      <xsl:apply-templates select="/wpcontentroot/templates/template[@name = $tplname]"></xsl:apply-templates>            
+      <xsl:variable name="uniqueid">
+      	<xsl:choose>
+      		<xsl:when test="@uid"><xsl:value-of select="@uid"></xsl:value-of></xsl:when>
+      		<xsl:otherwise><xsl:value-of select="/root/templates/template[@name = $tplname]/@uid"></xsl:value-of></xsl:otherwise>
+      	</xsl:choose>
+      </xsl:variable>
+          
+      <xsl:apply-templates select="/root/templates/template[@name = $tplname]">
+      	<xsl:with-param name="uid">
+      		<xsl:value-of select="$uniqueid"></xsl:value-of>
+      	</xsl:with-param>
+      	<xsl:with-param name="param1">
+      		<xsl:value-of select="@param1"></xsl:value-of>
+      	</xsl:with-param>
+      	<xsl:with-param name="param2">
+      		<xsl:value-of select="@param2"></xsl:value-of>
+      	</xsl:with-param>
+      	<xsl:with-param name="param3">
+      		<xsl:value-of select="@param3"></xsl:value-of>
+      	</xsl:with-param>
+      </xsl:apply-templates>            
   </xsl:template>
   
 	
@@ -70,7 +61,10 @@
 			<!-- add all attributes from xml to html -->
 			<xsl:call-template name="allattributes" />
 			
-			<xsl:value-of select="text()[1]" />
+			<xsl:call-template name="textout">
+     	 		<xsl:with-param name="textvalue" select="text()[1]"></xsl:with-param>        
+    		</xsl:call-template>
+	    				
 			<xsl:apply-templates/>
 		</div>
 	</xsl:template>
@@ -85,8 +79,10 @@
 				<xsl:with-param name="defaultstyle">width:100%;height:200px;</xsl:with-param> <!-- set the default style -->
 			</xsl:call-template>  
 		
-			<xsl:value-of select="text()[1]" />
-			<xsl:apply-templates/>
+			<xsl:call-template name="textout">
+     	 		<xsl:with-param name="textvalue" select="text()[1]"></xsl:with-param>        
+    		</xsl:call-template>	
+    		<xsl:apply-templates/>
 		</div>
 	</xsl:template>
 	
@@ -108,7 +104,9 @@
 					<xsl:with-param name="defaultstyle">width: 100%; height: 300px;</xsl:with-param> <!-- set the default style -->
 				</xsl:call-template>  
 			
-				<xsl:value-of select="text()[1]" />
+				<xsl:call-template name="textout">
+	     	 		<xsl:with-param name="textvalue" select="text()[1]"></xsl:with-param>        
+	    		</xsl:call-template>
 				<xsl:apply-templates/>
 			</div>
 		</div>
@@ -127,7 +125,9 @@
 			 	  <xsl:value-of select="." disable-output-escaping="yes" />	  
 			</xsl:for-each>
 		
-			<xsl:value-of select="text()[1]" />
+			<xsl:call-template name="textout">
+	     	 		<xsl:with-param name="textvalue" select="text()[1]"></xsl:with-param>        
+	    		</xsl:call-template>
 			<xsl:apply-templates/>
 		</div>
 	</xsl:template>
@@ -145,7 +145,9 @@
 			 	  <xsl:value-of select="." disable-output-escaping="yes" />	  
 			</xsl:for-each>
 		
-			<xsl:value-of select="text()[1]" />
+			<xsl:call-template name="textout">
+	     	 		<xsl:with-param name="textvalue" select="text()[1]"></xsl:with-param>        
+	    		</xsl:call-template>
 			<xsl:apply-templates/>
 		</div>
 	</xsl:template>
@@ -196,43 +198,157 @@
 				<xsl:with-param name="defaultstyle">width: 200px; height: 100px; border: solid 1px black;</xsl:with-param> <!-- set the default style -->
 			</xsl:call-template>  
 		
-			<xsl:value-of select="text()[1]" />
+			<xsl:call-template name="textout">
+	     	 		<xsl:with-param name="textvalue" select="text()[1]"></xsl:with-param>        
+	    		</xsl:call-template>
 			<xsl:apply-templates/>
 		</div>
 	</xsl:template>
 	
 	
-	<!-- a dojo scrollpane -->
+	<!-- a dojo accordioncontainer -->
 	<xsl:template match="accordioncontainer">
-        
-    <div dojoType="dijit.layout.AccordionContainer">
-			
+    	<div dojoType="dijit.layout.AccordionContainer">	
 			<!-- add all attributes from xml to html -->
 			<xsl:call-template name="allattributes">
 				<xsl:with-param name="defaultstyle">width: 100%;height: 300px;</xsl:with-param> <!-- set the default style -->
 			</xsl:call-template>  
 		
-			<xsl:value-of select="text()[1]" />
+			<xsl:call-template name="textout">
+	     	 		<xsl:with-param name="textvalue" select="text()[1]"></xsl:with-param>        
+	    		</xsl:call-template>
 			<xsl:apply-templates/>
 		</div>
 	</xsl:template>
 	
+	<!-- a dojo accordioncontainer -->
+	<xsl:template match="accordioncontainer_cnt">
+    	<xsl:param name="uid"></xsl:param>
+		
+		<xsl:variable name="currentuid">
+			<xsl:choose>
+				<xsl:when test="$uid != ''"><xsl:value-of select="$uid"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="@uid"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+    	
+    	<xsl:variable name="accid">djacc_<xsl:value-of select="$currentuid" /><xsl:value-of select="generate-id(.)"></xsl:value-of></xsl:variable>    	
+    	<div dojoType="dijit.layout.AccordionContainer">	
+			<!-- add all attributes from xml to html -->
+			<xsl:call-template name="allattributes">
+				<xsl:with-param name="defaultstyle">width: 100%;height: 300px;</xsl:with-param> <!-- set the default style -->
+			</xsl:call-template>  
+			
+			<xsl:choose>
+				<xsl:when test="@count">
+					<xsl:call-template name="loop" >
+						<xsl:with-param name="count"><xsl:value-of select="@count" /></xsl:with-param>
+						<xsl:with-param name="templatename">accordionpane</xsl:with-param>
+						<xsl:with-param name="prntid" select="$accid"></xsl:with-param>
+						<xsl:with-param name="uid" select="$currentuid"></xsl:with-param>
+					</xsl:call-template>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:for-each select="./accordionpane">
+						<xsl:variable name="tid">
+							<xsl:value-of select="$accid" /><xsl:value-of select="position()" />
+						</xsl:variable>
+				
+						<xsl:call-template name="accordionpane" > 
+							<xsl:with-param name="accid"><xsl:value-of select="$accid" /></xsl:with-param>
+						</xsl:call-template>
+					</xsl:for-each>	
+				</xsl:otherwise>
+			</xsl:choose>
+		</div>
+	</xsl:template>
+	
+	<!-- 
+		<xsl:template name="jqueryaccordion">
+		<xsl:param name="prntid"></xsl:param>
+		<xsl:param name="count"></xsl:param>
+		<xsl:param name="uid"></xsl:param>
+		
+		<h3><a href="#">
+				<xsl:choose>
+					<xsl:when test="$count != ''">
+						<xsl:call-template name="textout">
+			     	 		<xsl:with-param name="textvalue">###title_<xsl:value-of select="$uid"/>_<xsl:value-of select="$count"/>###</xsl:with-param>        
+			    		</xsl:call-template>	
+			    		<xsl:apply-templates/>	
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="@title"></xsl:value-of>
+					</xsl:otherwise>
+				</xsl:choose>
+			</a></h3>
+		<div>	
+			<p>
+				<xsl:choose>
+					<xsl:when test="$count != ''">
+						<xsl:call-template name="textout">
+			     	 		<xsl:with-param name="textvalue">###text_<xsl:value-of select="$uid"/>_<xsl:value-of select="$count"/>###</xsl:with-param>        
+			    		</xsl:call-template>	
+			    		<xsl:apply-templates/>	
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:call-template name="textout">
+			     	 		<xsl:with-param name="textvalue" select="text()[1]"></xsl:with-param>        
+			    			</xsl:call-template>	
+			    		<xsl:apply-templates/>
+					</xsl:otherwise>	
+				</xsl:choose>
+				
+    		</p>
+		</div>
+	</xsl:template>
+	
+	
+	 -->
+	
 	
 	<!-- a dojo accordionpane -->
-	<xsl:template match="accordionpane">        
-    <div dojoType="dijit.layout.AccordionPane">
-			
-			<!-- add all attributes from xml to html -->
-			<xsl:call-template name="allattributes" /> <!--
-				<xsl:with-param name="defaultstyle">width: 100%;height: 300px;</xsl:with-param>
-			</xsl:call-template>  -->
-		
-			<!--<xsl:value-of select="text()[1]" />-->
-      <xsl:call-template name="textout">
-        <xsl:with-param name="textvalue" select="text()[1]"></xsl:with-param>        
-      </xsl:call-template>
-      
-      <xsl:apply-templates/>
+	<xsl:template name="accordionpane" match="accordionpane">
+		<xsl:param name="prntid"></xsl:param>
+		<xsl:param name="count"></xsl:param>
+		<xsl:param name="uid"></xsl:param>
+	     
+		<div dojoType="dijit.layout.AccordionPane">				
+				<!-- add all attributes from xml to html -->
+				<xsl:call-template name="allattributes" /> 
+				
+				<xsl:attribute name="title">
+					<xsl:choose>
+						<xsl:when test="$count != ''">
+							<xsl:call-template name="textout">
+				     	 		<xsl:with-param name="textvalue">###text_<xsl:value-of select="$uid"/>_<xsl:value-of select="$count"/>###</xsl:with-param>        
+				    			<xsl:with-param name="istitle">true</xsl:with-param>
+				    		</xsl:call-template>	
+				    		<xsl:apply-templates/>	
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:call-template name="textout">
+				     	 		<xsl:with-param name="textvalue" select="text()[1]"></xsl:with-param>        
+				    			</xsl:call-template>	
+				    		<xsl:apply-templates/>
+						</xsl:otherwise>	
+					</xsl:choose>
+				</xsl:attribute>
+				
+			 	 <xsl:choose>
+					<xsl:when test="$count != ''">
+						<xsl:call-template name="textout">
+			     	 		<xsl:with-param name="textvalue">###text_<xsl:value-of select="$uid"/>_<xsl:value-of select="$count"/>###</xsl:with-param>        
+			    		</xsl:call-template>	
+			    		<xsl:apply-templates/>	
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:call-template name="textout">
+			     	 		<xsl:with-param name="textvalue" select="text()[1]"></xsl:with-param>        
+			    			</xsl:call-template>	
+			    		<xsl:apply-templates/>
+					</xsl:otherwise>	
+				</xsl:choose>
 		</div>
 	</xsl:template>
 	
@@ -261,8 +377,10 @@
                 	<xsl:attribute name="duration">3000</xsl:attribute>
                 </xsl:otherwise>  
             </xsl:choose>  
-			
-			<xsl:value-of select="text()[1]" />
+
+			<xsl:call-template name="textout">
+	     	 		<xsl:with-param name="textvalue" select="text()[1]"></xsl:with-param>        
+	    	</xsl:call-template>
 			<xsl:apply-templates/>
 		</div>
 	</xsl:template>
@@ -277,7 +395,9 @@
 				<xsl:with-param name="defaultstyle">width:100%; heigth:200px;</xsl:with-param>
 			</xsl:call-template>
 		
-			<xsl:value-of select="text()[1]" />
+			<xsl:call-template name="textout">
+	     	 		<xsl:with-param name="textvalue" select="text()[1]"></xsl:with-param>        
+	    		</xsl:call-template>
 			<xsl:apply-templates/>
 		</div>
 	</xsl:template>
@@ -292,30 +412,33 @@
 				<xsl:with-param name="defaultstyle">width:100%;</xsl:with-param>
 			</xsl:call-template>
 		
-			<xsl:value-of select="text()[1]" />
+			<xsl:call-template name="textout">
+	     	 		<xsl:with-param name="textvalue" select="text()[1]"></xsl:with-param>        
+	    		</xsl:call-template>
 			<xsl:apply-templates/>
 		</div>
 	</xsl:template>
 	
-	<!-- JQuery UI  -->
+	<!-- 
+		JQuery UI  
+		XSL-Templates to create query-ui Widgets
+	-->
 	
+	<!-- JQuery Tabs -->
 	<xsl:template match="jquerytabcontainer">
+		<xsl:param name="uid"></xsl:param>
 	
-		<xsl:variable name="tabid">jqtab_<xsl:value-of select="@uid" /><xsl:value-of select="generate-id(.)"></xsl:value-of></xsl:variable>
+		<xsl:variable name="tabid">jqtab_<xsl:value-of select="$uid" /><xsl:value-of select="generate-id(.)"></xsl:value-of></xsl:variable>
 		<!-- 
 		<xsl:for-each select="./ancestor::*">
 			xx<xsl:value-of select="name()"></xsl:value-of>yy
 		</xsl:for-each>-->
-			
+		
+		<script type="text/javascript">
 		<xsl:text disable-output-escaping="yes">
-			<![CDATA[
-					<script type="text/javascript">		
-					$(function() {
-						$("#]]></xsl:text><xsl:value-of select="$tabid"></xsl:value-of><xsl:text disable-output-escaping="yes"><![CDATA[").tabs();
-					});
-					</script>							
-			]]>
+			<![CDATA[$(function() {$("#]]></xsl:text><xsl:value-of select="$tabid"></xsl:value-of><xsl:text disable-output-escaping="yes"><![CDATA[").tabs();});]]>
 		</xsl:text>
+		</script>
 	
 		<div id="{$tabid}">
 			<!-- add all attributes from xml to html -->
@@ -358,17 +481,166 @@
 		-->
 		
 		<div id="{$tid}">
-			<xsl:call-template name="textout">
-     	 				<xsl:with-param name="textvalue" select="text()[1]"></xsl:with-param>        
-    				</xsl:call-template>
-    				
-    		<xsl:apply-templates/>
+			<p>
+				<xsl:call-template name="textout">
+	     	 		<xsl:with-param name="textvalue" select="text()[1]"></xsl:with-param>        
+	    			</xsl:call-template>	
+	    		<xsl:apply-templates/>
+    		</p>
 		</div>
-		
-		
-		
 	</xsl:template>
 	
+	<!-- JQuery Accordion -->
+	<xsl:template match="jqueryaccordioncontainer">
+		<xsl:param name="uid"></xsl:param>
+		
+		<xsl:variable name="currentuid">
+			<xsl:choose>
+				<xsl:when test="$uid != ''"><xsl:value-of select="@uid"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="$uid"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		
+		<xsl:variable name="accid">jqacc_<xsl:value-of select="$currentuid" /><xsl:value-of select="generate-id(.)"></xsl:value-of></xsl:variable>
+		
+		<script type="text/javascript">	
+			<xsl:text disable-output-escaping="yes"><![CDATA[$(document).ready(function(){alert('xxx');alert($("#]]></xsl:text><xsl:value-of select="$accid"></xsl:value-of><xsl:text disable-output-escaping="yes"><![CDATA[").accordion);});]]></xsl:text>
+		</script>
+		
+		<div id="{$accid}">
+			<!-- add all attributes from xml to html -->
+			<xsl:call-template name="allattributes" > 
+				<xsl:with-param name="defaultstyle">width:100%;</xsl:with-param>
+			</xsl:call-template>
+									
+			<xsl:choose>
+				<xsl:when test="@count">
+					<xsl:call-template name="loop" >
+						<xsl:with-param name="count"><xsl:value-of select="@count" /></xsl:with-param>
+						<xsl:with-param name="templatename">jqueryaccordion</xsl:with-param>
+						<xsl:with-param name="prntid" select="$accid"></xsl:with-param>
+						<xsl:with-param name="uid" select="$uid"></xsl:with-param>
+					</xsl:call-template>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:for-each select="./jqueryaccordion">
+						<xsl:variable name="tid">
+							<xsl:value-of select="$accid" /><xsl:value-of select="position()" />
+						</xsl:variable>
+				
+						<xsl:call-template name="jqueryaccordion" > 
+							<xsl:with-param name="accid"><xsl:value-of select="$accid" /></xsl:with-param>
+						</xsl:call-template>
+					</xsl:for-each>	
+				</xsl:otherwise>
+			</xsl:choose>
+		</div>
+		
+		<xsl:apply-templates/>		
+	</xsl:template>
+	
+	<!-- 
+		adds a jquery ui accordion
+		if count is given it will create placeholder ###title_{uid}_{count}###, ###
+	 -->
+	<xsl:template name="jqueryaccordion">
+		<xsl:param name="prntid"></xsl:param>
+		<xsl:param name="count"></xsl:param>
+		<xsl:param name="uid"></xsl:param>
+		
+		<h3><a href="#">
+				<xsl:choose>
+					<xsl:when test="$count != ''">
+						<xsl:call-template name="textout">
+			     	 		<xsl:with-param name="textvalue">###title_<xsl:value-of select="$uid"/>_<xsl:value-of select="$count"/>###</xsl:with-param>        
+			    		</xsl:call-template>	
+			    		<xsl:apply-templates/>	
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="@title"></xsl:value-of>
+					</xsl:otherwise>
+				</xsl:choose>
+			</a></h3>
+		<div>	
+			<p>
+				<xsl:choose>
+					<xsl:when test="$count != ''">
+						<xsl:call-template name="textout">
+			     	 		<xsl:with-param name="textvalue">###text_<xsl:value-of select="$uid"/>_<xsl:value-of select="$count"/>###</xsl:with-param>        
+			    		</xsl:call-template>	
+			    		<xsl:apply-templates/>	
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:call-template name="textout">
+			     	 		<xsl:with-param name="textvalue" select="text()[1]"></xsl:with-param>        
+			    			</xsl:call-template>	
+			    		<xsl:apply-templates/>
+					</xsl:otherwise>	
+				</xsl:choose>
+				
+    		</p>
+		</div>
+	</xsl:template>
+	
+	
+	<!-- 
+		calls a template with given templatename count times
+	 -->
+	<xsl:template name="loop"> 
+      <xsl:param name="count" select="1"/>
+      <xsl:param name="prntid"></xsl:param>
+	  <xsl:param name="templatename"></xsl:param>
+	  <xsl:param name="uid"></xsl:param>
+	  
+      <xsl:if test="$count > 0">
+      	<xsl:call-template name="templatebyname">
+      		<xsl:with-param name="templatename" select="$templatename"></xsl:with-param>
+      		<xsl:with-param name="prntid" select="$prntid"></xsl:with-param>
+      		<xsl:with-param name="count" select="$count"></xsl:with-param>
+      		<xsl:with-param name="uid" select="$uid"></xsl:with-param>
+      	</xsl:call-template>
+      
+        <xsl:call-template name="loop">
+          <xsl:with-param name="count" select="$count - 1"/>
+          <xsl:with-param name="prntid" select="$prntid"/>
+          <xsl:with-param name="templatename" select="$templatename"/>
+          <xsl:with-param name="uid" select="$uid"></xsl:with-param>
+        </xsl:call-template>
+      </xsl:if>
+      
+ 	</xsl:template>
+ 	
+ 	<!-- 
+ 		dynamic template call by templatename
+ 	 -->
+ 	<xsl:template name="templatebyname">
+	  	<xsl:param name="templatename"></xsl:param>
+	  	<xsl:param name="prntid"></xsl:param>
+	  	<xsl:param name="count"></xsl:param>
+	  	<xsl:param name="uid"></xsl:param>
+
+	  	<xsl:choose>
+	    	<xsl:when test="$templatename = 'accordioncontainer'">
+	    		<xsl:call-template name="accordioncontainer"></xsl:call-template>
+	    	</xsl:when>
+	    	<xsl:when test="$templatename = 'jqueryaccordion'">
+	    		<xsl:call-template name="jqueryaccordion">
+	    			<xsl:with-param name="prntid" select="$prntid"></xsl:with-param>
+	    			<xsl:with-param name="count" select="$count"></xsl:with-param>
+	    			<xsl:with-param name="uid" select="$uid"></xsl:with-param>
+	    		</xsl:call-template>
+	    	</xsl:when>
+	    	<xsl:when test="$templatename = 'accordionpane'">
+	    		<xsl:call-template name="accordionpane">
+	    			<xsl:with-param name="prntid" select="$prntid"></xsl:with-param>
+	    			<xsl:with-param name="count" select="$count"></xsl:with-param>
+	    			<xsl:with-param name="uid" select="$uid"></xsl:with-param>
+	    		</xsl:call-template>
+	    	</xsl:when>
+	    </xsl:choose>
+  
+  </xsl:template>
+ 	
 		
 	<!-- 
 		 add all xml attributes as html attributes, if the style attribute does not exist
@@ -394,23 +666,29 @@
   -->
   <xsl:template name="textout">
     <xsl:param name="textvalue" />
-    
-    <xsl:choose>
-    <xsl:when test="//content[@id = $textvalue]">
-      <xsl:value-of select="//content[@id = $textvalue]/text()[1]"/>
-
-
-      <!--<xsl:for-each select="//content[@id = $textvalue]">
-        <xsl:value-of select="."/>
-      </xsl:for-each>-->
-      
-    </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="$textvalue"/>
-      </xsl:otherwise>
-
-    </xsl:choose>
-        
+    <xsl:param name="istitle" />
+	
+	  <xsl:choose>
+	   	 <xsl:when test="$istitle = 'true'">
+	   	 	<xsl:choose>
+				<xsl:when test="//content[@id = $textvalue]/@title"><xsl:value-of select="//content[@id = $textvalue]/@title" /></xsl:when>
+				<xsl:otherwise>e<xsl:value-of select="$textvalue"></xsl:value-of></xsl:otherwise>
+			</xsl:choose>
+	   	 </xsl:when>
+	   	 <xsl:otherwise>
+		    <xsl:choose>
+		 		<xsl:when test="//content[@id = $textvalue]/child::*">
+					<xsl:for-each select="//content[@id = $textvalue]/child::*"><xsl:copy-of select="."></xsl:copy-of></xsl:for-each>		 
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:choose>
+						<xsl:when test="//content[@id = $textvalue]"><xsl:copy-of select="//content[@id = $textvalue]" /></xsl:when>
+						<xsl:otherwise><xsl:value-of select="$textvalue"></xsl:value-of></xsl:otherwise>
+					</xsl:choose>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:otherwise>
+     </xsl:choose>   
   </xsl:template>
   
 	
@@ -447,7 +725,7 @@
 	</xsl:template>
 	
 	<!-- Templates for some html elements -->
-	
+	<!-- 
 	<xsl:template match="ul">
 		<xsl:call-template name="addhtml" />	
 	</xsl:template>
@@ -475,6 +753,7 @@
 	<xsl:template match="i">
 		<xsl:call-template name="addhtml" />
 	</xsl:template>
+	-->
 	
 	<xsl:template match="code">
 		<div class="wpdojoloader_highlight">

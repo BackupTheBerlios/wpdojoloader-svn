@@ -40,9 +40,21 @@
 		<jquerytab title="Hallo Welt2"></jquerytab> 
 		<jquerytab title="Hallo Welt2">###text2###</jquerytab>     
     </jquerytabcontainer>
-
   </template>
   
+  <template name="jqueryaccordion">
+    <jqueryaccordioncontainer style="width:40%;height:200px">
+		<jqueryaccordion title="Hallo Welt">###text1###</jqueryaccordion>
+		<!-- <calltemplate name="template2"></calltemplate>-->
+		<jqueryaccordion title="Hallo Welt2"></jqueryaccordion> 
+		<jqueryaccordion title="Hallo Welt2">###text2###</jqueryaccordion>     
+    </jqueryaccordioncontainer>
+  </template>
+  
+  <template name="jqueryaccordion_cnt" >
+  	<jqueryaccordioncontainer style="width:40%;height:200px" count="5">
+  	</jqueryaccordioncontainer>	
+  </template>
   
   
   

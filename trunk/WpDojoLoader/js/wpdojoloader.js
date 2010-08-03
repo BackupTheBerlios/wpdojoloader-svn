@@ -47,10 +47,10 @@ function wpdojoloader_addOnLoad() {
 				
 				//below is the dojo highlightner
 				//it's not needed because translation is in xsl
-				/*
+				/**/
 				var cd1 = dojox.highlight.processString(code,n.getAttribute("lang"));
 				n.innerHTML = cd1.result;
-				*/
+				
 			});
 			
 			
@@ -103,7 +103,7 @@ function wpdojoloader_addOnLoad() {
 						});
 						break;
 					case "xml": //create a xml datastore
-						var storeurl = "dojo_xmlstore_loadsave.php?filename=" + "wp-content/" + jQuery(this).parent().attr('filename'); 
+						var storeurl = "wp-content/plugins/wpdojoloader/dojo_xmlstore_loadsave.php?filename=" + "wp-content/" + jQuery(this).parent().attr('filename'); 
 						dataStore = new dojox.data.XmlStore({ 
 							url: storeurl, 
 							urlPreventCache: false,
@@ -127,6 +127,11 @@ function wpdojoloader_addOnLoad() {
 				//load the field definitions
 				var id1 = jQuery(this).attr('id');
 				var fields = jQuery(this).parent().attr('fieldnames'); //list of fieldnames, seperated with comma
+				if (!fields)
+				{
+					fields = "name,link";
+				}
+				
 				var layoutGrid = new Array();
 				var lst1 = fields.split(","); //split the fieldlist
 				if (lst1) {
@@ -134,6 +139,7 @@ function wpdojoloader_addOnLoad() {
 						var fo = {
 							field: lst1[i],
 							name: lst1[i],
+							width: 'auto',
 							editable: editable
 						}
 						layoutGrid.push(fo); 
@@ -203,7 +209,7 @@ function wpdojoloader_addOnLoad() {
 						return this.url;
 					} else
 					{
-						return "http://dirk-lehmeier.de/wpdojoloader/#";
+						return "wpdojoloader/#";
 					}
 				}
 				
@@ -225,7 +231,7 @@ function wpdojoloader_addOnLoad() {
 					//alert(event);
 					//dataStore.save();
 				}
-				alert('a');
+			
 				/* you can use this for custom row styleing
 				dijit.byId(id1).onStyleRow = function(inrow){
 				}

@@ -50,12 +50,14 @@ if (!class_exists("WpDojoLoader")) {
 		var $loadLocalDojo = false;   	//load a local version of dojo instead of google
 		var $loadOpenLayers = false;  	//load the openlayers api, used for some custom widgets
 		var $loadOpenStreetMap = false;	//load the openstreetmap api, used for some custom widgets
+		var $loadjqueryui = true;  //load jqueryui
 		
 		//general options
 		var $customLoaderEnabled = false; //if this is set to true, the custom loader is enabled which contains 
 										  //some other none dojo elements
 		
 		var $debugmode = false;
+		var $addcontenttags = true;
 		
 		/*****************************
 		 * 
@@ -83,15 +85,18 @@ if (!class_exists("WpDojoLoader")) {
 		 * @return boolean
 		 */
 		function isActive() {	
-			$adminoptions = get_option($this->adminOptionsName);
-			$dojoLoaderAdminOptions = array();
-			
-			if (!empty($adminoptions)) {
-				foreach ($adminoptions as $key => $option)
-					$dojoLoaderAdminOptions[$key] = $option;
-			}	
-			if ($dojoLoaderAdminOptions["activate"] == "true") {
-				return true;
+			if (function_exists("get_option"))
+			{
+				$adminoptions = get_option($this->adminOptionsName);
+				$dojoLoaderAdminOptions = array();
+				
+				if (!empty($adminoptions)) {
+					foreach ($adminoptions as $key => $option)
+						$dojoLoaderAdminOptions[$key] = $option;
+				}	
+				if ($dojoLoaderAdminOptions["activate"] == "true") {
+					return true;
+				}
 			}
 			return false;
 		}
@@ -104,7 +109,7 @@ if (!class_exists("WpDojoLoader")) {
 			if ($this->debugmode == true)
 			{
 				echo "<br/>";
-				echo "########&nbsp;".$text."&nbsp;########<br/>";
+				echo "########&nbsp;<br/>".$text."<br/>&nbsp;########<br/>";
 				
 				if ($object != null)
 				{
@@ -326,8 +331,9 @@ if (!class_exists("WpDojoLoader")) {
 				if ($nodeset != null) {
 					foreach ($nodeset as $node) {
 						
-						$this->debug("getTemplateElements",$node);
 						$this->debug("getTemplateElements",$node->get_attribute("filename"));
+						$this->debug("getTemplateElements",$node);
+						
 						
 						//add 			
 						$filename = $node->get_attribute("filename");								
@@ -337,8 +343,11 @@ if (!class_exists("WpDojoLoader")) {
 						  
 						if (file_exists($filename))
 						{
+							$this->debug("getTemplateElements2222",$filename);
 							$tpl = domxml_open_file($filename);
-
+							
+							$this->debug($tpl->dump_mem(true),null);
+							
             				$templates = $this->getChildren($tpl, $importtype);
 				            foreach ($templates as $template)
 				            {
@@ -353,6 +362,9 @@ if (!class_exists("WpDojoLoader")) {
 							$text = $domdocument->create_text_node( $tpltxt );
 							//$parentnode->append_child( $attr );
 							$parentnode->append_child( $text );
+						} else
+						{
+							$this->debug("file does not exist",$filename);
 						}						
 					} //foreach
 				}
@@ -372,7 +384,7 @@ if (!class_exists("WpDojoLoader")) {
 		 * @param $xpathcontext Object
 		 */
 		function getContentElement($xpathcontext) {
-			$node = $xpathcontext->xpath_eval('/wpcontentroot'); //get content element
+			$node = $xpathcontext->xpath_eval('/root'); //get content element
 			return $node->nodeset[0];
 		}
 		
@@ -381,14 +393,17 @@ if (!class_exists("WpDojoLoader")) {
 		 * @return array
 		 */
 		function getAdminOptions() {	
-			$adminoptions = get_option($this->adminOptionsName);
-			$dojoLoaderAdminOptions = array();
-			
-			if (!empty($adminoptions)) {
-				foreach ($adminoptions as $key => $option)
-					$dojoLoaderAdminOptions[$key] = $option;
-			}				
-			return $dojoLoaderAdminOptions;
+			if (function_exists("get_option"))
+			{
+				$adminoptions = get_option($this->adminOptionsName);
+				$dojoLoaderAdminOptions = array();
+				
+				if (!empty($adminoptions)) {
+					foreach ($adminoptions as $key => $option)
+						$dojoLoaderAdminOptions[$key] = $option;
+				}				
+				return $dojoLoaderAdminOptions;
+			}
 		}
 		
 		/*
@@ -397,10 +412,18 @@ if (!class_exists("WpDojoLoader")) {
 		function addDojoRequireLines() {
 			
 			//dojo version 1.4 from google
-			echo '<SCRIPT TYPE="text/javascript"  SRC="http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojo/dojo.xd.js" djConfig="parseOnLoad:false" ></SCRIPT>';
-			echo '<script type="text/javascript">';
-			$adminOptions = $this->getAdminOptions();
+			//echo '<SCRIPT TYPE="text/javascript"  SRC="http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojo/dojo.xd.js" djConfig="parseOnLoad:false" ></SCRIPT>';
+			//echo '<script type="text/javascript">';
+			
+			//dojo version 1.5 from google
+			echo '<SCRIPT TYPE="text/javascript"  SRC="http://ajax.googleapis.com/ajax/libs/dojo/1.5/dojo/dojo.xd.js" djConfig="parseOnLoad:false" ></SCRIPT>';
 						
+			//some dojo styles
+			echo '<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/dojo/1.5/dijit/themes/claro/claro.css" />';
+			echo '<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/dojo/1.5/dojox/grid/resources/claroGrid.css" />';
+			
+			echo '<script type="text/javascript">';
+			$adminOptions = $this->getAdminOptions();			
 			//var_dump($adminOptions);
 			$require = "";
 			for ($i=0;$i<count($adminOptions['require']);$i++) {
@@ -545,6 +568,7 @@ if (!class_exists("WpDojoLoader")) {
 			$xh = xslt_create();
 			
 			$xslfile = dirname(__FILE__). '/wpdojoloader.xsl';
+			$this->debug($xslfile,$xslfile);
 			//$result = xslt_process($xh, 'arg:/_xml', 'wp-content/plugins/wpdojoloader/wpdojoloader.xsl', NULL, $arguments);
 			$result = xslt_process($xh, 'arg:/_xml', $xslfile, NULL, $arguments);
 			if ($result) {
@@ -566,17 +590,40 @@ if (!class_exists("WpDojoLoader")) {
 						
 			//wrap xml document around the xmldata from the page or post
 			$xd = "<?xml version=\"1.0\"?>";
-			$xd .= "<wpcontentroot>";
+			$xd .= "<root>";
+			
+			if ($this->addcontenttags)
+			{
+				$xd .= "<content>";	
+			}
+			
 			$xd .= $xmldata;
-			$xd .= "</wpcontentroot>";
+			
+			if ($this->addcontenttags)
+			{
+				$xd .= "</content>";	
+			}
+			
+			$xd .= "</root>";
+				
 			$xd = str_replace("&lt;","<",$xd);
 			$xd = str_replace("&gt;",">",$xd);
 			
+			if ($this->debugmode)
+			{
+				echo "<!-- BEGIN XML".$xd." END XML -->"; //debug only
+			}
+						
 			$xd = $this->enrichXmlString($xd);
-			
-			//echo "<!-- BEGIN XML".$xd." END XML -->"; //debug only
+
+			if ($this->debugmode)
+			{
+				echo "<!-- BEGIN XML".$xd." END XML -->"; //debug only
+			}
 			
 			$rslt = ($this->xml_translate($xd));
+			
+			
 			return $rslt;
 		}
 				
@@ -598,7 +645,9 @@ if (!class_exists("WpDojoLoader")) {
 				$pre = substr($aContent,0,$p1);
 				$suf = substr($aContent,$p2 + strlen($aEndTag),strlen($aContent) - $p1);
 				$inner = substr($aContent,$p1 + strlen($aStartTag), ($p2 - strlen($aStartTag)) - ($p1));
-							
+
+				$this->debug($inner,null);
+				
 				$htmldata = $this->parseXML($inner); 
 				if ($htmldata != null) {
 					//echo "<!-- BEGIN CONTENT ".$htmldata." END CONTENT -->"; //debug only	
@@ -648,6 +697,7 @@ if (!class_exists("WpDojoLoader")) {
 		 */
 		function addHeaderCode() {
 			//add some css files
+			/*
 			echo '<link type="text/css" rel="stylesheet" href="' . get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/css/themes/tundra/tundra.css" />' . "\n";
 			echo '<link type="text/css" rel="stylesheet" href="' . get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/css/dojox/grid/resources/Grid.css" />' . "\n";
 			echo '<link type="text/css" rel="stylesheet" href="' . get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/css/dojox/grid/resources/tundraGrid.css" />' . "\n";
@@ -655,7 +705,13 @@ if (!class_exists("WpDojoLoader")) {
 			echo '<link type="text/css" rel="stylesheet" href="' . get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/css/dojox/layout/resources/ResizeHandle.css" />' . "\n";
 			echo '<link type="text/css" rel="stylesheet" href="' . get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/css/dojox/layout/resources/ScrollPane.css" />' . "\n";
 			echo '<link type="text/css" rel="stylesheet" href="' . get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/css/resources/dojo.css" />' . "\n";
+			*/
 			//echo '<link type="text/css" rel="stylesheet" href="' . get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/css/wpdojoloader.css" />' . "\n";
+			
+			if ($this->loadjqueryui) {
+				echo '<link type="text/css" rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7/themes/smoothness/jquery-ui.css" />' . "\n";
+			}
+			
 			
 			if (function_exists('wp_enqueue_script')) {
 				//load jquery
@@ -673,6 +729,11 @@ if (!class_exists("WpDojoLoader")) {
 				//load openlayers api
 				if ($this->loadOpenLayers) {			
 					wp_enqueue_script('openlayers', 'http://openlayers.org/api/OpenLayers.js', array('prototype'), '0.1');
+				}
+				
+				if ($this->loadjqueryui) {			
+					
+					wp_enqueue_script('jqueryui', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js', array('prototype'), '0.1');
 				}
 				
 				//load openstreetmap api
@@ -714,6 +775,11 @@ if (!class_exists("WpDojoLoader")) {
 			$rslt .= $this->parseContent($content); 
 			return $rslt;	
 		}
+		
+		function addTitle($content = '') {
+			return "<div style=\"border:solid 1px red;\">".$content."</div>";
+		}
+		
 	}
 }
 
@@ -752,6 +818,10 @@ if (isset($dl_dojoLoader)) {
 			//Actions
 			add_action('wp_print_scripts',array(&$dl_dojoLoader, 'addHeaderCode'), 1);
 					
+			//Filters
+			//add_action('the_post', array(&$dl_dojoLoader, 'addTitle'),1);
+			//add_filter('the_title', array(&$dl_dojoLoader, 'addTitle'),1);
+			
 			//Filters
 			add_filter('the_content', array(&$dl_dojoLoader, 'addContent'),1); 
 		}

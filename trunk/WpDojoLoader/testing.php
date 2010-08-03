@@ -11,7 +11,7 @@ class WpDojoLoaderTester {
   //constructor
   function WpDojoLoaderTester(){
     $this->dl_dojoLoader = new WpDojoLoader();
-    $this->dl_dojoLoader->debugmode = true;
+    $this->dl_dojoLoader->debugmode = false;
   }
 	
   function addSeperator($text)
@@ -26,12 +26,14 @@ class WpDojoLoaderTester {
   	$rawdata = $dom->dump_mem(true);
   	$rawdata = str_replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>","",$rawdata);
   	
-  	
+  	/*
   	$this->addSeperator("Rawdata");
   	echo "<br>".$rawdata."<br>";
+  	*/
   	
   	$this->addSeperator("Content");
   	$rawdata  = "[dojocontent]".$rawdata."[/dojocontent]";
+  	$this->dl_dojoLoader->addcontenttags = false;
   	$content = $this->dl_dojoLoader->addContent($rawdata);
   	echo $content;	
   	$this->addSeperator("Ende");
@@ -44,11 +46,12 @@ class WpDojoLoaderTester {
 ?>
 <html>
 	<head>
-		<script src="http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojo/dojo.xd.js" djConfig="parseOnLoad:true" 
+		<script src="http://ajax.googleapis.com/ajax/libs/dojo/1.5/dojo/dojo.xd.js" djConfig="parseOnLoad:true" 
 			type="text/javascript"></script>
-		<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/dojo/1.4/dijit/themes/tundra/tundra.css"
+		<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/dojo/1.5/dijit/themes/claro/claro.css"
         />
-		
+		<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/dojo/1.5/dojox/grid/resources/claroGrid.css"
+        />
 				
 		
 		<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7/themes/smoothness/jquery-ui.css"
@@ -56,6 +59,10 @@ class WpDojoLoaderTester {
 		
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="js/wpdojoloader.js"></script>
+		
+		
+		
 		
 		
 		<script type="text/javascript">
@@ -81,17 +88,17 @@ class WpDojoLoaderTester {
 		</script>
 		
 		<script type="text/javascript">	
-
+			/*
 			dojo.ready(function(){
 				  //dojo.registerModulePath("trm","../../trm");		
 				  
-				  console.debug("alo");
+				  //console.debug("alo");
 				  //alert('hi');
 				  //var foo=new dojox.data.XmlStore();
 				  //init();
 				  //dojo.parser.parse();      
 				  
-			  });
+			  });*/
 		</script>
 		
 	</head>
@@ -101,11 +108,26 @@ class WpDojoLoaderTester {
 			$dojotest = new  WpDojoLoaderTester();
 			$dojotest->run($filename);
 		?>
+		
+		<p>
+			echo ini_get("memory_limit");
+			ini_set('memory_limit', '32M');
+	
+			echo ini_get("memory_limit");
+	
+			phpinfo();
+		</p>
+		
 	</body>
 
 </html>
 
+<?php
 
+// Show all information, defaults to INFO_ALL
+//phpinfo();
+
+?>
 
 
 
