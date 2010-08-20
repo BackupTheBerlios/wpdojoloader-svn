@@ -1,23 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?>
-  
-<!--
-<accordioncontainer style="width:80%;height:200px">
-
-<accordionpane selected="true" title="A AccordionPane 1">Hello World 1</accordionpane>
-
-<accordionpane selected="true" title="A AccordionPane 2">Hello World 2</accordionpane>
-
-<accordionpane selected="true" title="A AccordionPane 3">Hello World 3</accordionpane>
-
-</accordioncontainer>
--->
-<content>	
+<contentlist>
 	
-<import type="template" filename="wpd_template.xml" />
-<import type="content" filename="mydata.xml" />
-
-
-<calltemplate name="datagrid_example"></calltemplate>
-
-
-</content>
+	<content id="###text1###">This is sample text1</content>
+	<content id="###text2###">This is sample text2</content>
+	<content id="###text3###">This is sample text3</content>
+	<content id="###text4###">This is sample text4</content>
+	<content id="###text5###">This is sample text5</content>
+	
+	<content id="###text_accordion1_1###" title="Title1">accordion sampletext 1</content>
+	<content id="###text_accordion1_2###" title="Title2">accordion sampletext 2</content>
+	<content id="###text_accordion1_3###" title="Title3">accordion sampletext 3</content>
+	<content id="###text_accordion1_4###" title="Title4">accordion sampletext 4</content>
+	<content id="###text_accordion1_5###" title="Title5">accordion sampletext 5</content>
+	
+	
+	<content id="###left###">
+		<span>
+			<ul>
+				<li>This is some text 1</li>
+				<li>This is some text 2</li>
+			</ul>
+		</span>
+	</content>
+	
+</contentlist>

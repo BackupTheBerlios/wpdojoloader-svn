@@ -68,6 +68,9 @@ if (!class_exists("WpDojoLoader")) {
 		var $adminOptionsName = "WpDojoLoaderAdminOptions";
 		//TODO to remove
 		//var $iscodeelem = false; //this is set to true if a <code> element is found, no other elements will be parsed until the </code> element 
+		var $customtemplates = array(array());   //if this is not empty the selected templates will loaded 
+		var $customuid = "";
+		var $contentgroup = "";
 		
 		function WpDojoLoader() { //constructor
 			//nothing to be done at the moment
@@ -140,6 +143,12 @@ if (!class_exists("WpDojoLoader")) {
 				);
 								
 			update_option($this->adminOptionsName, $dojoLoaderAdminOptions);
+			
+			if (!isset($dl_adminLoader)) {
+				$dl_adminLoader = new WpDojoLoader_AdminLoader();
+			}
+			
+			$dl_adminLoader->initAdminOptions();
 		}
 		
 		/**
@@ -269,6 +278,16 @@ if (!class_exists("WpDojoLoader")) {
 			$node->append_child( $attr );
 			$node->append_child( $text );
 			
+			//add the contentgroup
+			if ($this->contentgroup != "")
+			{			
+				$node = $domdocument->create_element( 'option' );
+				$attr = $domdocument->create_attribute  ( "name"  , "contentgroup"  );
+				$text = $domdocument->create_text_node( $this->contentgroup );
+				$node->append_child( $attr );
+				$node->append_child( $text );
+			}
+			
 			array_push($result, $node);	
 			
 			if (count($result) > 0)		
@@ -278,6 +297,9 @@ if (!class_exists("WpDojoLoader")) {
 		}
 		
 		
+		/**
+		 *
+		 */
 		function &getFirstChild(&$domdocument)
 		{
 			$de = $domdocument->document_element();
@@ -293,27 +315,30 @@ if (!class_exists("WpDojoLoader")) {
 			return null;
 		}
     
-
-    function getChildren(&$domdocument,$elementname)
-    {
-      $result = array();
-
-      $de = $domdocument->document_element();
-      $kids = $de->children();
-      
-      foreach($kids as $node)
-      {
-        if (strtolower($node->node_name()) == strtolower($elementname))
-        {
-          array_push($result, $node);	  
-        }
-      } 
-      
-      if (count($result) > 0)		
-				return $result;
-				
-			return null;	      
-    }		
+	
+	    /**
+	     *
+	     */
+	    function getChildren(&$domdocument,$elementname)
+	    {
+	      $result = array();
+	
+	      $de = $domdocument->document_element();
+	      $kids = $de->children();
+	      
+	      foreach($kids as $node)
+	      {
+	        if (strtolower($node->node_name()) == strtolower($elementname))
+	        {
+	          array_push($result, $node);	  
+	        }
+	      } 
+	      
+	      if (count($result) > 0)		
+					return $result;
+					
+				return null;	      
+	    }		
 		
 		
 		/**
@@ -338,7 +363,7 @@ if (!class_exists("WpDojoLoader")) {
 						//add 			
 						$filename = $node->get_attribute("filename");								
 						$this->debug("getTemplateElements1111",$filename);
-
+	
 						$filename = dirname(__FILE__)."/".$filename;
 						  
 						if (file_exists($filename))
@@ -348,8 +373,9 @@ if (!class_exists("WpDojoLoader")) {
 							
 							$this->debug($tpl->dump_mem(true),null);
 							
-            				$templates = $this->getChildren($tpl, $importtype);
-				            foreach ($templates as $template)
+	            			$templates = $this->getChildren($tpl, $importtype);
+				            //var_dump($templates);
+	            			foreach ($templates as $template)
 				            {
 				              $nd = $template->clone_node(true);
 											$parentnode->append_child($nd);
@@ -376,15 +402,21 @@ if (!class_exists("WpDojoLoader")) {
 				
 			return null;	
 		}
-		
+			
 		
 		/**
 		 * get the main content element from the xml document
 		 * @return 
 		 * @param $xpathcontext Object
 		 */
-		function getContentElement($xpathcontext) {
+		function getRootElement($xpathcontext) {
 			$node = $xpathcontext->xpath_eval('/root'); //get content element
+			return $node->nodeset[0];
+		}
+		
+		
+		function getContentElement($xpathcontext) {
+			$node = $xpathcontext->xpath_eval('/root/content'); //get content element
 			return $node->nodeset[0];
 		}
 		
@@ -487,6 +519,20 @@ if (!class_exists("WpDojoLoader")) {
 			}	
 		}
 		
+		
+		/**
+		 * removes all calltemplate elements
+		 * -> used for ajax-load.php
+		 */
+		function removeCallTemplate(&$dom) {
+	      $elements = $dom->get_elements_by_tagname("calltemplate");
+	      foreach ($elements as $elem) {
+	        $prnt = $elem->parent_node();
+	        $prnt->remove_child($elem);
+	      }
+		}
+		
+		
 		/**
 		 * enriches the xmlstring with linked posts, pages and gridstructures
 		 * @return 
@@ -495,7 +541,7 @@ if (!class_exists("WpDojoLoader")) {
 			$dom   = domxml_open_mem($xmlstring);
 			$xpath = $dom->xpath_new_context();
 			
-			$elem_content = $this->getContentElement($xpath);
+			$elem_content = $this->getRootElement($xpath);
 			if ($elem_content != null) {
 				$elem_posts = $dom->create_element("posts");
 				$elem_pages = $dom->create_element("pages");
@@ -536,6 +582,7 @@ if (!class_exists("WpDojoLoader")) {
 				$this->getImportElements($xpath,$dom,$elem_templates,"template");
 				$this->getImportElements($xpath,$dom,$elem_contents,"content");
 				
+				
 				/*
 				if ($templates != null) {
 					foreach ($template as $tpl) {
@@ -544,6 +591,24 @@ if (!class_exists("WpDojoLoader")) {
 				}
 				*/
 				
+				// if there are customtemplate names we use only this for calltemplate
+				if ($this->customtemplates[0][0] != "")
+				{
+					$this->removeCallTemplate($dom);
+					$cnt = $this->getContentElement($xpath);
+					
+					foreach ($this->customtemplates as $tpl) {
+						$elem_tpl = $dom->create_element("calltemplate");
+						$attr1 = $dom->create_attribute("name",$tpl[0]);
+						$elem_tpl->append_child( $attr1 );
+						
+						$attr2 = $dom->create_attribute("uid",$tpl[1]);
+						$elem_tpl->append_child( $attr2 );
+						
+						$cnt->append_child( $elem_tpl );
+					}	
+				}
+				/* */	
 				$this->replaceGridStructures($xpath);
 			}
 			return $dom->dump_mem(true);

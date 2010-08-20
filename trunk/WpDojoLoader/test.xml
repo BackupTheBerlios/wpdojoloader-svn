@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  
+<!--
+	Some test data for testing.php
+-->
+  
+<!--
+<accordioncontainer style="width:80%;height:200px">
+
+<accordionpane selected="true" title="A AccordionPane 1">Hello World 1</accordionpane>
+
+<accordionpane selected="true" title="A AccordionPane 2">Hello World 2</accordionpane>
+
+<accordionpane selected="true" title="A AccordionPane 3">Hello World 3</accordionpane>
+
+</accordioncontainer>
+-->
+<content>	
+	
+<import type="template" filename="wpd_template.xml" />
+<import type="content" filename="mydata.xml" />
+
+
+<calltemplate name="datagrid_example"></calltemplate>
+
+
+</content>

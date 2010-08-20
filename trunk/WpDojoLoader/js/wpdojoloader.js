@@ -42,6 +42,9 @@ function wpdojoloader_addOnLoad() {
 				//comment out this line
 				code = code.replace(/<p>/g,"");   
 				code = code.replace(/<\/p>/g,"");
+				code = code.replace(/<br>/g,"");
+				code = code.replace(/<br\/>/g,"");
+				code = code.replace(/<\/br>/g,"");
 				console.debug(code);
 				n.innerHTML = code;
 				
@@ -464,4 +467,30 @@ function wpdojoloader_savePost(sender){
 		console.error(e);
 	}	
 } // end function wpdojoloader_savePost
+
+function initHighlightner()
+{
+	dojo.query(".wpdojoloader_highlight").forEach(function(n){
+	
+	var code = n.innerHTML;
+	
+	//replace the <p> tags -> added from wordpress
+	//if you want to show <p> tags in the code you have to
+	//comment out this line
+	code = code.replace(/<p>/g,"");   
+	code = code.replace(/<\/p>/g,"");
+	code = code.replace(/<br>/g,"");
+	code = code.replace(/<br\/>/g,"");
+	code = code.replace(/<\/br>/g,"");
+	console.debug(code);
+	n.innerHTML = code;
+	
+	//below is the dojo highlightner
+	//it's not needed because translation is in xsl
+	/**/
+	var cd1 = dojox.highlight.processString(code,n.getAttribute("lang"));
+	n.innerHTML = cd1.result;
+	alert('ready');
+	});
+}
 

@@ -1,0 +1,19 @@
+dojo.require("dijit.form.TextBox");
+dojo.require("dijit.layout.TabContainer");
+dojo.require("dijit.layout.ContentPane");
+dojo.require("dojox.layout.ResizeHandle");
+dojo.require("dojox.grid.DataGrid");
+dojo.require("dojox.data.CsvStore");
+dojo.require("dojox.data.XmlStore");
+dojo.require("dojox.widget.FisheyeLite");
+dojo.require("dojox.highlight");
+dojo.require("dojox.layout.ScrollPane");
+dojo.require("dijit.layout.AccordionContainer");
+dojo.require("dijit.form.Button");
+dojo.require("dijit.layout.BorderContainer");
+dojo.require("dijit.TitlePane");
+dojo.require("dojox.html.entities");
+//Load the XML language
+dojo.require("dojox.highlight.languages.xml");
+//Load the HTML language
+dojo.require("dojox.highlight.languages.html");

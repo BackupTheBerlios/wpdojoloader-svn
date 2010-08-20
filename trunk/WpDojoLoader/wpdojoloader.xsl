@@ -1,9 +1,9 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format">
-<xsl:output method="html" version="4.01" indent="no" encoding="UTF-8"/>
+<xsl:output method="html" version="4.01" omit-xml-declaration="yes" indent="no" encoding="UTF-8"/>
 	
 	<!-- the main template -->
 	<!--<xsl:template match="wpcontentroot">  
-		<div class="tundra wpdojoloader">
+		<div class="claro wpdojoloader">
       <xsl:apply-templates/>
 		</div>
 	</xsl:template>-->
@@ -12,9 +12,6 @@
   	this template calls the different templates by name  	
    -->
   <xsl:template match="/">
-     <!-- ich bin stern  -->
-     <!--  <xsl:value-of select="name()"/>  -->
-
     <xsl:variable name="templatename" select="name()"></xsl:variable>
 
 
@@ -23,6 +20,12 @@
     </div>  
     <!--<xsl:call-template name="$templatename"></xsl:call-template>-->
   </xsl:template>
+      
+  <xsl:template match="script">
+  	<xsl:if test="@type = 'script'">
+  		<script type="text/javascript"><xsl:value-of disable-output-escaping="yes" select="."></xsl:value-of></script>
+  	</xsl:if>		
+  </xsl:template> 
 
   <!-- 
   	template to call imported templates
@@ -56,7 +59,7 @@
 	
 	<!-- a dojo contentpane -->
 	<xsl:template match="contentpane">
-		<div dojoType="dijit.layout.ContentPane" class="tundra wpdojoloader_contentpane">
+		<div dojoType="dijit.layout.ContentPane" class="claro wpdojoloader_contentpane">
 			
 			<!-- add all attributes from xml to html -->
 			<xsl:call-template name="allattributes" />
@@ -72,7 +75,7 @@
 	
 	<!-- a dojo tabcontainer -->
 	<xsl:template match="tabcontainer">
-		<div dojoType="dijit.layout.TabContainer" class="tundra wpdojoloader_tab">
+		<div dojoType="dijit.layout.TabContainer" class="claro wpdojoloader_tab">
 			
 			<!-- add all attributes from xml to html -->
 			<xsl:call-template name="allattributes">
@@ -97,7 +100,7 @@
 				<xsl:value-of select="generate-id()"></xsl:value-of>
 			</xsl:variable>				
 			
-			<div dojoType="dojox.grid.DataGrid" jsid="{$gridid}" id="{$gridid}" rowsPerPage="40" class="tundra wpdojoloader_datagrid">
+			<div dojoType="dojox.grid.DataGrid" jsid="{$gridid}" id="{$gridid}" rowsPerPage="40" class="claro wpdojoloader_datagrid">
 				
 				<!-- add all attributes from xml to html -->
 				<xsl:call-template name="allattributes">
@@ -427,19 +430,12 @@
 	<!-- JQuery Tabs -->
 	<xsl:template match="jquerytabcontainer">
 		<xsl:param name="uid"></xsl:param>
-	
 		<xsl:variable name="tabid">jqtab_<xsl:value-of select="$uid" /><xsl:value-of select="generate-id(.)"></xsl:value-of></xsl:variable>
-		<!-- 
-		<xsl:for-each select="./ancestor::*">
-			xx<xsl:value-of select="name()"></xsl:value-of>yy
-		</xsl:for-each>-->
 		
 		<script type="text/javascript">
-		<xsl:text disable-output-escaping="yes">
-			<![CDATA[$(function() {$("#]]></xsl:text><xsl:value-of select="$tabid"></xsl:value-of><xsl:text disable-output-escaping="yes"><![CDATA[").tabs();});]]>
-		</xsl:text>
+			<xsl:text disable-output-escaping="yes"><![CDATA[jQuery(document).ready(function(){jQuery("#]]></xsl:text><xsl:value-of select="$tabid"></xsl:value-of><xsl:text disable-output-escaping="yes"><![CDATA[").tabs();});]]></xsl:text>
 		</script>
-	
+		
 		<div id="{$tabid}">
 			<!-- add all attributes from xml to html -->
 			<xsl:call-template name="allattributes" > 
@@ -493,20 +489,17 @@
 	<!-- JQuery Accordion -->
 	<xsl:template match="jqueryaccordioncontainer">
 		<xsl:param name="uid"></xsl:param>
-		
 		<xsl:variable name="currentuid">
 			<xsl:choose>
-				<xsl:when test="$uid != ''"><xsl:value-of select="@uid"/></xsl:when>
-				<xsl:otherwise><xsl:value-of select="$uid"/></xsl:otherwise>
+				<xsl:when test="$uid != ''"><xsl:value-of select="$uid"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="@uid"/></xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		
 		<xsl:variable name="accid">jqacc_<xsl:value-of select="$currentuid" /><xsl:value-of select="generate-id(.)"></xsl:value-of></xsl:variable>
-		
+		<xsl:value-of select="$accid"></xsl:value-of>
 		<script type="text/javascript">	
-			<xsl:text disable-output-escaping="yes"><![CDATA[$(document).ready(function(){alert('xxx');alert($("#]]></xsl:text><xsl:value-of select="$accid"></xsl:value-of><xsl:text disable-output-escaping="yes"><![CDATA[").accordion);});]]></xsl:text>
+			<xsl:text disable-output-escaping="yes"><![CDATA[jQuery(document).ready(function(){jQuery("#]]></xsl:text><xsl:value-of select="$accid"></xsl:value-of><xsl:text disable-output-escaping="yes"><![CDATA[").accordion();});]]></xsl:text>
 		</script>
-		
 		<div id="{$accid}">
 			<!-- add all attributes from xml to html -->
 			<xsl:call-template name="allattributes" > 
@@ -519,7 +512,7 @@
 						<xsl:with-param name="count"><xsl:value-of select="@count" /></xsl:with-param>
 						<xsl:with-param name="templatename">jqueryaccordion</xsl:with-param>
 						<xsl:with-param name="prntid" select="$accid"></xsl:with-param>
-						<xsl:with-param name="uid" select="$uid"></xsl:with-param>
+						<xsl:with-param name="uid" select="$currentuid"></xsl:with-param>
 					</xsl:call-template>
 				</xsl:when>
 				<xsl:otherwise>
@@ -667,27 +660,56 @@
   <xsl:template name="textout">
     <xsl:param name="textvalue" />
     <xsl:param name="istitle" />
-	
 	  <xsl:choose>
-	   	 <xsl:when test="$istitle = 'true'">
-	   	 	<xsl:choose>
-				<xsl:when test="//content[@id = $textvalue]/@title"><xsl:value-of select="//content[@id = $textvalue]/@title" /></xsl:when>
-				<xsl:otherwise>e<xsl:value-of select="$textvalue"></xsl:value-of></xsl:otherwise>
-			</xsl:choose>
-	   	 </xsl:when>
-	   	 <xsl:otherwise>
-		    <xsl:choose>
-		 		<xsl:when test="//content[@id = $textvalue]/child::*">
-					<xsl:for-each select="//content[@id = $textvalue]/child::*"><xsl:copy-of select="."></xsl:copy-of></xsl:for-each>		 
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:choose>
-						<xsl:when test="//content[@id = $textvalue]"><xsl:copy-of select="//content[@id = $textvalue]" /></xsl:when>
-						<xsl:otherwise><xsl:value-of select="$textvalue"></xsl:value-of></xsl:otherwise>
-					</xsl:choose>
-				</xsl:otherwise>
-			</xsl:choose>
-		</xsl:otherwise>
+	  <xsl:when test="//options/option[@name = 'contentgroup'] != ''">
+	  	 <xsl:variable name="contentgroup" select="//options/option[@name = 'contentgroup']"></xsl:variable>
+	  	 
+	  	 <xsl:choose>
+		   	 <xsl:when test="$istitle = 'true'">
+		   	 	<xsl:choose>
+					<xsl:when test="//content[@id = $textvalue and @group = $contentgroup]/@title"><xsl:value-of select="//content[@id = $textvalue and @group = $contentgroup]/@title" disable-output-escaping="yes"/></xsl:when>
+					<xsl:otherwise><xsl:value-of select="$textvalue" disable-output-escaping="yes"></xsl:value-of></xsl:otherwise>
+				</xsl:choose>
+		   	 </xsl:when>
+		   	 <xsl:otherwise>
+			    <xsl:choose>
+			 		<xsl:when test="//content[@id = $textvalue and @group = $contentgroup]/child::*">
+						<xsl:for-each select="//content[@id = $textvalue and @group = $contentgroup]/child::*"><xsl:copy-of select="."></xsl:copy-of></xsl:for-each>		 
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:choose>
+							<xsl:when test="//content[@id = $textvalue and @group = $contentgroup]"><xsl:copy-of select="//content[@id = $textvalue and @group = $contentgroup]" /></xsl:when>
+							<xsl:otherwise><xsl:value-of select="$textvalue" disable-output-escaping="yes"></xsl:value-of></xsl:otherwise>
+						</xsl:choose>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:otherwise>
+	     </xsl:choose>
+	  </xsl:when>
+	  <xsl:otherwise>
+	  
+		  <xsl:choose>
+		   	 <xsl:when test="$istitle = 'true'">
+		   	 	<xsl:choose>
+					<xsl:when test="//content[@id = $textvalue]/@title"><xsl:value-of select="//content[@id = $textvalue]/@title" disable-output-escaping="yes"/></xsl:when>
+					<xsl:otherwise><xsl:value-of select="$textvalue" disable-output-escaping="yes"></xsl:value-of></xsl:otherwise>
+				</xsl:choose>
+		   	 </xsl:when>
+		   	 <xsl:otherwise>
+			    <xsl:choose>
+			 		<xsl:when test="//content[@id = $textvalue]/child::*">
+						<xsl:for-each select="//content[@id = $textvalue]/child::*"><xsl:copy-of select="."></xsl:copy-of></xsl:for-each>		 
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:choose>
+							<xsl:when test="//content[@id = $textvalue]"><xsl:copy-of select="//content[@id = $textvalue]" /></xsl:when>
+							<xsl:otherwise><xsl:value-of select="$textvalue" disable-output-escaping="yes"></xsl:value-of></xsl:otherwise>
+						</xsl:choose>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:otherwise>
+	     </xsl:choose>
+	 	</xsl:otherwise>
      </xsl:choose>   
   </xsl:template>
   
@@ -725,15 +747,15 @@
 	</xsl:template>
 	
 	<!-- Templates for some html elements -->
-	<!-- 
+	
 	<xsl:template match="ul">
-		<xsl:call-template name="addhtml" />	
+		<xsl:copy-of select="."></xsl:copy-of>	
 	</xsl:template>
 	
 	<xsl:template match="li">
-		<xsl:call-template name="addhtml" />
+		<xsl:copy-of select="."></xsl:copy-of>	
 	</xsl:template>
-	
+	<!-- 
 	<xsl:template match="img">
 		<xsl:call-template name="addhtml" />
 	</xsl:template>
@@ -760,6 +782,9 @@
 			<xsl:call-template name="allattributes" />
 			<xsl:call-template name="addall" />
 		</div>
+		<script type="text/javascript">	
+			<xsl:text disable-output-escaping="yes"><![CDATA[initHighlightner();]]></xsl:text>
+		</script>		
 	</xsl:template>
 	
 	<!-- 

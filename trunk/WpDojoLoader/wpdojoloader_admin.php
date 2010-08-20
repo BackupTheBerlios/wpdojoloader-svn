@@ -37,6 +37,34 @@
 			return $dojoLoaderAdminOptions;
 		}
 		
+
+		/**
+		 * init the admin options, used for activation
+		 */
+		function initAdminOptions()
+		{
+			//styles
+			$fp = @fopen(dirname(__FILE__)."/css/wpdojoloader.txt", "r") or die ("can not open file wpdojoloader.css.css");
+		  	$i=0;
+			while($line = fgets($fp, 1024)){
+		  		$adminOptions['css'][$i] = trim($line);
+		  		$i++;
+		  	}
+		  	fclose($fp);
+			
+		  	//dojo require lines
+		  	$fp = @fopen(dirname(__FILE__)."/require.txt", "r") or die ("can not open file require.txt");
+		  	$i=0;
+			while($line = fgets($fp, 1024)){
+		  		$adminOptions['require'][$i] = trim($line);
+		  		$i++;
+		  	}
+		  	fclose($fp);
+		  	
+		  	update_option($this->adminOptionsName, $adminOptions); //store options
+		}
+		
+		
 		/**
 		 * prints the admin page
 		 * @return 
@@ -84,19 +112,19 @@
 				}
 				
 				//xslt option
-				if (isset($_POST['wpdojoloader_xslt'])) {
-					
-					for ($i=count($adminOptions['xslt']);$i>-1;$i--) {
-						unset($adminOptions['xslt'][$i]);	
-					}
-					
-				   $lines = preg_split("/\r\n/", $_POST["wpdojoloader_xslt"]);
-				   $i = 0;
-				   foreach ($lines as $key => $value) {
-				      $adminOptions['xslt'][$i] = ($value);
-				      $i++;
-				    }
-				}
+//				if (isset($_POST['wpdojoloader_xslt'])) {
+//					
+//					for ($i=count($adminOptions['xslt']);$i>-1;$i--) {
+//						unset($adminOptions['xslt'][$i]);	
+//					}
+//					
+//				   $lines = preg_split("/\r\n/", $_POST["wpdojoloader_xslt"]);
+//				   $i = 0;
+//				   foreach ($lines as $key => $value) {
+//				      $adminOptions['xslt'][$i] = ($value);
+//				      $i++;
+//				    }
+//				}
 								
 								
 				//update existing grid structures
@@ -149,18 +177,18 @@
 			}
 			if ($require == "")
 			{
-				$require .= "Hallo";
+				$require .= "Hallo"; //TODO
 			}
 			
 			//load xslt options array into a string 
-			$xslt = "";
-			for ($i=0;$i<count($adminOptions['xslt']);$i++) {
-				if ($i == 0) {
-					$xslt = ($adminOptions['xslt'][$i]);	
-				} else {
-					$xslt .= "\n".($adminOptions['xslt'][$i]);	
-				}
-			}
+//			$xslt = "";
+//			for ($i=0;$i<count($adminOptions['xslt']);$i++) {
+//				if ($i == 0) {
+//					$xslt = ($adminOptions['xslt'][$i]);	
+//				} else {
+//					$xslt .= "\n".($adminOptions['xslt'][$i]);	
+//				}
+//			}
 			
 			//load css options array into a string 
 			$css = "";
@@ -196,12 +224,12 @@
 				<textarea type="text" name="wpdojoloader_dojorequire" style="width:400px;height:150px;"><?php echo stripslashes($require); ?></textarea>
 			</p>
 			
-			<hr />
+			<!--<hr />
 			<h2>XSL Transformation</h2>
 			<p>
 				<textarea type="text" name="wpdojoloader_xslt" style="width:800px;height:300px;"><?php echo stripslashes($xslt); ?></textarea>
-			</p>
-						
+			</p>				
+			-->
 			<hr/>
 			<h2>Datagrid Structures</h2><br/>
 			<i>please enter the grid fieldnames in comma seperated values</i>

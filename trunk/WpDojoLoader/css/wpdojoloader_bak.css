@@ -1,0 +1,140 @@
+/*******************************************
+ *
+ * Styleing of Dojo Elements
+ *
+ *******************************************/
+/* style of a contentpane */
+.tundra .wpdojoloader_contentpane { /* */
+    color: Black;
+    /*
+     background-color:red;
+     border:solid 1px green;
+     width:100%;
+     height:100%;
+     */
+}
+
+/*
+ .wpdojoloader_contentpane p {  /* p element inside a contentpane * /
+ /*
+ color: Blue;
+ border:solid 1px green;
+ * /
+ }
+ */
+/*
+ .wpdojoloader .tundra .dijitContentPane {
+ color: black;
+ border:solid 1px red;
+ }
+ */
+.wpdojoloader .tundra .dijitTabInnerDiv { /* tab button from a contentpane in a tabcontainer */
+    padding: 2px;
+    /*border: solid 1px red;*/
+    color: black; /* color of the titletext */
+}
+
+/* div element which contains another post used by <post> element */
+.wpdojoloader_post {
+}
+
+/* if the tab buttons are a little bit to big it's a good idea to check this */
+.wpdojoloader .tundra .dijitTab .dijitTabButtonSpacer { /* this is a img element behind the tab button title */
+    margin-bottom: 0px;
+    margin-top: 0px;
+    max-height: 600px;
+    max-width: 500px;
+    border: none;
+    height: 0px;
+}
+
+/*
+ #content .wpdojoloader .dojoxGridContent { /* div containing the dojo grid content * /
+ height: 200px;
+ border: solid 1px red;
+ }
+ */
+.wpdojoloader .dojoxGridCell { /* color in a datagrid cell */
+    color: Black;
+    width: 250px !important;
+}
+
+.wpdojoloader_highlight {
+    border: solid 1px black;
+}
+
+.wpdojoloader_highlight .tag {
+    color: Blue;
+    display: block;
+    padding-left: 10px;
+}
+
+.wpdojoloader_highlight .title {
+    /* padding-left:10px; */
+}
+
+/*
+ * rounded box, taken from http://dojocampus.com
+ *
+ */
+.wpdojoloader_box {
+    margin-top: 10px;
+    color: #292929;
+    width: 300px;
+    border: 1px solid #BABABA;
+    background-color: #ddd;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-left: 10px;
+    margin-bottom: 1em;
+    -o-border-radius: 10px;
+    -moz-border-radius: 12px;
+    -webkit-border-radius: 10px;
+    -webkit-box-shadow: 0px 3px 7px #adadad;
+    border-radius: 10px;
+    -moz-box-sizing: border-box;
+    -opera-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.wpdojoloader .dijitButtonNode { /* a dojo button */
+    color: black; /* color of the button text */
+}
+
+/* OTHER STYLES */
+.wpdojoloader_tinymce {
+    border: solid 1px red;
+    width: 100%;
+    heigth: 400px;
+}
+
+/***********************************************************************
+ *
+ * CUSTOM WIDGETS
+ *
+ ***********************************************************************/
+.wpdWidget { /* baseclass div */
+    width: 100%;
+    height: 400px;
+    border: solid 1px black;
+}
+
+/* OpenStreetMap Widget - wpd.widget.OsmMapWidget */
+.wpdOsmMapWidget { /* container div */
+}
+
+.wpdojoloader_osmmap { /* container div */
+    width: 100%;
+    height: 400px;
+    /* border: solid 1px black; */
+}
+
+.wpdOsmMapWidget_map { /* div containing the map */
+    /* border:solid 1px blue; */
+    height: 100%;
+}
+
+
