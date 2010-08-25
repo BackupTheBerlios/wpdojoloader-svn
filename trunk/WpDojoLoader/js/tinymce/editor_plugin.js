@@ -27,6 +27,16 @@
 	                    m.add({title : 'wpdojoloader.dojocontent', onclick : function() {
 							tinyMCE.execCommand('mceInsertContent', false, "[dojocontent][/dojocontent]");
 	                    }});
+	                    
+	                    //calltemplate template
+	                    m.add({title : 'wpdojoloader.calltemplate', onclick : function() {
+							tinyMCE.execCommand('mceInsertContent', false, "&lt;calltemplate name=\"templatename\" uid=\"templateuid\"&gt;&lt;/calltemplate&gt;");
+	                    }});
+	                    
+	                    //content template
+	                    m.add({title : 'wpdojoloader.content', onclick : function() {
+							tinyMCE.execCommand('mceInsertContent', false, "&lt;content id=\"###id###\" title=\"title\"&gt;Contenttext&lt;/content&gt;");
+	                    }});
 						
 						m.add({title : 'wpdojoloader.dojowidgets', 'class' : 'mceMenuItemTitle'}).setDisabled(1);
 						

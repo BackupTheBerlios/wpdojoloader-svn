@@ -490,7 +490,6 @@ function initHighlightner()
 	/**/
 	var cd1 = dojox.highlight.processString(code,n.getAttribute("lang"));
 	n.innerHTML = cd1.result;
-	alert('ready');
 	});
 }
 

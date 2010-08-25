@@ -53,11 +53,13 @@ if (!class_exists("WpDojoLoader")) {
 		var $loadjqueryui = true;  //load jqueryui
 		
 		//general options
-		var $customLoaderEnabled = false; //if this is set to true, the custom loader is enabled which contains 
-										  //some other none dojo elements
+		var $customLoaderEnabled = false; //if this is set to true, the custom loader is enabled which contains some other none dojo elements  //TODO deprecated 
+		var $import_wpdtemplate  = true;  //auto import the wpd_template.xml template file
+		var $import_wpddata      = true;  //auto import the wpd_data.xml content file								  
 		
-		var $debugmode = false;
-		var $addcontenttags = true;
+		var $debugmode = true;      //if this is set to true dojoloader makes some debug output -> use only for debugging
+		var $addcontenttags = true;  //add the <data> tags in the xml -> used for testing.php
+		
 		
 		/*****************************
 		 * 
@@ -277,6 +279,16 @@ if (!class_exists("WpDojoLoader")) {
 			$text = $domdocument->create_text_node( get_bloginfo("wpurl") );
 			$node->append_child( $attr );
 			$node->append_child( $text );
+			array_push($result, $node);	
+			
+			//add the wordpress upload dir
+			$node = $domdocument->create_element( 'option' );
+			$attr = $domdocument->create_attribute  ( "name"  , "wpuploaddir"  );
+			$text = $domdocument->create_text_node( wp_upload_dir()->path );
+			$node->append_child( $attr );
+			$node->append_child( $text );
+			array_push($result, $node);	
+			
 			
 			//add the contentgroup
 			if ($this->contentgroup != "")
@@ -286,9 +298,8 @@ if (!class_exists("WpDojoLoader")) {
 				$text = $domdocument->create_text_node( $this->contentgroup );
 				$node->append_child( $attr );
 				$node->append_child( $text );
+				array_push($result, $node);	
 			}
-			
-			array_push($result, $node);	
 			
 			if (count($result) > 0)		
 				return $result;
@@ -364,8 +375,15 @@ if (!class_exists("WpDojoLoader")) {
 						$filename = $node->get_attribute("filename");								
 						$this->debug("getTemplateElements1111",$filename);
 	
-						$filename = dirname(__FILE__)."/".$filename;
-						  
+						//$filename = dirname(__FILE__)."/".$filename;
+						$uploaddir = wp_upload_dir();
+						$filename = $uploaddir->path."/".$filename;
+						if (!file_exists($filename))
+						{
+							$filename = dirname(__FILE__)."/".$filename;
+						}
+						
+						
 						if (file_exists($filename))
 						{
 							$this->debug("getTemplateElements2222",$filename);
@@ -416,7 +434,7 @@ if (!class_exists("WpDojoLoader")) {
 		
 		
 		function getContentElement($xpathcontext) {
-			$node = $xpathcontext->xpath_eval('/root/content'); //get content element
+			$node = $xpathcontext->xpath_eval('/root/data'); //get content element
 			return $node->nodeset[0];
 		}
 		
@@ -532,6 +550,31 @@ if (!class_exists("WpDojoLoader")) {
 	      }
 		}
 		
+		/**
+		 * 
+		 * 
+		 */
+		function moveContent(&$xpathcontext,&$parentnode) {
+		  $node = $xpathcontext->xpath_eval('/root/data/content'); //get content element
+		  //return $node->nodeset[0];		  
+		  foreach ($node->nodeset as $nd)
+		  {
+		  	$prnt = $nd->parent_node();
+		  	$prnt->remove_child($nd);
+		  	$parentnode->append_child($nd);
+		  }
+		  
+		  /*
+		  $elements = $dom->get_elements_by_tagname("content");
+	      foreach ($elements as $elem) {
+	        $prnt = $elem->parent_node();
+	        $parentnode->append_child($dom->clone_node($elem));
+	        //$parentnode->append_child($prnt);
+	        $prnt->remove_child($elem);
+	      }
+	      */
+		}
+		
 		
 		/**
 		 * enriches the xmlstring with linked posts, pages and gridstructures
@@ -581,8 +624,9 @@ if (!class_exists("WpDojoLoader")) {
 				//add template elements
 				$this->getImportElements($xpath,$dom,$elem_templates,"template");
 				$this->getImportElements($xpath,$dom,$elem_contents,"content");
-				
-				
+				//echo "xxxx";
+				$this->moveContent($xpath,$elem_contents);
+				//echo "xxxx";
 				/*
 				if ($templates != null) {
 					foreach ($template as $tpl) {
@@ -659,14 +703,26 @@ if (!class_exists("WpDojoLoader")) {
 			
 			if ($this->addcontenttags)
 			{
-				$xd .= "<content>";	
+				$xd .= "<data>";	
+			}
+ 			
+			//auto import the wpd_template.xml template file
+			if ($this->import_wpdtemplate)
+			{
+				$xd .= '<import type="template" filename="wpd_template.xml" />';	
+			}
+			
+			//auto import the wpd_data.xml content file	
+			if ($this->import_wpddata)
+			{
+				$xd .= '<import type="content" filename="wpd_data.xml" />';	
 			}
 			
 			$xd .= $xmldata;
 			
 			if ($this->addcontenttags)
 			{
-				$xd .= "</content>";	
+				$xd .= "</data>";	
 			}
 			
 			$xd .= "</root>";

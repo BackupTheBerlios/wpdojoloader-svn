@@ -14,9 +14,8 @@
   <xsl:template match="/">
     <xsl:variable name="templatename" select="name()"></xsl:variable>
 
-
     <div class="claro wpdojoloader"> 
-      <xsl:apply-templates select="/root/content"/>
+      <xsl:apply-templates select="/root/data"/>
     </div>  
     <!--<xsl:call-template name="$templatename"></xsl:call-template>-->
   </xsl:template>
@@ -32,7 +31,6 @@
    -->
   <xsl:template match="calltemplate">      
       <xsl:variable name="tplname" select="@name"></xsl:variable>
-         
       <xsl:variable name="uniqueid">
       	<xsl:choose>
       		<xsl:when test="@uid"><xsl:value-of select="@uid"></xsl:value-of></xsl:when>
@@ -59,10 +57,14 @@
 	
 	<!-- a dojo contentpane -->
 	<xsl:template match="contentpane">
+		<xsl:param name="uid"></xsl:param>
+		
 		<div dojoType="dijit.layout.ContentPane" class="claro wpdojoloader_contentpane">
 			
 			<!-- add all attributes from xml to html -->
-			<xsl:call-template name="allattributes" />
+			<xsl:call-template name="allattributes" >
+				<xsl:with-param name="uid"><xsl:value-of select="$uid"></xsl:value-of></xsl:with-param>
+			</xsl:call-template>
 			
 			<xsl:call-template name="textout">
      	 		<xsl:with-param name="textvalue" select="text()[1]"></xsl:with-param>        
@@ -95,6 +97,12 @@
 		<div>
 			<!-- add all attributes from xml to html -->
 			<xsl:call-template name="allattributes" />
+				
+			<xsl:variable name="wpuploaddir">  
+            	<xsl:value-of select="//option[@name='wpuploaddir']" />  
+            </xsl:variable>
+            
+            <xsl:attribute name="wpuploaddir"><xsl:value-of select="$wpuploaddir"></xsl:value-of></xsl:attribute>
 				
 			<xsl:variable name="gridid">
 				<xsl:value-of select="generate-id()"></xsl:value-of>
@@ -209,12 +217,13 @@
 	</xsl:template>
 	
 	
-	<!-- a dojo accordioncontainer -->
+	<!-- a dojo accordioncontainer  => the old one 
+	
 	<xsl:template match="accordioncontainer">
     	<div dojoType="dijit.layout.AccordionContainer">	
-			<!-- add all attributes from xml to html -->
+			
 			<xsl:call-template name="allattributes">
-				<xsl:with-param name="defaultstyle">width: 100%;height: 300px;</xsl:with-param> <!-- set the default style -->
+				<xsl:with-param name="defaultstyle">width: 100%;height: 300px;</xsl:with-param> 
 			</xsl:call-template>  
 		
 			<xsl:call-template name="textout">
@@ -223,9 +232,10 @@
 			<xsl:apply-templates/>
 		</div>
 	</xsl:template>
+	-->
 	
-	<!-- a dojo accordioncontainer -->
-	<xsl:template match="accordioncontainer_cnt">
+	<!-- a dojo accordioncontainer (new) -->
+	<xsl:template match="accordioncontainer">
     	<xsl:param name="uid"></xsl:param>
 		
 		<xsl:variable name="currentuid">
@@ -391,11 +401,13 @@
 	
 	<!-- a dojo bordercontainer -->
 	<xsl:template match="bordercontainer">
-		<div dojoType="dijit.layout.BorderContainer" >
-			
+		<xsl:param name="uid"></xsl:param>
+	
+		<div dojoType="dijit.layout.BorderContainer" >	
 			<!-- add all attributes from xml to html -->
 			<xsl:call-template name="allattributes" > 
 				<xsl:with-param name="defaultstyle">width:100%; heigth:200px;</xsl:with-param>
+				<xsl:with-param name="uid" select="$uid"></xsl:with-param>
 			</xsl:call-template>
 		
 			<xsl:call-template name="textout">
@@ -641,9 +653,30 @@
 	-->
 	<xsl:template name="allattributes">
 		<xsl:param name="defaultstyle" />
+		<xsl:param name="uid" />
+		
 		<xsl:for-each select="@*">
-			  <xsl:attribute name="{name()}"><xsl:value-of select="."/></xsl:attribute>	  
+			<xsl:attribute name="{name()}"><xsl:value-of select="."/></xsl:attribute>
+			<!-- testing
+			  <xsl:choose>
+			  	<xsl:when test="name() = 'id'">
+			  		
+			  		<xsl:attribute name="{name()}">			  				
+				  		<xsl:for-each select="ancestor::*">
+							xxxx<xsl:value-of select="name()"></xsl:value-of>xxxx
+						</xsl:for-each>						
+			  		</xsl:attribute>
+			  	</xsl:when>
+			  	<xsl:otherwise>
+			  		<xsl:attribute name="{name()}"><xsl:value-of select="."/></xsl:attribute>
+			  	</xsl:otherwise>
+			  </xsl:choose>
+			 -->	  
 		</xsl:for-each>
+		
+		<xsl:if test="$uid != ''">
+			<xsl:attribute name="uid"><xsl:value-of select="$uid"/></xsl:attribute>	
+		</xsl:if>
 		
 		<xsl:if test="$defaultstyle != ''">
 			<xsl:if test="not(@style)">
@@ -663,22 +696,21 @@
 	  <xsl:choose>
 	  <xsl:when test="//options/option[@name = 'contentgroup'] != ''">
 	  	 <xsl:variable name="contentgroup" select="//options/option[@name = 'contentgroup']"></xsl:variable>
-	  	 
 	  	 <xsl:choose>
 		   	 <xsl:when test="$istitle = 'true'">
 		   	 	<xsl:choose>
-					<xsl:when test="//content[@id = $textvalue and @group = $contentgroup]/@title"><xsl:value-of select="//content[@id = $textvalue and @group = $contentgroup]/@title" disable-output-escaping="yes"/></xsl:when>
+					<xsl:when test="/root/contentlist/content[@id = $textvalue and @group = $contentgroup]/@title"><xsl:value-of select="/root/contentlist/content[@id = $textvalue and @group = $contentgroup]/@title" disable-output-escaping="yes"/></xsl:when>
 					<xsl:otherwise><xsl:value-of select="$textvalue" disable-output-escaping="yes"></xsl:value-of></xsl:otherwise>
 				</xsl:choose>
 		   	 </xsl:when>
 		   	 <xsl:otherwise>
 			    <xsl:choose>
-			 		<xsl:when test="//content[@id = $textvalue and @group = $contentgroup]/child::*">
-						<xsl:for-each select="//content[@id = $textvalue and @group = $contentgroup]/child::*"><xsl:copy-of select="."></xsl:copy-of></xsl:for-each>		 
+			 		<xsl:when test="/root/contentlist/content[@id = $textvalue and @group = $contentgroup]/child::*">
+						<xsl:for-each select="/root/contentlist/content[@id = $textvalue and @group = $contentgroup]/child::*"><xsl:copy-of select="."></xsl:copy-of></xsl:for-each>		 
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:choose>
-							<xsl:when test="//content[@id = $textvalue and @group = $contentgroup]"><xsl:copy-of select="//content[@id = $textvalue and @group = $contentgroup]" /></xsl:when>
+						<xsl:choose>							
+							<xsl:when test="/root/contentlist/content[@id = $textvalue and @group = $contentgroup]"><xsl:copy-of select="/root/contentlist/content[@id = $textvalue and @group = $contentgroup]" /></xsl:when>
 							<xsl:otherwise><xsl:value-of select="$textvalue" disable-output-escaping="yes"></xsl:value-of></xsl:otherwise>
 						</xsl:choose>
 					</xsl:otherwise>
@@ -691,18 +723,18 @@
 		  <xsl:choose>
 		   	 <xsl:when test="$istitle = 'true'">
 		   	 	<xsl:choose>
-					<xsl:when test="//content[@id = $textvalue]/@title"><xsl:value-of select="//content[@id = $textvalue]/@title" disable-output-escaping="yes"/></xsl:when>
+					<xsl:when test="/root/contentlist/content[@id = $textvalue]/@title"><xsl:value-of select="/root/contentlist/content[@id = $textvalue]/@title" disable-output-escaping="yes"/></xsl:when>
 					<xsl:otherwise><xsl:value-of select="$textvalue" disable-output-escaping="yes"></xsl:value-of></xsl:otherwise>
 				</xsl:choose>
 		   	 </xsl:when>
 		   	 <xsl:otherwise>
 			    <xsl:choose>
-			 		<xsl:when test="//content[@id = $textvalue]/child::*">
-						<xsl:for-each select="//content[@id = $textvalue]/child::*"><xsl:copy-of select="."></xsl:copy-of></xsl:for-each>		 
+			 		<xsl:when test="/root/contentlist/content[@id = $textvalue]/child::*">
+						<xsl:for-each select="/root/contentlist/content[@id = $textvalue]/child::*"><xsl:copy-of select="."></xsl:copy-of></xsl:for-each>		 
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:choose>
-							<xsl:when test="//content[@id = $textvalue]"><xsl:copy-of select="//content[@id = $textvalue]" /></xsl:when>
+							<xsl:when test="/root/contentlist/content[@id = $textvalue]"><xsl:copy-of select="/root/contentlist/content[@id = $textvalue]" /></xsl:when>
 							<xsl:otherwise><xsl:value-of select="$textvalue" disable-output-escaping="yes"></xsl:value-of></xsl:otherwise>
 						</xsl:choose>
 					</xsl:otherwise>
@@ -747,7 +779,7 @@
 	</xsl:template>
 	
 	<!-- Templates for some html elements -->
-	
+	<!-- 
 	<xsl:template match="ul">
 		<xsl:copy-of select="."></xsl:copy-of>	
 	</xsl:template>
@@ -755,7 +787,7 @@
 	<xsl:template match="li">
 		<xsl:copy-of select="."></xsl:copy-of>	
 	</xsl:template>
-	<!-- 
+	
 	<xsl:template match="img">
 		<xsl:call-template name="addhtml" />
 	</xsl:template>
@@ -779,8 +811,13 @@
 	
 	<xsl:template match="code">
 		<div class="wpdojoloader_highlight">
-			<xsl:call-template name="allattributes" />
-			<xsl:call-template name="addall" />
+			<!-- <xsl:call-template name="allattributes" />
+			<xsl:call-template name="addall" /> -->
+			<!--   <xsl:copy-of select="."></xsl:copy-of> -->
+			<xsl:call-template name="textout">
+     	 		<xsl:with-param name="textvalue" select="text()[1]"></xsl:with-param>        
+    			</xsl:call-template>	
+    		<xsl:apply-templates/>
 		</div>
 		<script type="text/javascript">	
 			<xsl:text disable-output-escaping="yes"><![CDATA[initHighlightner();]]></xsl:text>

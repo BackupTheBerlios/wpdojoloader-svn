@@ -11,16 +11,20 @@
 		<script type="script"><![CDATA[
 				function loadpost(id,targetid,uid,template,contentgroup)
 				{
-					var cp = dijit.byId(targetid);
-					if (cp)
+					var targetelem = jQuery('[uid = '+uid+']').find('[targetid = '+targetid+']')[0];
+					if (targetelem)
 					{
-						var url = 'wp-content/plugins/wpdojoloader/ajax-load.php';
-						var and = String.fromCharCode(38);
-						url += '?id=' + id;
-						url += and + 'uid=' + uid;
-						url += and + 'template=' + template;
-						url += and + 'contentgroup=' + contentgroup; 		
-						setTimeout(cp.setHref(url, 3000));
+						var cp = dijit.byId(targetelem.id);
+						if (cp)
+						{
+							var url = 'wp-content/plugins/wpdojoloader/ajax-load.php';
+							var and = String.fromCharCode(38);
+							url += '?id=' + id;
+							url += and + 'uid=' + uid;
+							url += and + 'template=' + template;
+							url += and + 'contentgroup=' + contentgroup; 		
+							setTimeout(cp.setHref(url, 3000));
+						}
 					}	
 				}
 			]]></script>
@@ -51,6 +55,23 @@
 	</template>
 	
 	
+	
+	
+	<!-- 
+		Below are some Samples from the homepage
+		the content is in testdata.xml
+	-->
+	<template name="accordion_example" uid="accordion1">
+		<accordioncontainer count="5" >
+		</accordioncontainer>	
+	</template>
+	
+	<template name="titlepane_example" uid="titlepane1">
+		<titlepane title="Titlepane1" open="false">###text1###</titlepane>
+		<titlepane title="Titlepane2" open="false">###text2###</titlepane>
+		<titlepane title="Titlepane3 with a post inside" open="false">###text3###</titlepane>		
+	</template>
+	
 	<template name="tabcontainer_example">
 		<box animation="fadein" style="width:95%;font-size:22px;opacity:0;text-align:center;">###head###</box>
 		<tabcontainer>
@@ -68,21 +89,6 @@
 			</contentpane>
 		
 		</tabcontainer>	
-	</template>
-	
-	<!-- 
-		Below are some Samples from the homepage
-		the content is in testdata.xml
-	-->
-	<template name="accordion_example" uid="accordion1">
-		<accordioncontainer_cnt count="5" >
-		</accordioncontainer_cnt>	
-	</template>
-	
-	<template name="titlepane_example" uid="titlepane1">
-		<titlepane title="Titlepane1" open="false">###text1###</titlepane>
-		<titlepane title="Titlepane2" open="false">###text2###</titlepane>
-		<titlepane title="Titlepane3 with a post inside" open="false">###text3###</titlepane>		
 	</template>
 	
 	<template name="tab_example" uid="tabexample">
@@ -114,8 +120,8 @@
 			<contentpane region="left" style="width:100px;background-color:#d7d7d7">###left###</contentpane>
 			<contentpane region="top" style="background-color:#e7e7e7;">###head###</contentpane>
 			<contentpane region="center" style="background-color:#f7f7f7;">
-				<accordioncontainer_cnt count="5" uid="accordion1">
-				</accordioncontainer_cnt>	
+				<accordioncontainer count="5" uid="accordion1">
+				</accordioncontainer>	
 			</contentpane>
 		</bordercontainer>		
 	</template>
@@ -125,21 +131,13 @@
 		<bordercontainer style="width:100%; height:300px;" design="screenDesign">
 			<contentpane region="top" style="text-align:center;vertical-align:middle;margin-top:0px !important;">###head###</contentpane>
 			<contentpane region="left" style="width:20%;background-color:#d7d7d7;">###doc_menu###</contentpane>
-			<contentpane id="rightcp" region="center">###center###</contentpane>
+			<contentpane targetid="rightcp" region="center">###center###</contentpane>
 		</bordercontainer>
 	</template>
 	
-	<template name="doc_code">###blah###
+	<template name="doc_code">
 		<contentpane title="Nested">
-			<code lang="xml">
-				<accordioncontainer_cnt count="5" uid="accordion1"></accordioncontainer_cnt>
-
-<content id="###text_accordion1_1###" title="Title1">accordion sampletext 1</content>
-<content id="###text_accordion1_2###" title="Title2">accordion sampletext 2</content>
-<content id="###text_accordion1_3###" title="Title3">accordion sampletext 3</content>
-<content id="###text_accordion1_4###" title="Title4">accordion sampletext 4</content>
-<content id="###text_accordion1_5###" title="Title5">accordion sampletext 5</content>
-			</code>
+			<code lang="xml">###code###</code>
 		</contentpane>
 	</template>
 	

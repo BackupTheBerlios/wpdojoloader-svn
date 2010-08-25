@@ -18,5 +18,7 @@ tinyMCE.addI18n('en.wpdojoloader',{
 	hyperlink: 'Hyperlink',
 	insert: 'Insert',
 	insertpage: 'Page',
-	insertpost: 'Post'
+	insertpost: 'Post',
+	calltemplate: 'Call Template',
+	content: 'Content'
 });
