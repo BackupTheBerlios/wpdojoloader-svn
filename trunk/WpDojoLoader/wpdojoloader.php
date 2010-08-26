@@ -57,8 +57,9 @@ if (!class_exists("WpDojoLoader")) {
 		var $import_wpdtemplate  = true;  //auto import the wpd_template.xml template file
 		var $import_wpddata      = true;  //auto import the wpd_data.xml content file								  
 		
-		var $debugmode = true;      //if this is set to true dojoloader makes some debug output -> use only for debugging
+		var $debugmode = false;      //if this is set to true dojoloader makes some debug output -> use only for debugging
 		var $addcontenttags = true;  //add the <data> tags in the xml -> used for testing.php
+		var $datagridcontent = "/wordpress3/wp-content/blogs.dir/2/files";
 		
 		
 		/*****************************
@@ -73,6 +74,7 @@ if (!class_exists("WpDojoLoader")) {
 		var $customtemplates = array(array());   //if this is not empty the selected templates will loaded 
 		var $customuid = "";
 		var $contentgroup = "";
+		var $ajaxload = false;   //used for ajax-load.php -> don't change unless if you know what you are doing :)
 		
 		function WpDojoLoader() { //constructor
 			//nothing to be done at the moment
@@ -284,12 +286,32 @@ if (!class_exists("WpDojoLoader")) {
 			//add the wordpress upload dir
 			$node = $domdocument->create_element( 'option' );
 			$attr = $domdocument->create_attribute  ( "name"  , "wpuploaddir"  );
-			$text = $domdocument->create_text_node( wp_upload_dir()->path );
+			$uploaddir = wp_upload_dir();
+			$path = $uploaddir["basedir"]; 		
+			$text = $domdocument->create_text_node($path);
 			$node->append_child( $attr );
 			$node->append_child( $text );
 			array_push($result, $node);	
 			
+			//add the wordpress upload dir
+			$node = $domdocument->create_element( 'option' );
+			$attr = $domdocument->create_attribute  ( "name"  , "datagridcontent"  ); 		
+			$text = $domdocument->create_text_node($this->datagridcontent);
+			$node->append_child( $attr );
+			$node->append_child( $text );
+			array_push($result, $node);
 			
+			
+			//add true if it is a ajax load
+			if ($this->ajaxload)
+			{
+				$node = $domdocument->create_element( 'option' );
+				$attr = $domdocument->create_attribute  ( "name"  , "ajaxload"  ); 		
+				$text = $domdocument->create_text_node("true");
+				$node->append_child( $attr );
+				$node->append_child( $text );
+				array_push($result, $node);
+			}
 			//add the contentgroup
 			if ($this->contentgroup != "")
 			{			
@@ -377,12 +399,12 @@ if (!class_exists("WpDojoLoader")) {
 	
 						//$filename = dirname(__FILE__)."/".$filename;
 						$uploaddir = wp_upload_dir();
-						$filename = $uploaddir->path."/".$filename;
+						$filename = $uploaddir["basedir"]."/".$filename;
 						if (!file_exists($filename))
 						{
+							$filename = $node->get_attribute("filename");	
 							$filename = dirname(__FILE__)."/".$filename;
 						}
-						
 						
 						if (file_exists($filename))
 						{

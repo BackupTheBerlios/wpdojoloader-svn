@@ -98,11 +98,11 @@
 			<!-- add all attributes from xml to html -->
 			<xsl:call-template name="allattributes" />
 				
-			<xsl:variable name="wpuploaddir">  
-            	<xsl:value-of select="//option[@name='wpuploaddir']" />  
+			<xsl:variable name="contentdir">  
+            	<xsl:value-of select="//option[@name='datagridcontent']" />  
             </xsl:variable>
             
-            <xsl:attribute name="wpuploaddir"><xsl:value-of select="$wpuploaddir"></xsl:value-of></xsl:attribute>
+            <xsl:attribute name="contentdir"><xsl:value-of select="$contentdir"></xsl:value-of></xsl:attribute>
 				
 			<xsl:variable name="gridid">
 				<xsl:value-of select="generate-id()"></xsl:value-of>
@@ -120,6 +120,11 @@
 	    		</xsl:call-template>
 				<xsl:apply-templates/>
 			</div>
+			<xsl:if test="//options/option[@name = 'ajaxload'] = 'true'">
+				<script type="text/javascript">	
+					<xsl:text disable-output-escaping="yes"><![CDATA[initGridAfterLoad();]]></xsl:text>
+				</script>
+			</xsl:if>
 		</div>
 	</xsl:template>
 	
@@ -167,7 +172,11 @@
 	<!-- a dojo fisheye -->
 	<xsl:template match="fisheye">
 		<div class="wpdojoloader_fisheyelite">
-			<xsl:call-template name="addhtml" />
+			<!-- <xsl:call-template name="addhtml" />  -->
+			<xsl:call-template name="textout">
+	     	 		<xsl:with-param name="textvalue" select="text()[1]"></xsl:with-param>        
+	    		</xsl:call-template>
+			<xsl:apply-templates/>
 		</div>
 	</xsl:template>
 	

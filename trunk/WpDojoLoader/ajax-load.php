@@ -34,7 +34,7 @@ if ( $authorised ) {
         $dl_dojoLoader->customtemplates = array(array($tplname,$uid));
         $dl_dojoLoader->customuid       = $uid;
         $dl_dojoLoader->contentgroup    = $cntgroup;
-        
+        $dl_dojoLoader->ajaxload = true;
         //$dl_dojoLoader->debugmode = true;
         
   		//echo $pst;

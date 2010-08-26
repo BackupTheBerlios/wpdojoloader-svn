@@ -33,6 +33,8 @@ function wpdojoloader_addOnLoad() {
 			});
 			
 			//init a Highlightner			
+			initHighlightner();
+			/*
 			dojo.query(".wpdojoloader_highlight").forEach(function(n){
 				
 				var code = n.innerHTML;
@@ -50,11 +52,12 @@ function wpdojoloader_addOnLoad() {
 				
 				//below is the dojo highlightner
 				//it's not needed because translation is in xsl
-				/**/
+				
 				var cd1 = dojox.highlight.processString(code,n.getAttribute("lang"));
 				n.innerHTML = cd1.result;
 				
 			});
+			*/
 			
 			
 			//init a animation
@@ -84,21 +87,23 @@ function wpdojoloader_addOnLoad() {
 			
 								
 			//init a datagrid
+			initDatagrid();
+			/*
 			jQuery('.wpdojoloader_datagrid').each(function(){
 			
 				//init a store
 				var storetype = jQuery(this).parent().attr('storetype');
-				var uploaddir = jQuery(this).parent().attr('uploaddir');
+				var uploaddir = jQuery(this).parent().attr('contentdir');
 
-				console.debug(this.id);
+				//console.debug(this.id);
 				//console.debug(this.jsID);
 				
 				var dataStore = null;
 				switch (storetype) {
 					case "csv": //create a csv store
-						//var storeurl = uploaddir + "/" + jQuery(this).parent().attr('filename');
+						var storeurl = uploaddir + "/" + jQuery(this).parent().attr('filename');
 						//console.debug(uploaddir);
-						var storeurl = "wp-content/" + jQuery(this).parent().attr('filename');
+						//var storeurl = "wp-content/" + jQuery(this).parent().attr('filename');
 						dataStore = new dojox.data.CsvStore({
 							url: storeurl,
 							label: "Title"
@@ -106,7 +111,7 @@ function wpdojoloader_addOnLoad() {
 						});
 						break;
 					case "xml": //create a xml datastore
-						var storeurl = "wp-content/plugins/wpdojoloader/dojo_xmlstore_loadsave.php?filename=" + "wp-content/" + jQuery(this).parent().attr('filename'); 
+						var storeurl = "wp-content/plugins/wpdojoloader/dojo_xmlstore_loadsave.php?filename=" +uploaddir + "/" + jQuery(this).parent().attr('filename'); 
 						dataStore = new dojox.data.XmlStore({ 
 							url: storeurl, 
 							urlPreventCache: false,
@@ -160,11 +165,10 @@ function wpdojoloader_addOnLoad() {
 						window.open(content);  //open the url in a new window
 					}	
 				}
-				*/
+				*  /
 				
 				//called when a row is clicked
 				dijit.byId(id1).onRowClick = function(event){
-					return;
 					console.debug("onRowClick");
 					console.debug(event);
 					//check all cells if there is a valid url and open it
@@ -225,7 +229,7 @@ function wpdojoloader_addOnLoad() {
 					console.debug(this.data);
 					
 				}
-				*/
+				*  /
 				
 				dijit.byId(id1).onApplyEdit = function(event){
 					//log.error;
@@ -238,14 +242,14 @@ function wpdojoloader_addOnLoad() {
 				/* you can use this for custom row styleing
 				dijit.byId(id1).onStyleRow = function(inrow){
 				}
-				*/
+				*  /
 				
 				dijit.byId(id1).setStructure(layoutGrid);	
 				//dijit.byId(id1).setStore(dataStore, { query: "*" ,queryOptions: {ignoreCase: true}});
 				dijit.byId(id1).setStore(dataStore);
 				dijit.byId(id1).startup();
 			}); //end datagrid
-			
+			*/
 			
 			//init a osm map
 			dojo.query(".wpdojoloader_osmmap").forEach(function(n){
@@ -492,4 +496,174 @@ function initHighlightner()
 	n.innerHTML = cd1.result;
 	});
 }
+
+function initGridAfterLoad()
+{
+	//dojo.parser.parse();
+	initDatagrid();
+}
+
+function initDatagrid()
+{
+	jQuery('.wpdojoloader_datagrid').each(function(){
+		
+		//init a store
+		var storetype = jQuery(this).parent().attr('storetype');
+		var uploaddir = jQuery(this).parent().attr('contentdir');
+				
+		var dataStore = null;
+		switch (storetype) {
+			case "csv": //create a csv store
+				var storeurl = uploaddir + "/" + jQuery(this).parent().attr('filename');
+				//console.debug(uploaddir);
+				//var storeurl = "wp-content/" + jQuery(this).parent().attr('filename');
+				dataStore = new dojox.data.CsvStore({
+					url: storeurl,
+					label: "Title"
+				    //seperator: ";"  //supported by dojo 1.4 ?
+				});
+				break;
+			case "xml": //create a xml datastore
+				var storeurl = "wp-content/plugins/wpdojoloader/dojo_xmlstore_loadsave.php?filename=" +uploaddir + "/" + jQuery(this).parent().attr('filename'); 
+				dataStore = new dojox.data.XmlStore({ 
+					url: storeurl, 
+					urlPreventCache: false,
+					id:"teststore",
+					jsId:"teststore"
+					//query: "*",
+					//sendQuery: false
+				});  
+				break;
+		}
+						
+		if (!dataStore) 
+			return;
+		
+		var editable = jQuery(this).parent().attr('editable');
+		if (!editable) 
+		{
+			editable = "false";
+		}
+		
+		//load the field definitions
+		var id1 = jQuery(this).attr('id');
+		var fields = jQuery(this).parent().attr('fieldnames'); //list of fieldnames, seperated with comma
+		if (!fields)
+		{
+			fields = "name,link";
+		}
+		
+		var layoutGrid = new Array();
+		var lst1 = fields.split(","); //split the fieldlist
+		if (lst1) {
+			for (var i=0;i<lst1.length;i++) {
+				var fo = {
+					field: lst1[i],
+					name: lst1[i],
+					width: 'auto',
+					editable: editable
+				}
+				layoutGrid.push(fo); 
+			}
+		} 
+						
+		//called when a cell is clicked				
+		/*
+		dijit.byId(id1).onCellClick = function(event) {
+			//console.debug(event.cellNode.textContent);
+			var content = event.cellNode.textContent;  //content of the cell
+			//this regexp checks if the content is valid url
+			var regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
+			if (regexp.test(content)) { 
+				window.open(content);  //open the url in a new window
+			}	
+		}
+		*/
+		
+		//called when a row is clicked
+		alert(id1);
+		alert(dijit);
+		alert(dijit.byId(id1));
+		dijit.byId(id1).onRowClick = function(event){
+			console.debug("onRowClick");
+			console.debug(event);
+			//check all cells if there is a valid url and open it
+			dojo.query("[role=gridcell]", event.rowNode).forEach(
+			    function(element) {
+			        //console.debug(element.innerHTML);
+					var content = element.innerHTML;
+					var regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
+					if (regexp.test(content)) { 
+						window.open(content);  //open the url in a new window
+					}
+			    }
+			);
+		}
+		
+		//onApplyCellEdit(inValue, inRowIndex, inFieldIndex);
+		dijit.byId(id1).onApplyCellEdit = function(inValue, inRowIndex, inFieldIndex){
+			console.debug("onApplyCellEdit");
+			console.debug(inValue);
+			console.debug(inRowIndex);
+			console.debug(inFieldIndex);
+		}
+		
+		dataStore._saveCustom = function(saveComplete, saveFailed) {
+			alert("savecustom");
+		}
+		
+		dataStore._getPostUrl = function(item) {
+			console.debug("_getPostUrl");
+			console.debug(item);
+		}
+		
+		dataStore._getPutUrl = function(item) {
+			console.debug("_getPutUrl");
+			console.debug(item);
+		}
+		
+		
+		dataStore._getFetchUrl = function(item) {
+			console.debug("_getFetchUrl");
+			console.debug(item);
+			if (item != null)
+			{
+				console.debug("hallo");
+				return this.url;
+			} else
+			{
+				return "wpdojoloader/#";
+			}
+		}
+		
+		/*
+		console.debug(dataStore.fetchItemByIdentity);
+		dataStore.fetchItemByIdentity = function(keywordArgs)
+		{
+			console.debug("fetchItemByIdentity");
+			console.debug(keywordArgs);
+			console.debug(this.data);
+			
+		}
+		*/
+		
+		dijit.byId(id1).onApplyEdit = function(event){
+			//log.error;
+			console.debug("onApplyEdit")
+			console.debug(event);
+			//alert(event);
+			//dataStore.save();
+		}
+	
+		/* you can use this for custom row styleing
+		dijit.byId(id1).onStyleRow = function(inrow){
+		}
+		*/
+		
+		dijit.byId(id1).setStructure(layoutGrid);	
+		//dijit.byId(id1).setStore(dataStore, { query: "*" ,queryOptions: {ignoreCase: true}});
+		dijit.byId(id1).setStore(dataStore);
+		dijit.byId(id1).startup();
+	}); //end datagrid
+} //initDatagrid();
 
