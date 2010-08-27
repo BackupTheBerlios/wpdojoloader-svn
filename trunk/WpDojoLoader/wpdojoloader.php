@@ -50,7 +50,7 @@ if (!class_exists("WpDojoLoader")) {
 		var $loadLocalDojo = false;   	//load a local version of dojo instead of google
 		var $loadOpenLayers = false;  	//load the openlayers api, used for some custom widgets
 		var $loadOpenStreetMap = false;	//load the openstreetmap api, used for some custom widgets
-		var $loadjqueryui = true;  //load jqueryui
+		var $loadjqueryui = false;  //load jqueryui
 		
 		//general options
 		var $customLoaderEnabled = false; //if this is set to true, the custom loader is enabled which contains some other none dojo elements  //TODO deprecated 

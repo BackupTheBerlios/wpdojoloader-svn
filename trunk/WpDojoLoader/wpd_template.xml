@@ -7,6 +7,9 @@
 
 <templates>
 	
+	<!--
+	  this special template includes javascript into the page
+	-->
 	<template name="script">
 		<script type="script"><![CDATA[
 				function loadpost(id,targetid,uid,template,contentgroup)
@@ -32,17 +35,9 @@
 	
 	<template name="wpdsidebar">
 		<bordercontainer style="width:100%; height:300px;border:solid 1px black;" design="sidebar">
-			<contentpane region="left" style="width:100px;background-color:#d7d7d7">
-				<div>
-				<ul>
-					<li onclick="loadpost(76,'rightcp','xxx','accordion_example','x')">###text1###</li>
-					<li onclick="loadpost(76,'rightcp','xxx','tabcontainer_example','x')">###text1###</li>
-					<li onclick="loadpost(76,'rightcp','xxx','accordion_example','grp2')">###text1###</li>
-				</ul>
-				</div>
-			</contentpane>
+			<contentpane region="left" style="width:100px;background-color:#d7d7d7">###left###</contentpane>
 			<contentpane region="top" style="background-color:#e7e7e7;">###head###</contentpane>
-			<contentpane id="rightcp" region="center" style="background-color:#f7f7f7;">###right###</contentpane>
+			<contentpane region="center" style="background-color:#f7f7f7;">###right###</contentpane>
 		</bordercontainer>
 	</template>
 	

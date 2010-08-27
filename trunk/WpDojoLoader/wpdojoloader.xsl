@@ -178,6 +178,11 @@
 	    		</xsl:call-template>
 			<xsl:apply-templates/>
 		</div>
+		<xsl:if test="//options/option[@name = 'ajaxload'] = 'true'">
+			<script type="text/javascript">	
+				<xsl:text disable-output-escaping="yes"><![CDATA[initFishEye();]]></xsl:text>
+			</script>
+		</xsl:if>
 	</xsl:template>
 	
 	
@@ -819,7 +824,7 @@
 	-->
 	
 	<xsl:template match="code">
-		<div class="wpdojoloader_highlight">
+		<div class="wpdojoloader_highlight" initialized="false">
 			<!-- <xsl:call-template name="allattributes" />
 			<xsl:call-template name="addall" /> -->
 			<!--   <xsl:copy-of select="."></xsl:copy-of> -->

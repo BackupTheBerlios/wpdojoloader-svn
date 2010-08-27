@@ -18,7 +18,9 @@ function wpdojoloader_addOnLoad() {
 				//return;
 			}
 					
-			//init a FisheyeLite for a li element			
+			//init a FisheyeLite for a li element
+			initFishEye();
+			/*
 			dojo.query(".wpdojoloader_fisheyelite li").forEach(function(n){
 				new dojox.widget.FisheyeLite({},n);
 			});
@@ -31,6 +33,7 @@ function wpdojoloader_addOnLoad() {
 										        }
 										      },n);
 			});
+			*/
 			
 			//init a Highlightner			
 			initHighlightner();
@@ -478,6 +481,9 @@ function initHighlightner()
 	
 	var code = n.innerHTML;
 	
+	if (n.getAttribute("initialized") == 'true')
+		return;
+	
 	//replace the <p> tags -> added from wordpress
 	//if you want to show <p> tags in the code you have to
 	//comment out this line
@@ -494,6 +500,7 @@ function initHighlightner()
 	/**/
 	var cd1 = dojox.highlight.processString(code,n.getAttribute("lang"));
 	n.innerHTML = cd1.result;
+	n.setAttribute("initialized",'true');
 	});
 }
 
@@ -581,9 +588,6 @@ function initDatagrid()
 		*/
 		
 		//called when a row is clicked
-		alert(id1);
-		alert(dijit);
-		alert(dijit.byId(id1));
 		dijit.byId(id1).onRowClick = function(event){
 			console.debug("onRowClick");
 			console.debug(event);
@@ -666,4 +670,24 @@ function initDatagrid()
 		dijit.byId(id1).startup();
 	}); //end datagrid
 } //initDatagrid();
+
+function initFishEye()
+{
+	dojo.query(".wpdojoloader_fisheyelite li").forEach(function(n){
+		new dojox.widget.FisheyeLite({},n);
+	});
+	
+	//init a FisheyeLite for a img element
+	dojo.query(".wpdojoloader_fisheyelite img").forEach(function(n){
+		new dojox.widget.FisheyeLite({properties: {
+								          height:1.75,
+								          width:1.75
+								        }
+								      },n);
+	});
+} //initFishEye 
+
+
+
+
 
