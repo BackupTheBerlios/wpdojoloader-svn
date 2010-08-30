@@ -707,9 +707,22 @@
   <xsl:template name="textout">
     <xsl:param name="textvalue" />
     <xsl:param name="istitle" />
-	  <xsl:choose>
-	  <xsl:when test="//options/option[@name = 'contentgroup'] != ''">
-	  	 <xsl:variable name="contentgroup" select="//options/option[@name = 'contentgroup']"></xsl:variable>
+    <!-- -->	 
+      <xsl:variable name="contentgroup">
+    	<xsl:choose>
+    		<xsl:when test="//options/option[@name = 'contentgroup'] != ''">
+    			<xsl:value-of select="//options/option[@name = 'contentgroup']"></xsl:value-of>
+    		</xsl:when>
+    		<xsl:otherwise>
+    			<xsl:value-of select="//calltemplate[@group != 'contentgroup']/@group"></xsl:value-of>
+    			<!--   <xsl:value-of select="//calltemplate/[@group = 'sd']"></xsl:value-of>-->	
+    		</xsl:otherwise>
+    	</xsl:choose>   	 
+      </xsl:variable>
+    
+	  <xsl:choose>	  
+	  <xsl:when test="$contentgroup != ''">
+	  	 <!--  <xsl:variable name="contentgroup" select="//options/option[@name = 'contentgroup']"></xsl:variable> -->
 	  	 <xsl:choose>
 		   	 <xsl:when test="$istitle = 'true'">
 		   	 	<xsl:choose>

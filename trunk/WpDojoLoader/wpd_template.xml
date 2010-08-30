@@ -30,6 +30,15 @@
 						}
 					}	
 				}
+				function wpd_sTo(mark,targetid,uid)
+				{
+					var targetelem = jQuery('[uid = '+uid+']').find('[targetid = '+targetid+']');
+					if (targetelem)
+					{
+						var st = targetelem.find('[mark = '+mark+']');
+						targetelem.scrollTo( st, 800 );
+					}
+				}
 			]]></script>
 	</template>
 	
@@ -37,7 +46,7 @@
 		<bordercontainer style="width:100%; height:300px;border:solid 1px black;" design="sidebar">
 			<contentpane region="left" style="width:100px;background-color:#d7d7d7">###left###</contentpane>
 			<contentpane region="top" style="background-color:#e7e7e7;">###head###</contentpane>
-			<contentpane region="center" style="background-color:#f7f7f7;">###right###</contentpane>
+			<contentpane region="center" targetid="rightcp" style="background-color:#f7f7f7;">###right###</contentpane>
 		</bordercontainer>
 	</template>
 	

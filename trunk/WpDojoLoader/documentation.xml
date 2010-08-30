@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<contentlist>
+	<!-- This file contains the getting started documentation from wpdojoloader -->
+	
+	<content id="###right###" group="gettingstarted">
+		<span mark="install">
+			<b>Installation</b><br/>
+			<br/>
+			The installion is just easy. Extract the wpdojoloader.zip under the wordpress/wp-content/plugins
+			directory so that you have a subfolder which is called wpdojoloader.<br/>
+			(A small hint: wpdojoloader does not require to overwrite any other wordpress files,
+			exempt from a previous wpdojoloader installation.<br/>
+			So if you're beeing asked... There's probably something wrong ! )<br/>
+			<br/><br/>			
+		</span>	 
+		
+		<span mark="configuration">
+			<b>Configuration</b><br/>
+			<br/>
+			With a normal wordpress configuration you should not have to configure anything.
+			But if you are using a wordpress multi installation you probably have to configure
+			the path to the wordpress content directory if you are using a datagrid.
+			In the wpdojoloader.php you find a section called "Beging Config Section" there you can
+			change some settings.
+		</span>
+		
+		<span mark="activate">
+			<b>Activate the plugin</b><br/>
+			<br/>
+			Just go to settings -> wpdojoloader<br/>
+			Check if "Activate Dojo Loader Plugin?" is "yes" scroll down and click update settings...
+			<br/><br/>
+			That's it: <br/>
+			<img src="doc/img/activate.jpg" />			
+		</span>
+		<span mark="hello">
+			<b>Hello World</b><br/>
+			<br/>		
+			In this chapter i describe how wpdojoloader works generally so that you get an idea of
+			what you can do.<br/>
+			
+						
+		</span>
+	</content>
+
+</contentlist>

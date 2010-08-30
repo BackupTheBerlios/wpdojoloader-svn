@@ -60,7 +60,8 @@ if (!class_exists("WpDojoLoader")) {
 		var $debugmode = false;      //if this is set to true dojoloader makes some debug output -> use only for debugging
 		var $addcontenttags = true;  //add the <data> tags in the xml -> used for testing.php
 		var $datagridcontent = "/wordpress3/wp-content/blogs.dir/2/files";
-		
+		var $plugindir = "/wordpress3/wp-content/plugins/wpdojoloader"; //this is used for images included in content tags (currently for the documentation)
+		var $loadjqscrollto = true;  //load the jquery scrollto plugin
 		
 		/*****************************
 		 * 
@@ -75,6 +76,8 @@ if (!class_exists("WpDojoLoader")) {
 		var $customuid = "";
 		var $contentgroup = "";
 		var $ajaxload = false;   //used for ajax-load.php -> don't change unless if you know what you are doing :)
+		var $times = array("xsl_parse" => "", "script_time" => "");
+		
 		
 		function WpDojoLoader() { //constructor
 			//nothing to be done at the moment
@@ -585,18 +588,23 @@ if (!class_exists("WpDojoLoader")) {
 		  	$prnt->remove_child($nd);
 		  	$parentnode->append_child($nd);
 		  }
-		  
-		  /*
-		  $elements = $dom->get_elements_by_tagname("content");
-	      foreach ($elements as $elem) {
-	        $prnt = $elem->parent_node();
-	        $parentnode->append_child($dom->clone_node($elem));
-	        //$parentnode->append_child($prnt);
-	        $prnt->remove_child($elem);
-	      }
-	      */
 		}
 		
+		/**
+		 * adds the plugin dir to images source ... if you are using multi mode
+		 *
+		 */
+		function changeImgSource(&$xpathcontext) {
+			$node = $xpathcontext->xpath_eval('//img'); //get all img elements
+		  	//return $node->nodeset[0];		  
+		  	
+			foreach ($node->nodeset as &$nd)
+		  	{
+		  		$src = $nd->get_attribute("src");
+		  	  	$src = $this->plugindir."/".$src;
+		  		$nd->set_attribute("src",$src);	
+		  	}		
+		}
 		
 		/**
 		 * enriches the xmlstring with linked posts, pages and gridstructures
@@ -646,17 +654,8 @@ if (!class_exists("WpDojoLoader")) {
 				//add template elements
 				$this->getImportElements($xpath,$dom,$elem_templates,"template");
 				$this->getImportElements($xpath,$dom,$elem_contents,"content");
-				//echo "xxxx";
 				$this->moveContent($xpath,$elem_contents);
-				//echo "xxxx";
-				/*
-				if ($templates != null) {
-					foreach ($template as $tpl) {
-						$elem_templates->append_child($tpl);	
-					}	
-				}
-				*/
-				
+								
 				// if there are customtemplate names we use only this for calltemplate
 				if ($this->customtemplates[0][0] != "")
 				{
@@ -676,6 +675,7 @@ if (!class_exists("WpDojoLoader")) {
 				}
 				/* */	
 				$this->replaceGridStructures($xpath);
+				$this->changeImgSource($xpath);
 			}
 			return $dom->dump_mem(true);
 		}
@@ -701,13 +701,16 @@ if (!class_exists("WpDojoLoader")) {
 			$xslfile = dirname(__FILE__). '/wpdojoloader.xsl';
 			$this->debug($xslfile,$xslfile);
 			//$result = xslt_process($xh, 'arg:/_xml', 'wp-content/plugins/wpdojoloader/wpdojoloader.xsl', NULL, $arguments);
+			$time_start = microtime(false);
 			$result = xslt_process($xh, 'arg:/_xml', $xslfile, NULL, $arguments);
+			
+			$time_end = microtime(false);
+			$this->times["xsl_parse"] = $time_end - $time_start." s";
 			if ($result) {
 				return $result;	
 			} else {
 				return null;
-			}
-			
+			}						
 			xslt_free($xh);
 		}
 		
@@ -902,6 +905,12 @@ if (!class_exists("WpDojoLoader")) {
 				
 				//add the wpdojoloader js functions
 				wp_enqueue_script('wpdojoloader', get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/js/wpdojoloader.js', array('prototype'), '0.1');				
+				
+				//jquery jquery.scrollTo-min.js
+				if ($this->loadjqscrollto)
+				{
+					wp_enqueue_script('loadjqscrollto', get_bloginfo('wpurl') . '/wp-content/plugins/wpdojoloader/js/jquery.scrollTo-min.js', array('prototype'), '0.1');
+				}					
 			}
 			
 			$this->addDojoRequireLines();
@@ -915,7 +924,12 @@ if (!class_exists("WpDojoLoader")) {
 		 */
 		function addContent($content = '') {
 			$rslt = "";
-			$rslt .= $this->parseContent($content); 
+			$time_start = microtime(false);
+			$rslt .= $this->parseContent($content);
+			$time_end = microtime(false);
+			
+			$this->times["script_time"] = $time_end - $time_start;
+			var_dump($this->times); 
 			return $rslt;	
 		}
 		
