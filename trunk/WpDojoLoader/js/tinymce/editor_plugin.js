@@ -30,12 +30,17 @@
 	                    
 	                    //calltemplate template
 	                    m.add({title : 'wpdojoloader.calltemplate', onclick : function() {
-							tinyMCE.execCommand('mceInsertContent', false, "&lt;calltemplate name=\"templatename\" uid=\"templateuid\"&gt;&lt;/calltemplate&gt;");
+							tinyMCE.execCommand('mceInsertContent', false, "&lt;calltemplate name=\"templatename\" uid=\"templateuid\" group=\"\" &gt;&lt;/calltemplate&gt;");
 	                    }});
 	                    
 	                    //content template
 	                    m.add({title : 'wpdojoloader.content', onclick : function() {
 							tinyMCE.execCommand('mceInsertContent', false, "&lt;content id=\"###id###\" title=\"title\"&gt;Contenttext&lt;/content&gt;");
+	                    }});
+	                    
+	                    //import template
+	                    m.add({title : 'wpdojoloader.import', onclick : function() {
+							tinyMCE.execCommand('mceInsertContent', false, "&lt;import filename=\"filename.xml\" type=\"content\"&gt;&lt;/import&gt;");
 	                    }});
 						
 						m.add({title : 'wpdojoloader.dojowidgets', 'class' : 'mceMenuItemTitle'}).setDisabled(1);
@@ -55,7 +60,13 @@
 	                        tinyMCE.execCommand('mceInsertContent', false, "&lt;datagrid storetype=\"csv\" structurename=\"gridstructure_1\" filename=\"filename1.csv\"&gt;&lt;/datagrid&gt;");
 	                    }});
 						
+						//accordion (new)
+						m.add({title : 'wpdojoloader.accordion', onclick : function() {
+	                        tinyMCE.execCommand('mceInsertContent', false, "&lt;accordioncontainer count=\"5\" uid=\"accordion1\"&gt;&lt;/accordioncontainer&gt;");
+	                    }});
+						
 						//accordion container template
+						/*
 						m.add({title : 'wpdojoloader.accordioncontainer', onclick : function() {
 	                        tinyMCE.execCommand('mceInsertContent', false, "&lt;accordioncontainer&gt;&lt;/accordioncontainer&gt;");
 	                    }});
@@ -64,6 +75,7 @@
 						m.add({title : 'wpdojoloader.accordionpane', onclick : function() {
 	                        tinyMCE.execCommand('mceInsertContent', false, "&lt;accordionpane selected=\"true\" title=\"A AccordionPane\"&gt;Hello World&lt;/accordionpane&gt;");
 	                    }});
+						*/
 						
 						//fisheye template
 						m.add({title : 'wpdojoloader.fisheye', onclick : function() {

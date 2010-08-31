@@ -6,6 +6,7 @@ tinyMCE.addI18n('en.wpdojoloader',{
 	datagrid: 'Datagrid',
 	accordioncontainer: 'Accordion Container',
 	accordionpane: 'Accordion Pane',
+	accordion: 'Accordion',
 	fisheye: 'Fisheye',
 	scrollpane: 'Scroll Pane',
 	box: 'Box',
@@ -20,5 +21,6 @@ tinyMCE.addI18n('en.wpdojoloader',{
 	insertpage: 'Page',
 	insertpost: 'Post',
 	calltemplate: 'Call Template',
-	content: 'Content'
+	content: 'Content',
+	import: 'Import',
 });
