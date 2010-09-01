@@ -928,8 +928,12 @@ if (!class_exists("WpDojoLoader")) {
 			$rslt .= $this->parseContent($content);
 			$time_end = microtime(false);
 			
-			$this->times["script_time"] = $time_end - $time_start;
-			var_dump($this->times); 
+			if ($this->debugmode)
+			{
+				$this->times["script_time"] = $time_end - $time_start;
+				var_dump($this->times);
+			}
+			
 			return $rslt;	
 		}
 		

@@ -4,14 +4,13 @@
 	<!-- This file contains the getting started documentation from wpdojoloader -->
 	
 	<content id="###right###" group="gettingstarted">
+		<div style="padding:10px;">
 		<span mark="install">
 			<b>Installation</b><br/>
 			<br/>
-			The installion is just easy. Extract the wpdojoloader.zip under the wordpress/wp-content/plugins
-			directory so that you have a subfolder which is called wpdojoloader.<br/>
+			The installion is just easy. Extract the wpdojoloader.zip under the wordpress/wp-content/plugins directory so that you have a subfolder which is called wpdojoloader.<br/>
 			(A small hint: wpdojoloader does not require to overwrite any other wordpress files,
-			exempt from a previous wpdojoloader installation.<br/>
-			So if you're beeing asked... There's probably something wrong ! )<br/>
+			exempt from a previous wpdojoloader installation.<br/>So if you're beeing asked... There's probably something wrong ! )<br/>
 			<br/><br/>			
 		</span>	 
 		
@@ -39,9 +38,43 @@
 			<br/>		
 			In this chapter i describe how wpdojoloader works generally so that you get an idea of
 			what you can do.<br/>
-			
-						
+			<br/> 
+			So, first of all we create a new post:<br/>
+			<img src="doc/img/add_post.jpg" />	
+			<br/>
+			<b>Next</b> we have to say that we are creating dojoloader content.
+			This is done with the dojocontent start and end tag.<br/>
+			If dojoloader is active you have a new button in your editor. With that button
+			you can easy insert dojoloader text.<br/><br/>
+			Click the Button select dojo content tags:<br/>
+			<img src="doc/img/add_content_tags_1.jpg" /><br/><br/>
+			<b>And</b> then you should have something like this:<br/>
+			<img src="doc/img/add_content_tags_2.jpg" /><br/><br/><br/>
+			<b>Now</b> we want to have a accordion. Just click the dojoloader button again, select
+			accordion and that's it.<br/>
+			<b>Step 1</b>
+			<img src="doc/img/add_accordion_1.jpg" /><br/><br/><br/>
+			<b>Step 2</b>
+			<img src="doc/img/add_accordion_2.jpg" /><br/>
+			<br/><br/>
+			<b>Now</b> you can save the post (or page) and click the "View Post" button.
+			The result is something like this:<br/>				
+			<img src="doc/img/view_accordion_1.jpg" /><br/>
+			<br/><br/>
+			<b>At</b> the moment you don't have your own text in the accordion. You just see the
+			content placeholders (the text with the hash keys).<br/>
+			In the editor menu you can also select a content element.<br/>
+			Select it, change the id attribute to for the content which you want to enter, change the title
+			(the title attribute is not used by all widgets) and then add some text:<br/>
+			<img src="doc/img/add_accordion_3.jpg" /><br/>
+			<br/><br/>
+			<b>Save</b> the post again and now it looks like this:
+			<br/>
+			<img src="doc/img/view_accordion_2.jpg" /><br/>
+			<br/><br/><br/>
+			<h1><b>ready !</b></h1>						
 		</span>
+		</div>
 	</content>
 
 </contentlist>

@@ -36,7 +36,7 @@
 					if (targetelem)
 					{
 						var st = targetelem.find('[mark = '+mark+']');
-						targetelem.scrollTo( st, 800 );
+						targetelem.scrollTo( st, 800, {axis: 'y'} );
 					}
 				}
 			]]></script>
@@ -145,6 +145,14 @@
 			<contentpane region="top" style="text-align:center;vertical-align:middle;margin-top:0px !important;">###head###</contentpane>
 			<contentpane region="left" style="width:20%;background-color:#d7d7d7;">###doc_menu###</contentpane>
 			<contentpane targetid="rightcp" region="center">###center###</contentpane>
+		</bordercontainer>
+	</template>
+	
+	<template name="doc_template2">
+		<bordercontainer style="width:100%; height:600px;border:solid 1px black;" design="sidebar">
+			<contentpane region="left" style="width:100px;background-color:#d7d7d7">###left###</contentpane>
+			<contentpane region="top" style="background-color:#e7e7e7;">###head###</contentpane>
+			<contentpane region="center" targetid="rightcp" style="background-color:#f7f7f7;">###right###</contentpane>
 		</bordercontainer>
 	</template>
 	
