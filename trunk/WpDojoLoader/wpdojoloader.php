@@ -3,7 +3,7 @@
 Plugin Name: WpDojoLoader
 Plugin URI: http://wpdojoloader.berlios.de/
 Description: WpDojoloader allows you to include dojo widgets into wordpress
-Version: 0.0.42
+Version: 0.0.50
 Author: Dirk Lehmeier
 Author URI: http://wpdojoloader.berlios.de/
  
@@ -39,12 +39,10 @@ if (!class_exists("WpDojoLoader")) {
 	 */
 	class WpDojoLoader {
 		
-		/******************************
-		 * 
-		 * BEGIN Config Section
-		 * 
-		 ******************************/
-		
+		/*
+		 * Config Variables -> don't change here, use the config.php
+		 */
+				
 		//javascript libraries
 		var $loadTinyMce = false;     	//load TinyMCE
 		var $loadLocalDojo = false;   	//load a local version of dojo instead of google
@@ -63,11 +61,7 @@ if (!class_exists("WpDojoLoader")) {
 		var $plugindir = "/wordpress3/wp-content/plugins/wpdojoloader"; //this is used for images included in content tags (currently for the documentation)
 		var $loadjqscrollto = true;  //load the jquery scrollto plugin
 		
-		/*****************************
-		 * 
-		 * END Config Section
-		 * 
-		 *****************************/
+		/*****************************/
 		
 		var $adminOptionsName = "WpDojoLoaderAdminOptions";
 		//TODO to remove
@@ -80,7 +74,35 @@ if (!class_exists("WpDojoLoader")) {
 		
 		
 		function WpDojoLoader() { //constructor
-			//nothing to be done at the moment
+			
+			//load settings from the config.php
+			global $gl_loadTinyMce;
+			global $gl_loadLocalDojo;
+			global $gl_loadOpenLayers;
+			global $gl_loadOpenStreetMap;
+			global $gl_loadjqueryui;			
+			global $gl_customLoaderEnabled; 
+			global $gl_import_wpdtemplate;
+			global $gl_import_wpddata;								  
+			global $gl_debugmode;
+			global $gl_addcontenttags;
+			global $gl_datagridcontent;
+			global $gl_plugindir;
+			global $gl_loadjqscrollto;
+			
+			$this->loadTinyMce = $gl_loadTinyMce;
+			$this->loadLocalDojo = $gl_loadLocalDojo;
+			$this->loadOpenLayers = $gl_loadOpenLayers;
+			$this->loadOpenStreetMap = $gl_loadOpenStreetMap;
+			$this->loadjqueryui = $gl_loadjqueryui;			
+			$this->customLoaderEnabled = $gl_customLoaderEnabled; 
+			$this->import_wpdtemplate = $gl_import_wpdtemplate;
+			$this->import_wpddata = $gl_import_wpddata;								  
+			$this->debugmode = $gl_debugmode;
+			$this->addcontenttags = $gl_addcontenttags;
+			$this->datagridcontent = $gl_datagridcontent;
+			$this->plugindir = $gl_plugindir;
+			$this->loadjqscrollto = $gl_loadjqscrollto;	
 		}
 		
 		/*

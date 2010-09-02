@@ -1,17 +1,22 @@
 === WpDojoLoader ===
 Contributors: lehmeier
 Donate link: http://wpdojoloader.berlios.de/
-Tags: wordpress, dojo, datagrid, accordion, scrollpane, grid, table, nested, titlepane, tab, widget, fisheye, xml, xsl
+Tags: wordpress, dojo, datagrid, accordion, scrollpane, grid, table, nested, titlepane, tab, widget, fisheye, xml, xsl,jquery,jquery-ui,content management,cms,templates,ajax
 Requires at least: 2.8.2
 Tested up to: 2.8.5
-Stable tag: 0.0.41
+Stable tag: 0.0.50
 
 == Description ==
 
-WpDojoLoader allows you to include dojo widgets into wordpress.
-At the moment you can add them into posts and pages.
+WpDojoLoader allows you to include widgets or simple html templates into wordpress.
+You are also able to import content from external xml files which is directly displayed
+in your posts.
+Another new feature is Ajaxloading of posts. Check the wpdojoloader homepage for examples.
 
-The following widgets are supported at the moment:
+At the moment you can add them into posts and pages. And the plugin also provides a sub-plugin to add content
+into the wordpress sidebar.
+
+The following (dojo) widgets are supported at the moment:
 
 * tabcontainer
 * bordercontainer
@@ -22,6 +27,11 @@ The following widgets are supported at the moment:
 * accordionpane
 * accrodioncontainer
 * titlepane
+
+New are the JQuery Widgets (at the monent only 2)
+
+* JQUery Accordion
+* JQuery Tabs
 
 To add a widget the plugin uses a simple xml structure so that you can create nested tabs or
 include a datagrid into a tab or a accordion.
@@ -38,22 +48,12 @@ The directoryname of the plugin must be 'wpdojoloader'
 == Frequently Asked Questions ==
 
 = How to use the plugin =
-
-For a accordion e.g. add this lines in a post or page.
-<pre><code>
-[dojocontent]
-	<accordioncontainer>
-		<accordionpane selected=”true” title=”First One”>This is the content in the first accordion pane</accordionpane>
-		<accordionpane  title=”Second One”>This is the content in the second accordion pane</accordionpane>
-		<accordionpane  title=”With a post inside”><post id=”28″/></accordionpane>
-	</accordioncontainer>
-[/dojocontent]
-</code></pre>
+Vistit http://wpdojoloader.berlios.de there is a getting started tutorial.
 
 = Does it work with a version less then 2.8.2 =
 Maybe, i haven't tested it. So if it works, let me know about that.
 
-= I am getting a ‘xml cannot be parsed’ error. How can i fix this? =
+= I am getting a "xml cannot be parsed" error. How can i fix this? =
 You probably have copied and pasted from the example pages.
 Then it's possible that the quote characters are wrong. 
 
@@ -65,6 +65,19 @@ Then it's possible that the quote characters are wrong.
 4. Editor with plugin
 
 == Changelog ==
+
+= 0.0.50 =
+
+* support for xml templates
+* jquery-ui support
+* import xml content and xml templates
+* changed syntax for accordion and tabcontainer
+* ajax loading support
+* support for the jquery scrollTo plugin
+
+= 0.0.42 =
+*
+*
 
 = 0.0.41 =
 * fixed a bug with a foreach warning 
