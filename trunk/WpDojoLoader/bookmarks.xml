@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<bookmarks>
+  <bookmark ID="bookmark1">
+    <name>name of 1</name>
+    <link>Hans Zahl</link>
+  </bookmark>
+  <bookmark ID="bookmark2">
+    <name>name of 2</name>
+    <link>link of 2</link>
+  </bookmark>
+  <bookmark>
+    <name>name of 3</name>
+    <link>link of 3</link>
+  </bookmark>
+  <bookmark>
+    <name>name of 4</name>
+    <link>link of 4</link>
+  </bookmark>
+  <bookmark>
+    <name>name of 5</name>
+    <link>link of 5</link>
+  </bookmark>
+  <bookmark>
+    <name>name of 6</name>
+    <link>link of 6</link>
+  </bookmark>
+</bookmarks>
+

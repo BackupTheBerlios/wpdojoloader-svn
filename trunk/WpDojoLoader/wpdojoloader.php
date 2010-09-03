@@ -26,6 +26,7 @@ Author URI: http://wpdojoloader.berlios.de/
 */
 
 require_once(dirname(__FILE__). '/wpdojoloader_admin.php');
+require_once(dirname(__FILE__). '/config.php');
 
 if (PHP_VERSION>='5') {
 	require_once(dirname(__FILE__).'/domxml-php4-to-php5.php'); 	//Load the PHP5 converter
@@ -603,7 +604,12 @@ if (!class_exists("WpDojoLoader")) {
 		 */
 		function moveContent(&$xpathcontext,&$parentnode) {
 		  $node = $xpathcontext->xpath_eval('/root/data/content'); //get content element
-		  //return $node->nodeset[0];		  
+		  //return $node->nodeset[0];
+			
+		  if ($node === false)
+		  	return;
+		  
+		  var_dump($node);
 		  foreach ($node->nodeset as $nd)
 		  {
 		  	$prnt = $nd->parent_node();
@@ -620,6 +626,9 @@ if (!class_exists("WpDojoLoader")) {
 			$node = $xpathcontext->xpath_eval('//img'); //get all img elements
 		  	//return $node->nodeset[0];		  
 		  	
+			if ($node === false)
+		  		return;
+			
 			foreach ($node->nodeset as &$nd)
 		  	{
 		  		$src = $nd->get_attribute("src");
@@ -949,7 +958,6 @@ if (!class_exists("WpDojoLoader")) {
 			$time_start = microtime(false);
 			$rslt .= $this->parseContent($content);
 			$time_end = microtime(false);
-			
 			if ($this->debugmode)
 			{
 				$this->times["script_time"] = $time_end - $time_start;

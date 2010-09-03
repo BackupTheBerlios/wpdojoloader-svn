@@ -74,10 +74,10 @@ Then it's possible that the quote characters are wrong.
 * changed syntax for accordion and tabcontainer
 * ajax loading support
 * support for the jquery scrollTo plugin
+* xmlstore support for the datagrid
 
 = 0.0.42 =
-*
-*
+* commented out a debug line
 
 = 0.0.41 =
 * fixed a bug with a foreach warning 

@@ -24,22 +24,22 @@
 	 ******************************/
 	
 	//javascript libraries
-	var $gl_loadTinyMce = false;     	//load TinyMCE
-	var $gl_loadLocalDojo = false;   	//load a local version of dojo instead of google
-	var $gl_loadOpenLayers = false;  	//load the openlayers api, used for some custom widgets
-	var $gl_loadOpenStreetMap = false;	//load the openstreetmap api, used for some custom widgets
-	var $gl_loadjqueryui = false;  //load jqueryui
+	$gl_loadTinyMce = false;     	//load TinyMCE
+	$gl_loadLocalDojo = false;   	//load a local version of dojo instead of google
+	$gl_loadOpenLayers = false;  	//load the openlayers api, used for some custom widgets
+	$gl_loadOpenStreetMap = false;	//load the openstreetmap api, used for some custom widgets
+	$gl_loadjqueryui = false;  //load jqueryui
 	
 	//general options
-	var $gl_customLoaderEnabled = false; //if this is set to true, the custom loader is enabled which contains some other none dojo elements  //TODO deprecated 
-	var $gl_import_wpdtemplate  = true;  //auto import the wpd_template.xml template file
-	var $gl_import_wpddata      = true;  //auto import the wpd_data.xml content file								  
+	$gl_customLoaderEnabled = false; //if this is set to true, the custom loader is enabled which contains some other none dojo elements  //TODO deprecated 
+	$gl_import_wpdtemplate  = true;  //auto import the wpd_template.xml template file
+	$gl_import_wpddata      = true;  //auto import the wpd_data.xml content file								  
 	
-	var $gl_debugmode = false;      //if this is set to true dojoloader makes some debug output -> use only for debugging
-	var $gl_addcontenttags = true;  //add the <data> tags in the xml -> used for testing.php
-	var $gl_datagridcontent = "/wordpress3/wp-content/blogs.dir/2/files";
-	var $gl_plugindir = "/wordpress3/wp-content/plugins/wpdojoloader"; //this is used for images included in content tags (currently for the documentation)
-	var $gl_loadjqscrollto = true;  //load the jquery scrollto plugin
+	$gl_debugmode = false;      //if this is set to true dojoloader makes some debug output -> use only for debugging
+	$gl_addcontenttags = true;  //add the <data> tags in the xml -> used for testing.php
+	$gl_datagridcontent = "../../uploads";
+	$gl_plugindir = ""; //this is used for images included in content tags (currently for the documentation)
+	$gl_loadjqscrollto = true;  //load the jquery scrollto plugin
 	
 	/*****************************
 	 * 
