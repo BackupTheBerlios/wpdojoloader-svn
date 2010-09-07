@@ -35,6 +35,8 @@ if (PHP_VERSION>='5') {
 
 if (!class_exists("WpDojoLoader")) {
 	
+	session_start();
+	
 	/**
 	 * this class manages the parsing of posts and pages and inserts dojo content
 	 */
@@ -58,9 +60,10 @@ if (!class_exists("WpDojoLoader")) {
 		
 		var $debugmode = false;      //if this is set to true dojoloader makes some debug output -> use only for debugging
 		var $addcontenttags = true;  //add the <data> tags in the xml -> used for testing.php
-		var $datagridcontent = "/wordpress3/wp-content/blogs.dir/2/files";
-		var $plugindir = "/wordpress3/wp-content/plugins/wpdojoloader"; //this is used for images included in content tags (currently for the documentation)
-		var $loadjqscrollto = true;  //load the jquery scrollto plugin
+		var $datagridcontent = "../../uploads";
+		var $plugindir = ""; //this is used for images included in content tags (currently for the documentation)
+		var $loadjqscrollto = false;  //load the jquery scrollto plugin
+		var $session_authentication = false; //for ajax-load.php
 		
 		/*****************************/
 		
@@ -90,6 +93,7 @@ if (!class_exists("WpDojoLoader")) {
 			global $gl_datagridcontent;
 			global $gl_plugindir;
 			global $gl_loadjqscrollto;
+			global $gl_session_authentication;
 			
 			$this->loadTinyMce = $gl_loadTinyMce;
 			$this->loadLocalDojo = $gl_loadLocalDojo;
@@ -103,7 +107,8 @@ if (!class_exists("WpDojoLoader")) {
 			$this->addcontenttags = $gl_addcontenttags;
 			$this->datagridcontent = $gl_datagridcontent;
 			$this->plugindir = $gl_plugindir;
-			$this->loadjqscrollto = $gl_loadjqscrollto;	
+			$this->loadjqscrollto = $gl_loadjqscrollto;
+			$this->session_authentication = $gl_session_authentication;	
 		}
 		
 		/*
@@ -327,6 +332,15 @@ if (!class_exists("WpDojoLoader")) {
 			$node->append_child( $text );
 			array_push($result, $node);
 			
+			//add session id
+			$node = $domdocument->create_element( 'option' );
+			$attr = $domdocument->create_attribute  ( "name"  , "ssid"  );
+			
+			$sid = htmlspecialchars(SID);	
+			$text = $domdocument->create_text_node(session_id());
+			$node->append_child( $attr );
+			$node->append_child( $text );
+			array_push($result, $node);
 			
 			//add true if it is a ajax load
 			if ($this->ajaxload)
@@ -599,7 +613,7 @@ if (!class_exists("WpDojoLoader")) {
 		}
 		
 		/**
-		 * 
+		 * move the content elements in the data section to the /root/contentlist section
 		 * 
 		 */
 		function moveContent(&$xpathcontext,&$parentnode) {
@@ -609,7 +623,6 @@ if (!class_exists("WpDojoLoader")) {
 		  if ($node === false)
 		  	return;
 		  
-		  var_dump($node);
 		  foreach ($node->nodeset as $nd)
 		  {
 		  	$prnt = $nd->parent_node();
@@ -623,6 +636,12 @@ if (!class_exists("WpDojoLoader")) {
 		 *
 		 */
 		function changeImgSource(&$xpathcontext) {
+			
+			if ($this->plugindir == "")
+			{
+				return;
+			}
+			
 			$node = $xpathcontext->xpath_eval('//img'); //get all img elements
 		  	//return $node->nodeset[0];		  
 		  	
@@ -954,6 +973,12 @@ if (!class_exists("WpDojoLoader")) {
 		 * @param $content Object[optional]
 		 */
 		function addContent($content = '') {
+			
+			if ($this->session_authentication)
+			{
+				$_SESSION["wpd_session_auth"] = null;	
+			}
+			
 			$rslt = "";
 			$time_start = microtime(false);
 			$rslt .= $this->parseContent($content);
@@ -964,6 +989,10 @@ if (!class_exists("WpDojoLoader")) {
 				var_dump($this->times);
 			}
 			
+			if ($this->session_authentication)
+			{
+				$_SESSION["wpd_session_auth"] = uniqid("wpd_session_auth");
+			}
 			return $rslt;	
 		}
 		

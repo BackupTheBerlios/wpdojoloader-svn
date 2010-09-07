@@ -39,7 +39,8 @@
 	$gl_addcontenttags = true;  //add the <data> tags in the xml -> used for testing.php
 	$gl_datagridcontent = "../../uploads";
 	$gl_plugindir = ""; //this is used for images included in content tags (currently for the documentation)
-	$gl_loadjqscrollto = true;  //load the jquery scrollto plugin
+	$gl_loadjqscrollto = false;  //load the jquery scrollto plugin
+	$gl_session_authentication = true; //used for ajax-load.php ... if true you must have a valid session to get content from ajax-load.php -> if the session expires you can't load with ajax-load 
 	
 	/*****************************
 	 * 

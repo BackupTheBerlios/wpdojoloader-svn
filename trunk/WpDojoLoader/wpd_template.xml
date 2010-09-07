@@ -25,7 +25,8 @@
 							url += '?id=' + id;
 							url += and + 'uid=' + uid;
 							url += and + 'template=' + template;
-							url += and + 'contentgroup=' + contentgroup; 		
+							url += and + 'contentgroup=' + contentgroup;
+							url += and + 'PHPSESSID=' + gl_ssid; 		
 							setTimeout(cp.setHref(url, 3000));
 						}
 					}	
@@ -160,6 +161,13 @@
 		<contentpane title="Nested">
 			<code lang="xml">###code###</code>
 		</contentpane>
+	</template>
+	
+	<template name="jqtab_example">
+		<jquerytabcontainer>
+			<jquerytab>###text1###</jquerytab>
+			<jquerytab>###text2###</jquerytab>
+		</jquerytabcontainer>
 	</template>
 	
 </templates>

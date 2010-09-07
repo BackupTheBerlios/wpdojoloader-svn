@@ -22,7 +22,7 @@
       
   <xsl:template match="script">
   	<xsl:if test="@type = 'script'">
-  		<script type="text/javascript"><xsl:value-of disable-output-escaping="yes" select="."></xsl:value-of></script>
+  		<script type="text/javascript"><xsl:text disable-output-escaping="yes">var gl_ssid="</xsl:text><xsl:value-of select="//options/option[@name='ssid']"></xsl:value-of><xsl:text>"</xsl:text><xsl:value-of disable-output-escaping="yes" select="."></xsl:value-of></script>
   	</xsl:if>		
   </xsl:template> 
 
@@ -719,6 +719,8 @@
     		</xsl:otherwise>
     	</xsl:choose>   	 
       </xsl:variable>
+      
+      <xsl:variable name="parse"></xsl:variable>
     
 	  <xsl:choose>	  
 	  <xsl:when test="$contentgroup != ''">
@@ -733,11 +735,25 @@
 		   	 <xsl:otherwise>
 			    <xsl:choose>
 			 		<xsl:when test="/root/contentlist/content[@id = $textvalue and @group = $contentgroup]/child::*">
-						<xsl:for-each select="/root/contentlist/content[@id = $textvalue and @group = $contentgroup]/child::*"><xsl:copy-of select="."></xsl:copy-of></xsl:for-each>		 
+						<xsl:for-each select="/root/contentlist/content[@id = $textvalue and @group = $contentgroup]/child::*">
+							<xsl:choose>
+								<xsl:when test="/root/contentlist/content[@id = $textvalue and @group = $contentgroup]/@parse = 'true'">
+									<xsl:apply-templates select="."/>
+								</xsl:when>
+								<xsl:otherwise><xsl:copy-of select="."></xsl:copy-of></xsl:otherwise>	
+							</xsl:choose>
+						</xsl:for-each>		 
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:choose>							
-							<xsl:when test="/root/contentlist/content[@id = $textvalue and @group = $contentgroup]"><xsl:copy-of select="/root/contentlist/content[@id = $textvalue and @group = $contentgroup]" /></xsl:when>
+							<xsl:when test="/root/contentlist/content[@id = $textvalue and @group = $contentgroup]">
+								<xsl:choose>
+									<xsl:when test="/root/contentlist/content[@id = $textvalue and @group = $contentgroup]/@parse = 'true'">
+										<xsl:apply-templates select="/root/contentlist/content[@id = $textvalue and @group = $contentgroup]" />
+									</xsl:when>
+									<xsl:otherwise><xsl:copy-of select="/root/contentlist/content[@id = $textvalue and @group = $contentgroup]" /></xsl:otherwise>
+								</xsl:choose>
+							</xsl:when>
 							<xsl:otherwise><xsl:value-of select="$textvalue" disable-output-escaping="yes"></xsl:value-of></xsl:otherwise>
 						</xsl:choose>
 					</xsl:otherwise>
@@ -757,11 +773,23 @@
 		   	 <xsl:otherwise>
 			    <xsl:choose>
 			 		<xsl:when test="/root/contentlist/content[@id = $textvalue]/child::*">
-						<xsl:for-each select="/root/contentlist/content[@id = $textvalue]/child::*"><xsl:copy-of select="."></xsl:copy-of></xsl:for-each>		 
+						<xsl:for-each select="/root/contentlist/content[@id = $textvalue]/child::*">
+							<xsl:choose>
+								<xsl:when test="/root/contentlist/content[@id = $textvalue]/@parse = 'true'"><xsl:apply-templates select="." /></xsl:when>
+								<xsl:otherwise><xsl:copy-of select="." /></xsl:otherwise>
+							</xsl:choose>
+						</xsl:for-each>		 
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:choose>
-							<xsl:when test="/root/contentlist/content[@id = $textvalue]"><xsl:copy-of select="/root/contentlist/content[@id = $textvalue]" /></xsl:when>
+							<xsl:when test="/root/contentlist/content[@id = $textvalue]">
+								<xsl:choose>
+									<xsl:when test="/root/contentlist/content[@id = $textvalue]/@parse = 'true'">
+										<xsl:apply-templates select="/root/contentlist/content[@id = $textvalue]" />
+									</xsl:when>
+									<xsl:otherwise><xsl:copy-of select="/root/contentlist/content[@id = $textvalue]" /></xsl:otherwise>
+								</xsl:choose>
+							</xsl:when>
 							<xsl:otherwise><xsl:value-of select="$textvalue" disable-output-escaping="yes"></xsl:value-of></xsl:otherwise>
 						</xsl:choose>
 					</xsl:otherwise>
