@@ -52,7 +52,7 @@ if ( $authorised ) {
 	        $dl_dojoLoader->customuid       = $uid;
 	        $dl_dojoLoader->contentgroup    = $cntgroup;
 	        $dl_dojoLoader->ajaxload = true;
-	        //$dl_dojoLoader->debugmode = true;
+	        $dl_dojoLoader->debugmode = false;
 	        
 	  		//echo $pst;
 	        $content = $dl_dojoLoader->addContent($pst->post_content);

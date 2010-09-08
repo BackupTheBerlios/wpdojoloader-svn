@@ -158,9 +158,7 @@
 	</template>
 	
 	<template name="doc_code">
-		<contentpane title="Nested">
-			<code lang="xml">###code###</code>
-		</contentpane>
+		<contentpane title="Nested">###code###</contentpane>
 	</template>
 	
 	<template name="jqtab_example">

@@ -522,7 +522,7 @@
 			</xsl:choose>
 		</xsl:variable>
 		<xsl:variable name="accid">jqacc_<xsl:value-of select="$currentuid" /><xsl:value-of select="generate-id(.)"></xsl:value-of></xsl:variable>
-		<xsl:value-of select="$accid"></xsl:value-of>
+		
 		<script type="text/javascript">	
 			<xsl:text disable-output-escaping="yes"><![CDATA[jQuery(document).ready(function(){jQuery("#]]></xsl:text><xsl:value-of select="$accid"></xsl:value-of><xsl:text disable-output-escaping="yes"><![CDATA[").accordion();});]]></xsl:text>
 		</script>
@@ -740,7 +740,7 @@
 								<xsl:when test="/root/contentlist/content[@id = $textvalue and @group = $contentgroup]/@parse = 'true'">
 									<xsl:apply-templates select="."/>
 								</xsl:when>
-								<xsl:otherwise><xsl:copy-of select="."></xsl:copy-of></xsl:otherwise>	
+								<xsl:otherwise><xsl:copy-of select="."></xsl:copy-of></xsl:otherwise>
 							</xsl:choose>
 						</xsl:for-each>		 
 					</xsl:when>
@@ -868,11 +868,13 @@
 		<div class="wpdojoloader_highlight" initialized="false">
 			<!-- <xsl:call-template name="allattributes" />
 			<xsl:call-template name="addall" /> -->
-			<!--   <xsl:copy-of select="."></xsl:copy-of> -->
+			<xsl:copy-of select="node()"></xsl:copy-of>
+			<!-- 
 			<xsl:call-template name="textout">
      	 		<xsl:with-param name="textvalue" select="text()[1]"></xsl:with-param>        
-    			</xsl:call-template>	
-    		<xsl:apply-templates/>
+    		</xsl:call-template>
+    		 -->
+    		<!--<xsl:apply-templates/> -->
 		</div>
 		<script type="text/javascript">	
 			<xsl:text disable-output-escaping="yes"><![CDATA[initHighlightner();]]></xsl:text>
