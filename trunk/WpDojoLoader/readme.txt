@@ -3,17 +3,17 @@ Contributors: lehmeier
 Donate link: http://wpdojoloader.berlios.de/
 Tags: wordpress, dojo, datagrid, accordion, scrollpane, grid, table, nested, titlepane, tab, widget, fisheye, xml, xsl,jquery,jquery-ui,content management,cms,templates,ajax
 Requires at least: 2.8.2
-Tested up to: 2.8.5
+Tested up to: 3.0.0
 Stable tag: 0.0.50
 
 == Description ==
 
 WpDojoLoader allows you to include widgets or simple html templates into wordpress.
 You are also able to import content from external xml files which is directly displayed
-in your posts.
+in your posts. So you have some simple content management methods for wordpress.
 Another new feature is Ajaxloading of posts. Check the wpdojoloader homepage for examples.
 
-At the moment you can add them into posts and pages. And the plugin also provides a sub-plugin to add content
+At the moment you can add widgets into posts and pages. And the plugin also provides a sub-plugin to add content
 into the wordpress sidebar.
 
 The following (dojo) widgets are supported at the moment:
@@ -47,6 +47,9 @@ The directoryname of the plugin must be 'wpdojoloader'
 
 == Frequently Asked Questions ==
 
+= Where do i get a documentation =
+http://wpdojoloader.berlios.de
+
 = How to use the plugin =
 Vistit http://wpdojoloader.berlios.de there is a getting started tutorial.
 
@@ -60,7 +63,7 @@ Then it's possible that the quote characters are wrong.
 == Screenshots ==
 
 1. Here you can see a accordion
-2. This is a datagrid with data from a csv file
+2. jQuery Tabs
 3. Nested Tabs
 4. Editor with plugin
 

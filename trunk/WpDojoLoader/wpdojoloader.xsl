@@ -797,7 +797,10 @@
 			</xsl:otherwise>
 	     </xsl:choose>
 	 	</xsl:otherwise>
-     </xsl:choose>   
+     </xsl:choose>
+     <xsl:if test="/root/contentlist/content[@id = $textvalue]/@applytpl = 'true'">
+     	<xsl:apply-templates select="/root/contentlist/content[@id = $textvalue]"></xsl:apply-templates>
+     </xsl:if>   
   </xsl:template>
   
 	

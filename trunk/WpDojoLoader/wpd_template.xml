@@ -168,4 +168,16 @@
 		</jquerytabcontainer>
 	</template>
 	
+	<template name="about">
+		<bordercontainer style="width:100%; height:540px;" design="screenDesign">
+			<contentpane region="top" style="text-align:center;vertical-align:middle;margin-top:0px !important;">###head###</contentpane>
+			<contentpane region="left" style="width:50%;background-color:#d7d7d7;">
+				<contentpane>###description1###</contentpane>
+				<box style="padding: 10px;">###description2###</box>
+				<box class="box" style="padding:10px;">###features###</box>				
+			</contentpane>
+			<contentpane region="center">###center###</contentpane>
+		</bordercontainer>		
+	</template>
+	
 </templates>

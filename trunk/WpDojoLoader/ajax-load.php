@@ -31,10 +31,7 @@ if ($gl_session_authentication)
 }
 /**/
 if ( $authorised ) {
-    if ( isset( $_GET['id'] ) && !empty( $_GET['id'] ) ) {
-        //$opePost['ID'] = $_POST['id'];
-        //$opePost['post_content'] = rawurldecode( $_POST['content'] );
-        
+    if ( isset( $_GET['id'] ) && !empty( $_GET['id'] ) ) {        
         //var_dump(get_post($_GET['id']));
         $pst = get_post($_GET['id']); 
         //echo "post_status:".$pst->post_status;
@@ -54,7 +51,6 @@ if ( $authorised ) {
 	        $dl_dojoLoader->ajaxload = true;
 	        $dl_dojoLoader->debugmode = false;
 	        
-	  		//echo $pst;
 	        $content = $dl_dojoLoader->addContent($pst->post_content);
 	  		echo $content;
         }
