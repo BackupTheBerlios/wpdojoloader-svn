@@ -180,4 +180,8 @@
 		</bordercontainer>		
 	</template>
 	
+	<template name="boxx">
+		<contentpane region="center">###hint###</contentpane>	
+	</template>
+	
 </templates>

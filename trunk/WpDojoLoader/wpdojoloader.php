@@ -651,8 +651,10 @@ if (!class_exists("WpDojoLoader")) {
 			foreach ($node->nodeset as &$nd)
 		  	{
 		  		$src = $nd->get_attribute("src");
-		  	  	$src = $this->plugindir."/".$src;
-		  		$nd->set_attribute("src",$src);	
+		  		if(stristr($src, 'http://') === FALSE) {
+			  		$src = $this->plugindir."/".$src;
+			  		$nd->set_attribute("src",$src);
+		  		}	
 		  	}		
 		}
 		
